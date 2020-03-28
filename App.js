@@ -1,57 +1,36 @@
-import React from 'react';
-import {
-    StyleSheet, 
-    Text, 
-    View,
-    Alert,
-} from 'react-native';
-import Wizard from './components/wizard';
-import Step1 from "./components/step/Step1";
-import Step2 from "./components/step/Step2";
-import Step3 from "./components/step/Step3";
-import Step4 from "./components/step/Step4";
-import Step5 from "./components/step/Step5";
-import Step6 from "./components/step/Step6";
-import Step7 from "./components/step/Step7";
-const sections = [
-    <Step1/>,
-    <Step2/>,
-    <Step3/>,
-    <Step4/>,
-    <Step5/>,
-    <Step6/>,
-    <Step7/>
-];
-
-export default function App() {
-    return (
-        <View style={styles.container}>
-            <Wizard onEnd={() => console.log('end')}>
-                {
-                    sections.map((section, index) => (
-                        <Wizard.Step key={index}>
-                            <View style={styles.innerContainer}>
-                                    {section}
-                            </View>
-                        </Wizard.Step>
-                    ))
-                }
-            </Wizard>
-        </View>
-    );
+import React from "react";
+import { StyleSheet } from "react-native";
+import Navigation from "./Navigation/Navigation";
+console.ignoredYellowBox = ['Warning: Each', 'Warning: Failed'];
+console.disableYellowBox = true;
+export default class App extends React.Component {
+  
+ render() {
+  return (
+    <Navigation>
+    </Navigation>
+  );
+}
 }
 
 const styles = StyleSheet.create({
-    container: {
-        flex: 1,
-        backgroundColor: '#fff',
-        alignItems: 'center',
-        justifyContent: 'center',
-    },
+  container: {
+    display: 'flex',
+    height: '100%',
+    marginTop: 22,
+  },
 
-    innerContainer: {
-        flex: 1,
-        alignItems: 'center',
-        justifyContent: 'center',
-    },
+  welcome: {
+    fontSize: 22,
+    fontWeight: "bold"
+  },
+
+  paragraph: {
+    fontSize: 16,
+    color: "#777",
+    textAlign: "center",
+    padding: 10,
+    marginTop: 15,
+    lineHeight: 25
+  }
 });
