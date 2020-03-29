@@ -7,8 +7,8 @@ import {Text,View,Input,Item,Icon,Textarea,DatePicker,Picker} from 'native-base'
 import * as Animatable from 'react-native-animatable';
 
 const br = `\n`;
-const nbreecran=6;
-export default class Editpatient extends Component {
+const nbreecran=5;
+export default class Suivipatient extends Component {
     constructor(props) {
         super(props);
         this.state = ({
@@ -132,44 +132,8 @@ export default class Editpatient extends Component {
     }
 
   render() {
+
       if (this.state.current === 0) {
-        return (
-            
-            <View style={styles.container}>
-                <View style={{ flex: 1}}>
-                <Text style={styles.pageText}> {this.state.current+1}/{nbreecran+1} </Text> 
-                 </View>  
-                <View style={{ flex: 5}}>
-                    <Text style={styles.textlabel}> Nom :</Text> 
-                    <Item stackedLabel  >
-                    <Input style={styles.selectedText}  value={this.state.firstname} onChangeText={ (text) => this.setState({ firstname: text }) }/>
-                  </Item>
-                  <Text style={styles.textlabel}> Prénom :</Text> 
-                    <Item stackedLabel  >
-                    <Input style={styles.selectedText}  value={this.state.lastname} onChangeText={ (text) => this.setState({ lastname: text }) }/>
-                  </Item>
-                  <Text style={styles.textlabel}> Tel :</Text> 
-                    <Item stackedLabel  >
-                    <Input style={styles.selectedText}  value={this.state.tel} onChangeText={ (text) => this.setState({ tel: text }) }/>
-                  </Item>
-      
-                   <Text style={styles.textlabel}> Age :</Text> 
-                    <Item stackedLabel  >
-                    <Input style={styles.selectedText}  value={this.state.age} onChangeText={ (text) => this.setState({ age: text }) }/>
-                  </Item>
-       
-                </View>  
-                <View style={styles.buttonContainer}>
-                {this.state.current!= 0 ? <Button title={'Précédent'} onPress={() => this._onPrev()} /> : null}
-              
-                {!this.state.isLast ? <Button title={'Suivant'} onPress={() => this._onNext()} /> : <Button title={'Terminer'} onPress={() => this._addpatient()} />} 
-            </View>
-                </View>   
-      
-          
-        );
-    }
-    else  if (this.state.current === 1) {
         return (
             <View style={styles.container}>
             <View style={{ flex: 1}}>
@@ -198,7 +162,7 @@ export default class Editpatient extends Component {
             </View>
         );
     }
-    else  if (this.state.current === 2) {
+    else  if (this.state.current === 1) {
         return (
             <View style={styles.container}>
             <View style={{ flex: 1}}>
@@ -228,7 +192,7 @@ export default class Editpatient extends Component {
             </View> 
         );
     }
-    else  if (this.state.current === 3) {
+    else  if (this.state.current === 2) {
         return (
             <View style={styles.container}>
             <View style={{ flex: 1}}>
@@ -257,7 +221,7 @@ export default class Editpatient extends Component {
             </View>  
         );
     }
-    else  if (this.state.current === 4) {
+    else  if (this.state.current === 3) {
         return (
             <View style={styles.container}>
             <View style={{ flex: 1}}>
@@ -286,7 +250,7 @@ export default class Editpatient extends Component {
             </View>  
         );
     }
-    else  if (this.state.current === 5) {
+    else  if (this.state.current === 4) {
         return (
             <View style={styles.container}>
             <View style={{ flex: 1}}>
@@ -318,7 +282,7 @@ export default class Editpatient extends Component {
             </View> 
         );
     }
-    else  if (this.state.current === 6) {
+    else  if (this.state.current === 5) {
         return (
             <View style={styles.container}>
             <View style={{ flex: 1}}>

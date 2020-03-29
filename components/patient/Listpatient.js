@@ -33,6 +33,8 @@ firstName={item.firstName}
  lastName={item.lastName}
  age={item.age}
  tel={item.tel}
+ list={item}
+ navigation={ this.props.navigation}
 />
 
 );
@@ -136,7 +138,7 @@ const styles = StyleSheet.create({
     zIndex: 11,
     right: 40,
     bottom: 15,
-    backgroundColor: '#3f51b5',
+    backgroundColor: '#2196F3',
     width: 50,
     height: 50,
     borderRadius: 35,
