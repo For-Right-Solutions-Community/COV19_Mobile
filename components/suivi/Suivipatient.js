@@ -24,12 +24,12 @@ export default class Suivipatient extends Component {
               isdiarrhe:"",
               isvoyage:"",
               iscontact:"",
-              statustoux:false,
-              statusgorge:false,
-              statusfievre:false,
-              statusdiarrhe:false,
-              statusvoyage:false,
-              statuscontact:false,
+              statustoux:"empty",
+              statusgorge:"empty",
+              statusfievre:"empty",
+              statusdiarrhe:"empty",
+              statusvoyage:"empty",
+              statuscontact:"empty",
               onColor:"#96C85B"
 
         });
@@ -40,50 +40,50 @@ export default class Suivipatient extends Component {
     _onPresstoux(statustoux){
         const currentStatus = statustoux;
         this.setState({ statustoux: currentStatus});
-        if(currentStatus)
+        if(currentStatus==="yes")
             this.refs.viewoui.tada(800);
-        else
+        else if(currentStatus==="no")
         this.refs.viewnon.tada(800);
     }
     _onPressgorge(statusgorge){
         const currentStatus = statusgorge;
         this.setState({ statusgorge: currentStatus});
-        if(currentStatus)
+        if(currentStatus==="yes")
         this.refs.viewoui.tada(800);
-        else
+        else if(currentStatus==="no")
         this.refs.viewnon.tada(800);
     }
     _onPressfievre(statusfievre){
         const currentStatus = statusfievre;
         this.setState({ statusfievre: currentStatus});
-        if(currentStatus)
+        if(currentStatus==="yes")
         this.refs.viewoui.tada(800);
-        else
+        else if(currentStatus==="no")
         this.refs.viewnon.tada(800);
 
     }
     _onPressdiarrhe(statusdiarrhe){
         const currentStatus = statusdiarrhe;
         this.setState({ statusdiarrhe: currentStatus});
-        if(currentStatus)
+        if(currentStatus==="yes")
         this.refs.viewoui.tada(800);
-        else
+        else if(currentStatus==="no")
         this.refs.viewnon.tada(800);
     }
     _onPressvoyage(statusvoyage){
         const currentStatus =statusvoyage ;
         this.setState({ statusvoyage: currentStatus});
-        if(currentStatus)
+        if(currentStatus==="yes")
         this.refs.viewoui.tada(800);
-        else
+        else if(currentStatus==="no")
         this.refs.viewnon.tada(800);
     }
     _onPresscontact(statuscontact){
         const currentStatus = statuscontact;
         this.setState({ statuscontact: currentStatus});
-        if(currentStatus)
+        if(currentStatus==="yes")
         this.refs.viewoui.tada(800);
-        else
+        else if(currentStatus==="no")
         this.refs.viewnon.tada(800);
     }
     _addpatient()
@@ -142,13 +142,13 @@ export default class Suivipatient extends Component {
             <View style={{ flex: 3}}>
                 <Text style={styles.textlabel}>Ces derniers jours, avez-vous une toux ou une augmentation de votre toux habituelle ? {br} {br}</Text> 
                 <Text style={styles.textoption}> Sélectionnez une option :{br}</Text> 
-                <TouchableWithoutFeedback onPress={() => this._onPresstoux(true)}>
-                <Animatable.View ref="viewoui" style={{ margin:10, paddingTop :10, paddingBottom: 10, paddingRight: 20, paddingLeft: 20, backgroundColor: this.state.statustoux ? this.state.onColor : "#bdbdbd", borderRadius:20}}>
+                <TouchableWithoutFeedback onPress={() => this._onPresstoux("yes")}>
+                <Animatable.View ref="viewoui" style={{ margin:10, paddingTop :10, paddingBottom: 10, paddingRight: 20, paddingLeft: 20, backgroundColor: this.state.statustoux ==="yes" ? this.state.onColor : "#bdbdbd", borderRadius:20}}>
                 <Text style={{color:"white", fontWeight: "bold"}}>oui</Text>
                 </Animatable.View>
             </TouchableWithoutFeedback>
-            <TouchableWithoutFeedback onPress={() => this._onPresstoux(false)}>
-                <Animatable.View ref="viewnon" style={{ margin:10, paddingTop :10, paddingBottom: 10, paddingRight: 20, paddingLeft: 20, backgroundColor: !this.state.statustoux ? this.state.onColor : "#bdbdbd", borderRadius:20}}>
+            <TouchableWithoutFeedback onPress={() => this._onPresstoux("no")}>
+                <Animatable.View ref="viewnon" style={{ margin:10, paddingTop :10, paddingBottom: 10, paddingRight: 20, paddingLeft: 20, backgroundColor: this.state.statustoux ==="no"? this.state.onColor : "#bdbdbd", borderRadius:20}}>
                 <Text style={{color:  "white" , fontWeight: "bold"}}>Non</Text>
                 </Animatable.View>
             </TouchableWithoutFeedback>
@@ -171,13 +171,13 @@ export default class Suivipatient extends Component {
             <View style={{ flex: 3}}>
                 <Text style={styles.textlabel}>Ces derniers jours,avez-vous un mal de gorge ? {br} {br}</Text> 
                 <Text style={styles.textoption}> Sélectionnez une option :{br}</Text> 
-                <TouchableWithoutFeedback onPress={() => this._onPressgorge(true)}>
-                <Animatable.View ref="viewoui" style={{ margin:10, paddingTop :10, paddingBottom: 10, paddingRight: 20, paddingLeft: 20, backgroundColor: this.state.statusgorge ? this.state.onColor : "#bdbdbd", borderRadius:20}}>
+                <TouchableWithoutFeedback onPress={() => this._onPressgorge("yes")}>
+                <Animatable.View ref="viewoui" style={{ margin:10, paddingTop :10, paddingBottom: 10, paddingRight: 20, paddingLeft: 20, backgroundColor: this.state.statusgorge ==="yes" ? this.state.onColor : "#bdbdbd", borderRadius:20}}>
                 <Text style={{color:  "white" , fontWeight: "bold"}}>oui</Text>
                 </Animatable.View>
             </TouchableWithoutFeedback>
-            <TouchableWithoutFeedback onPress={() => this._onPressgorge(false)}>
-                <Animatable.View ref="viewnon" style={{ margin:10, paddingTop :10, paddingBottom: 10, paddingRight: 20, paddingLeft: 20, backgroundColor: !this.state.statusgorge ? this.state.onColor : "#bdbdbd", borderRadius:20}}>
+            <TouchableWithoutFeedback onPress={() => this._onPressgorge("no")}>
+                <Animatable.View ref="viewnon" style={{ margin:10, paddingTop :10, paddingBottom: 10, paddingRight: 20, paddingLeft: 20, backgroundColor: this.state.statusgorge ==="no" ? this.state.onColor : "#bdbdbd", borderRadius:20}}>
                 <Text style={{color:  "white" , fontWeight: "bold"}}>Non</Text>
                 </Animatable.View>
             </TouchableWithoutFeedback>
@@ -201,13 +201,13 @@ export default class Suivipatient extends Component {
             <View style={{ flex: 3}}>
                 <Text style={styles.textlabel}>Pensez-vous avoir ou avoir eu de la fièvre ces derniers jours (frissons, sueurs) ?  {br} {br}</Text> 
                 <Text style={styles.textoption}> Sélectionnez une option :{br}</Text> 
-                <TouchableWithoutFeedback onPress={() => this._onPressfievre(true)}>
-                <Animatable.View ref="viewoui" style={{ margin:10, paddingTop :10, paddingBottom: 10, paddingRight: 20, paddingLeft: 20, backgroundColor: this.state.statusfievre ? this.state.onColor : "#bdbdbd", borderRadius:20}}>
+                <TouchableWithoutFeedback onPress={() => this._onPressfievre("yes")}>
+                <Animatable.View ref="viewoui" style={{ margin:10, paddingTop :10, paddingBottom: 10, paddingRight: 20, paddingLeft: 20, backgroundColor: this.state.statusfievre ==="yes"? this.state.onColor : "#bdbdbd", borderRadius:20}}>
                 <Text style={{color:"white" , fontWeight: "bold"}}>oui</Text>
                 </Animatable.View>
             </TouchableWithoutFeedback>
-            <TouchableWithoutFeedback onPress={() => this._onPressfievre(false)}>
-                <Animatable.View ref="viewnon" style={{ margin:10, paddingTop :10, paddingBottom: 10, paddingRight: 20, paddingLeft: 20, backgroundColor: !this.state.statusfievre ? this.state.onColor : "#bdbdbd", borderRadius:20}}>
+            <TouchableWithoutFeedback onPress={() => this._onPressfievre("no")}>
+                <Animatable.View ref="viewnon" style={{ margin:10, paddingTop :10, paddingBottom: 10, paddingRight: 20, paddingLeft: 20, backgroundColor: this.state.statusfievre ==="no"? this.state.onColor : "#bdbdbd", borderRadius:20}}>
                 <Text style={{color:"white" , fontWeight: "bold"}}>Non</Text>
                 </Animatable.View>
             </TouchableWithoutFeedback>
@@ -230,13 +230,13 @@ export default class Suivipatient extends Component {
             <View style={{ flex: 3}}>
                 <Text style={styles.textlabel}> Ces dernières 24 heures, avez-vous de la diarrhée (Nausée, vomissements) ?   {br} {br}</Text> 
                 <Text style={styles.textoption}> Sélectionnez une option :{br}</Text> 
-                <TouchableWithoutFeedback onPress={() => this._onPressdiarrhe(true)}>
-                <Animatable.View ref="viewoui" style={{ margin:10, paddingTop :10, paddingBottom: 10, paddingRight: 20, paddingLeft: 20, backgroundColor: this.state.statusdiarrhe ? this.state.onColor : "#bdbdbd", borderRadius:20}}>
+                <TouchableWithoutFeedback onPress={() => this._onPressdiarrhe("yes")}>
+                <Animatable.View ref="viewoui" style={{ margin:10, paddingTop :10, paddingBottom: 10, paddingRight: 20, paddingLeft: 20, backgroundColor: this.state.statusdiarrhe ==="yes"? this.state.onColor : "#bdbdbd", borderRadius:20}}>
                 <Text style={{color: "white" , fontWeight: "bold"}}>oui</Text>
                 </Animatable.View>
             </TouchableWithoutFeedback>
-            <TouchableWithoutFeedback onPress={() => this._onPressdiarrhe(false)}>
-                <Animatable.View ref="viewnon" style={{ margin:10, paddingTop :10, paddingBottom: 10, paddingRight: 20, paddingLeft: 20, backgroundColor: !this.state.statusdiarrhe ? this.state.onColor : "#bdbdbd", borderRadius:20}}>
+            <TouchableWithoutFeedback onPress={() => this._onPressdiarrhe("no")}>
+                <Animatable.View ref="viewnon" style={{ margin:10, paddingTop :10, paddingBottom: 10, paddingRight: 20, paddingLeft: 20, backgroundColor: this.state.statusdiarrhe ==="no"? this.state.onColor : "#bdbdbd", borderRadius:20}}>
                 <Text style={{color: "white" , fontWeight: "bold"}}>Non</Text>
                 </Animatable.View>
             </TouchableWithoutFeedback>
@@ -259,13 +259,13 @@ export default class Suivipatient extends Component {
             <View style={{ flex: 3}}>
                 <Text style={styles.textlabel}> Était-il (elle) en voyage au cours du moi dernier ?   {br} {br}</Text> 
                 <Text style={styles.textoption}> Sélectionnez une option :{br}</Text> 
-                <TouchableWithoutFeedback onPress={() => this._onPressvoyage(true)}>
-                <Animatable.View ref="viewoui" style={{ margin:10, paddingTop :10, paddingBottom: 10, paddingRight: 20, paddingLeft: 20, backgroundColor: this.state.statusvoyage ? this.state.onColor : "#bdbdbd", borderRadius:20}}>
+                <TouchableWithoutFeedback onPress={() => this._onPressvoyage("yes")}>
+                <Animatable.View ref="viewoui" style={{ margin:10, paddingTop :10, paddingBottom: 10, paddingRight: 20, paddingLeft: 20, backgroundColor: this.state.statusvoyage ==="yes"? this.state.onColor : "#bdbdbd", borderRadius:20}}>
                 <Text style={{color: "white" , fontWeight: "bold"}}>oui</Text>
                 </Animatable.View>
             </TouchableWithoutFeedback>
-            <TouchableWithoutFeedback onPress={() => this._onPressvoyage(false)}>
-                <Animatable.View ref="viewnon" style={{ margin:10, paddingTop :10, paddingBottom: 10, paddingRight: 20, paddingLeft: 20, backgroundColor: !this.state.statusvoyage ? this.state.onColor : "#bdbdbd", borderRadius:20}}>
+            <TouchableWithoutFeedback onPress={() => this._onPressvoyage("no")}>
+                <Animatable.View ref="viewnon" style={{ margin:10, paddingTop :10, paddingBottom: 10, paddingRight: 20, paddingLeft: 20, backgroundColor: this.state.statusvoyage ==="no"? this.state.onColor : "#bdbdbd", borderRadius:20}}>
                 <Text style={{color:  "white", fontWeight: "bold"}}>Non</Text>
                 </Animatable.View>
             </TouchableWithoutFeedback>
@@ -291,13 +291,13 @@ export default class Suivipatient extends Component {
             <View style={{ flex: 3}}>
                 <Text style={styles.textlabel}> Était-il (elle) en contact avec une personne qui revient d’un voyage ?   {br} {br}</Text> 
                 <Text style={styles.textoption}> Sélectionnez une option :{br}</Text> 
-                <TouchableWithoutFeedback onPress={() => this._onPresscontact(true)}>
-                <Animatable.View ref="viewoui" style={{ margin:10, paddingTop :10, paddingBottom: 10, paddingRight: 20, paddingLeft: 20, backgroundColor: this.state.statuscontact ? this.state.onColor : "#bdbdbd", borderRadius:20}}>
+                <TouchableWithoutFeedback onPress={() => this._onPresscontact("yes")}>
+                <Animatable.View ref="viewoui" style={{ margin:10, paddingTop :10, paddingBottom: 10, paddingRight: 20, paddingLeft: 20, backgroundColor: this.state.statuscontact ==="yes" ? this.state.onColor : "#bdbdbd", borderRadius:20}}>
                 <Text style={{color:  "white" , fontWeight: "bold"}}>oui</Text>
                 </Animatable.View>
             </TouchableWithoutFeedback>
-            <TouchableWithoutFeedback onPress={() => this._onPresscontact(false)}>
-                <Animatable.View ref="viewnon" style={{ margin:10, paddingTop :10, paddingBottom: 10, paddingRight: 20, paddingLeft: 20, backgroundColor: !this.state.statuscontact ? this.state.onColor : "#bdbdbd", borderRadius:20}}>
+            <TouchableWithoutFeedback onPress={() => this._onPresscontact("no")}>
+                <Animatable.View ref="viewnon" style={{ margin:10, paddingTop :10, paddingBottom: 10, paddingRight: 20, paddingLeft: 20, backgroundColor: this.state.statuscontact ==="no" ? this.state.onColor : "#bdbdbd", borderRadius:20}}>
                 <Text style={{color: "white" , fontWeight: "bold"}}>Non</Text>
                 </Animatable.View>
             </TouchableWithoutFeedback>
