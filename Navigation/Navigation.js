@@ -2,6 +2,8 @@ import { createStackNavigator } from 'react-navigation';
 import Listpatient from '../components/patient/Listpatient';
 import Editpatient from '../components/patient/Editpatient';
 import Suivipatient from '../components/suivi/Suivipatient';
+import Authentification from '../Authentification';
+import Inscription from '../Inscription';
 import IndexFollowScreen from '../components/IndexFollowScreen';
 const IndexFollowScreenStackNavigator = createStackNavigator({
     IndexFollowScreen: { 
@@ -32,6 +34,18 @@ const IndexFollowScreenStackNavigator = createStackNavigator({
         screen: Suivipatient,
         navigationOptions: {
           title: 'Suivi patient'
+        }
+      },
+      Authentification: {
+        screen: Authentification,
+        navigationOptions: {
+          title: 'Authentification'
+        }
+      },
+      Inscription: {
+        screen: Inscription,
+        navigationOptions: {
+          title: 'Créer un compte'
         }
       }
 })

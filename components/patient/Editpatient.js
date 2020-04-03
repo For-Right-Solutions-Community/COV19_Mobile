@@ -4,24 +4,25 @@ import { Animated, Dimensions, Keyboard, StyleSheet, Button,TouchableWithoutFeed
 import {Text,View,Input,Item,Icon,Textarea,DatePicker,Picker} from 'native-base';
 import * as Animatable from 'react-native-animatable';
 import RadioForm, {RadioButton, RadioButtonInput, RadioButtonLabel} from 'react-native-simple-radio-button';
+import {httpRequestListPatient} from "../../ApiRequest/apirequest"
 const llll=' من يقوم بتعمير هذه الاستمارة ؟'
 const br = `\n`;
 const nbreecran=28;
 var radio_props = [
     {label: '   ذكر     ', value: 0 },
-    {label: '  انثى     ', value: 1 }
+    {label: '  أنثى     ', value: 1 }
   ];
   var radio_propsetatcivil = [
-    {label: ' اعزب/عزباء ', value: 0 },
+    {label: ' أعزب/عزباء ', value: 0 },
     {label: ' متزوج ', value: 1 },
-    {label: ' ارمل ', value: 2 }
+    {label: ' أرمل ', value: 2 }
   ];
   var radio_propsdiabitic = [
     {label: ' العينين', value: 0 },
     {label: ' القلب ', value: 1 },
     {label: ' الكلى ', value: 2 },
-    {label: ' الاعصاب ', value: 3 },
-    {label: ' الاطراف ', value: 4 },
+    {label: ' الأعصاب ', value: 3 },
+    {label: ' الأطراف ', value: 4 },
     {label: ' لاشيء ', value: 5 }
   ];
   var radio_propsLiving = [
@@ -65,9 +66,9 @@ export default class Editpatient extends Component {
               statuszonecritique:"empty",
               statusASPHYXIE:"empty",
               statusABILYTY:"empty",
-              statusWhyABILYTY:"empty",
+              statusWhyABILYTY:[],
               statusABILYTY_DURATION:"empty",
-              statusSYMTOME:"empty",
+              statusSYMTOME:[],
               statussenseofsmell:"empty",
               statusASPHEXIE:"empty",
               statusANTECEDENT:"empty",
@@ -83,6 +84,7 @@ export default class Editpatient extends Component {
               statusetatdiabitic:-1,
               statusLiving:-1,
               statusnbreanneediabitic:-1,
+              statusnbreanneehypertension:-1,
               statustreatmentconcer:-1,
               statusImmunity:-1
               
@@ -108,7 +110,7 @@ export default class Editpatient extends Component {
         const keyboardHeight = event.endCoordinates.height;
         const currentlyFocusedField = TextInputState.currentlyFocusedField();
         UIManager.measure(currentlyFocusedField, (originX, originY, width, height, pageX, pageY) => {
-          const fieldHeight = height;
+          const fieldHeight = height+20;
           const fieldTop = pageY;
           const gap = (windowHeight - keyboardHeight) - (fieldTop + fieldHeight);
           if (gap >= 0) {
@@ -224,24 +226,41 @@ export default class Editpatient extends Component {
         else if(currentStatus==="4")
         this.refs.view4.tada(800);
     }
+
     _onPressSYMTOME(statusSYMTOME){
         const currentStatus = statusSYMTOME;
-        this.setState({ statusSYMTOME: currentStatus});
-        if(currentStatus==="1")
-        this.refs.view1.tada(800);
-        else if(currentStatus==="2")
-        this.refs.view2.tada(800);
-        else if(currentStatus==="3")
-        this.refs.view3.tada(800);
-        else if(currentStatus==="4")
-        this.refs.view4.tada(800);
-        else if(currentStatus==="5")
-        this.refs.view5.tada(800);
-        else if(currentStatus==="6")
-        this.refs.view6.tada(800);
-        else if(currentStatus==="7")
-        this.refs.view7.tada(800);
-    }
+        const SYMTOMEIndex = this.state.statusSYMTOME.findIndex(item => item === currentStatus)
+        if (SYMTOMEIndex !== -1) {
+          // Le film est déjà dans les favoris, on le supprime de la liste
+  
+          this.setState({ statusSYMTOME: this.state.statusSYMTOME.filter( (item, index) => index !== SYMTOMEIndex)});
+   
+        }
+        else {
+          // Le film n'est pas dans les films favoris, on l'ajoute à la liste
+          this.setState({ statusSYMTOME: [...this.state.statusSYMTOME, currentStatus]});
+  
+          }
+
+          if(currentStatus==="1")
+          this.refs.view1.tada(800);
+          else if(currentStatus==="2")
+          this.refs.view2.tada(800);
+          else if(currentStatus==="3")
+          this.refs.view3.tada(800);
+          else if(currentStatus==="4")
+          this.refs.view4.tada(800);
+          else if(currentStatus==="5")
+          this.refs.view5.tada(800);
+          else if(currentStatus==="6")
+          this.refs.view6.tada(800);
+          else if(currentStatus==="7")
+          this.refs.view7.tada(800);
+          
+        }
+
+
+
     _onPresssenseofsmell(statussenseofsmell){
         const currentStatus = statussenseofsmell;
         this.setState({ statussenseofsmell: currentStatus});
@@ -376,18 +395,33 @@ export default class Editpatient extends Component {
         else if(currentStatus==="no")
         this.refs.viewnon.tada(800);
     }
+
     _onPressWhyABILYTY(statusWhyABILYTY){
         const currentStatus = statusWhyABILYTY;
-        this.setState({ statusWhyABILYTY: currentStatus});
-        if(currentStatus==="1")
-        this.refs.view1.tada(800);
-        else if(currentStatus==="2")
-        this.refs.view2.tada(800);
-        else if(currentStatus==="3")
-        this.refs.view3.tada(800);
-        else if(currentStatus==="4")
-        this.refs.view4.tada(800);
-    }
+        const SYMTOMEIndex = this.state.statusWhyABILYTY.findIndex(item => item === currentStatus)
+        if (SYMTOMEIndex !== -1) {
+          // Le film est déjà dans les favoris, on le supprime de la liste
+  
+          this.setState({ statusWhyABILYTY: this.state.statusWhyABILYTY.filter( (item, index) => index !== SYMTOMEIndex)});
+   
+        }
+        else {
+          // Le film n'est pas dans les films favoris, on l'ajoute à la liste
+          this.setState({ statusWhyABILYTY: [...this.state.statusWhyABILYTY, currentStatus]});
+  
+          }
+
+          if(currentStatus==="1")
+          this.refs.view1.tada(800);
+          else if(currentStatus==="2")
+          this.refs.view2.tada(800);
+          else if(currentStatus==="3")
+          this.refs.view3.tada(800);
+          else if(currentStatus==="4")
+          this.refs.view4.tada(800);
+
+          
+        }
     _addpatient()
     {
         console.log('end');
@@ -430,6 +464,8 @@ export default class Editpatient extends Component {
         this.setState({
             current:index
         });
+
+        httpRequestListPatient();
         
     }
 
@@ -443,10 +479,10 @@ export default class Editpatient extends Component {
                 <Text style={styles.pageText}> {this.state.current+1}/{nbreecran+1} </Text> 
                  </View> 
                  <View style={{ flex: 10}}>
-                 <Text style={styles.textlabel}> الاسم :</Text> 
+                 <Text style={styles.textlabel}> الإسم :</Text> 
                   
             <TextInput
-              placeholder="الاسم"
+              placeholder="الإسم"
               style={styles.textInput}
               value={this.state.firstname} onChangeText={ (text) => this.setState({ firstname: text }) }
             />
@@ -483,7 +519,7 @@ export default class Editpatient extends Component {
                                 buttonInnerColor={'#96C85B'}
                                 buttonOuterColor={this.state.statusgender === i ? '#96C85B' : '#000'}
                                 buttonSize={40}
-                                buttonOuterSize={60}
+                                buttonOuterSize={50}
                                 buttonStyle={{}}
                                 buttonWrapStyle={{marginLeft: 20}}
                                 />
@@ -499,15 +535,16 @@ export default class Editpatient extends Component {
                     ))
                 }  
                 </RadioForm>
-                </View>
-                <View style={{ flex: 3}}>
                 <View style={styles.buttonContainer}>
                 {this.state.current!= 0 ? <Button title={'Précédent'} onPress={() => this._onPrev(1)} /> : null}
               
                 {!this.state.isLast ? <Button title={'Suivant'} onPress={() => this._onNext(1)} /> : <Button title={'Terminer'} onPress={() => this._addpatient()} />} 
-            </View>
+                </View>
+                </View>
+               
+           
                </View>
-               </View>
+             
           </Animated.View>
       
           
@@ -530,10 +567,10 @@ export default class Editpatient extends Component {
                     value={this.state.tel} onChangeText={ (text) => this.setState({ tel: text }) }
                     />
 
-                   <Text style={styles.textlabel}> رقم هاتف احد الاقارب (في حالة عدم التحصل عليك) :</Text> 
+                   <Text style={styles.textlabel}> رقم هاتف أحد الأقارب (في حالة عدم التحصل عليك) :</Text> 
                    <Text style={styles.textlabel}> </Text> 
                    <TextInput
-                    placeholder="هاتف احد الاقارب"
+                    placeholder="هاتف أحد الأقارب"
                     style={styles.textInput}
                     value={this.state.telfamille} onChangeText={ (text) => this.setState({ telfamille: text }) }
                     />
@@ -560,7 +597,7 @@ export default class Editpatient extends Component {
                                 buttonInnerColor={'#96C85B'}
                                 buttonOuterColor={this.state.statusetatcivil === i ? '#96C85B' : '#000'}
                                 buttonSize={40}
-                                buttonOuterSize={60}
+                                buttonOuterSize={50}
                                 buttonStyle={{}}
                                 buttonWrapStyle={{marginLeft: 120}}
                                 />
@@ -576,17 +613,18 @@ export default class Editpatient extends Component {
                     ))
                 }  
                 </RadioForm>
-                </View>
-
-
-                </View> 
-                <View style={{ flex: 3}}> 
+                
                 <View style={styles.buttonContainer}>
                 {this.state.current!= 0 ? <Button title={'Précédent'} onPress={() => this._onPrev(1)} /> : null}
               
                 {!this.state.isLast ? <Button title={'Suivant'} onPress={() => this._onNext(1)} /> : <Button title={'Terminer'} onPress={() => this._addpatient()} />} 
-            </View>
+ 
                 </View>   
+                </View>
+
+
+                </View> 
+        
                 </View> 
          </Animated.View>
           
@@ -599,7 +637,7 @@ export default class Editpatient extends Component {
             <Text style={styles.pageText}> {this.state.current+1}/{nbreecran+1} </Text> 
              </View>  
              <View style={{ flex: 10}}>
-                <Text style={styles.textlabel}>  من يقوم بتعمير هذه الاستمارة ؟ {br} {br}</Text> 
+                <Text style={styles.textlabel}>  من يقوم بتعمير هذه الإستمارة ؟ {br} </Text> 
                 <TouchableWithoutFeedback onPress={() => this._onPressuserfillform("yes")}>
                 <Animatable.View ref="viewoui" style={{ margin:10, paddingTop :10, paddingBottom: 10, paddingRight: 20, paddingLeft: 20, backgroundColor: this.state.statususerfillform ==="yes" ? this.state.onColor : "#bdbdbd", borderRadius:20}}>
                 <Text style={{color:"white", fontWeight: "bold"}}>المريض </Text>
@@ -612,7 +650,7 @@ export default class Editpatient extends Component {
             </TouchableWithoutFeedback>
  
             {this.state.statususerfillform==="no" ? (
-              <View style={{ flex: 10}}>
+              <View>
                 <Text style={styles.textlabel}></Text> 
               <Text style={styles.textlabel}>لماذا ؟ {br} </Text> 
               <TouchableWithoutFeedback onPress={() => this._onPressWhyuserfillform("yes")}>
@@ -631,21 +669,22 @@ export default class Editpatient extends Component {
         <View/>
       )}
    
-           
-                </View>
-
-
-
-
-            <View style={{ flex: 3}}>
             <View style={styles.buttonContainer}>
             
             {this.state.current!= 0 ? <Button title={'Précédent'} onPress={() => this._onPrev(1)} /> : null}
               
                 {!this.state.isLast ? <Button title={'Suivant'} onPress={() => this._onNext(1)} /> : <Button title={'Terminer'} onPress={() => this._addpatient()} />} 
             </View>
+           
+                </View>
+
+
+
+
+   
+        
             </View>
-            </View>
+     
         );
     }
 
@@ -671,30 +710,30 @@ export default class Editpatient extends Component {
             </TouchableWithoutFeedback>
 
 
-          {this.state.statusvoyage==="yes" ? (
-              <View style={{ flex: 10}}>
-                 <Text style={styles.textlabel}></Text> 
-               <Text style={styles.textlabel}>  الى اي بلد؟ {br} {br}</Text> 
-               <TextInput
-                    placeholder="البلاد "
-                    style={styles.textInput}
-                    value={this.state.statuspaysvoyage} onChangeText={ (text) => this.setState({ statuspaysvoyage: text }) }
-                    />
-          </View>  
-      ) : (
-        <View/>
-      )}
+                    {this.state.statusvoyage==="yes" ? (
+                        <View>
+                            <Text style={styles.textlabel}></Text> 
+                        <Text style={styles.textlabel}>  إلى أي بلد؟ {br}</Text> 
+                        <TextInput
+                                placeholder="البلاد "
+                                style={styles.textInput}
+                                value={this.state.statuspaysvoyage} onChangeText={ (text) => this.setState({ statuspaysvoyage: text }) }
+                                />
+                    </View>  
+                ) : (
+                    <View/>
+                )}
 
-            
-   
-            </View>  
-            <View style={{ flex: 3}}>
-            <View style={styles.buttonContainer}>
+                <View style={styles.buttonContainer}>
             {this.state.current!= 0 ? <Button title={'Précédent'} onPress={() => this._onPrev(1)} /> : null}
               
                 {!this.state.isLast ? <Button title={'Suivant'} onPress={() => this._onNext(1)} /> : <Button title={'Terminer'} onPress={() => this._addpatient()} />} 
+         
             </View>
-            </View>
+   
+            </View>  
+     
+        
             </View>
             </Animated.View>
         );
@@ -708,7 +747,7 @@ export default class Editpatient extends Component {
             <Text style={styles.pageText}> {this.state.current+1}/{nbreecran+1} </Text> 
              </View>  
              <View style={{ flex: 10}}>
-                <Text style={styles.textlabel}>هل كان لك اتصال مباشر بشخص سافر خارج البلاد الشهر الفارط ؟ {br} {br}</Text> 
+                <Text style={styles.textlabel}>هل كان لك إتصال مباشر بشخص سافر خارج البلاد الشهر الفارط ؟ {br} {br}</Text> 
                 <TouchableWithoutFeedback onPress={() => this._onPresscontact("yes")}>
                 <Animatable.View ref="viewoui" style={{ margin:10, paddingTop :10, paddingBottom: 10, paddingRight: 20, paddingLeft: 20, backgroundColor: this.state.statuscontact==="yes" ? this.state.onColor : "#bdbdbd", borderRadius:20}}>
                 <Text style={{color:"white", fontWeight: "bold"}}>نعم</Text>
@@ -722,9 +761,9 @@ export default class Editpatient extends Component {
 
           
             {this.state.statuscontact==="yes" ? (
-              <View style={{ flex: 10}}>
+              <View >
                  <Text style={styles.textlabel}></Text> 
-                 <Text style={styles.textlabel}>  هل يسكن معك في نفس المنزل ؟ {br} {br}</Text> 
+                 <Text style={styles.textlabel}>  هل يسكن معك في نفس المنزل ؟  {br}</Text> 
                  <View>
                      <RadioForm
                         formHorizontal={true}
@@ -744,7 +783,7 @@ export default class Editpatient extends Component {
                                 buttonInnerColor={'#96C85B'}
                                 buttonOuterColor={this.state.statusLiving === i ? '#96C85B' : '#000'}
                                 buttonSize={40}
-                                buttonOuterSize={60}
+                                buttonOuterSize={50}
                                 buttonStyle={{}}
                                 buttonWrapStyle={{marginLeft: 20}}
                                 />
@@ -765,15 +804,16 @@ export default class Editpatient extends Component {
       ) : (
         <View/>
       )}
-            </View>  
-            <View style={{ flex: 3}}>
-            <View style={styles.buttonContainer}>
+                <View style={styles.buttonContainer}>
             {this.state.current!= 0 ? <Button title={'Précédent'} onPress={() => this._onPrev(1)} /> : null}
               
                 {!this.state.isLast ? <Button title={'Suivant'} onPress={() => this._onNext(1)} /> : <Button title={'Terminer'} onPress={() => this._addpatient()} />} 
             </View>
+            </View>  
+       
+        
             </View>
-            </View>
+         
 
             </Animated.View>
         );
@@ -785,7 +825,7 @@ export default class Editpatient extends Component {
             <Text style={styles.pageText}> {this.state.current+1}/{nbreecran+1} </Text> 
              </View>  
              <View style={{ flex: 10}}>
-                <Text style={styles.textlabel}>هل خضعت انت او الشخص المذكور لتحليل الاصابة بفيروس كورونا ؟ {br} {br}</Text> 
+                <Text style={styles.textlabel}>هل خضعت أنت أو الشخص المذكور لتحليل الإصابة بفيروس كورونا ؟ {br} {br}</Text> 
   
                 <TouchableWithoutFeedback onPress={() => this._onPresstestanalys("yes")}>
                 <Animatable.View ref="viewoui" style={{ margin:10, paddingTop :10, paddingBottom: 10, paddingRight: 20, paddingLeft: 20, backgroundColor: this.state.statustestanalys ==="yes" ? this.state.onColor : "#bdbdbd", borderRadius:20}}>
@@ -798,16 +838,16 @@ export default class Editpatient extends Component {
                 </Animatable.View>
             </TouchableWithoutFeedback>
 
-   
-            </View>  
-            <View style={{ flex: 3}}> 
             <View style={styles.buttonContainer}>
             {this.state.current!= 0 ? <Button title={'Précédent'} onPress={() => this._onPrev(1)} /> : null}
               
                 {!this.state.isLast ? <Button title={'Suivant'} onPress={() => this._onNext(this.state.statustestanalys ==="yes"?1:2)} /> : <Button title={'Terminer'} onPress={() => this._addpatient()} />} 
             </View>
+            </View>  
+
+   
             </View>
-            </View>
+  
         );
     }
     else if (this.state.current === 6) {
@@ -829,16 +869,18 @@ export default class Editpatient extends Component {
               <Text style={{color:  "white" , fontWeight: "bold"}}>غير مصاب</Text>
               </Animatable.View>
           </TouchableWithoutFeedback>
-   
-            </View> 
-            <View style={{ flex: 3}}>  
-            <View style={styles.buttonContainer}>
+
+                   <View style={styles.buttonContainer}>
             {this.state.current!= 0 ? <Button title={'Précédent'} onPress={() => this._onPrev(1)} /> : null}
               
                 {!this.state.isLast ? <Button title={'Suivant'} onPress={() => this._onNext(1)} /> : <Button title={'Terminer'} onPress={() => this._addpatient()} />} 
             </View>
+   
+            </View> 
+
+   
             </View>
-            </View>
+
         );
     }
     else  if (this.state.current === 7) {
@@ -850,7 +892,7 @@ export default class Editpatient extends Component {
             <Text style={styles.pageText}> {this.state.current+1}/{nbreecran+1} </Text> 
              </View>  
              <View style={{ flex: 10}}>
-                <Text style={styles.textlabel}>هل كنت في احدى المناطق التي اعلنت عنها وزارة الصحة كبؤرة لانتشار المرض خلال الاسبوعين الفارطين؟ {br} {br}</Text> 
+                <Text style={styles.textlabel}>هل كنت في إحدى المناطق التي أعلنت عنها وزارة الصحة كبؤرة لإنتشار المرض خلال الأسبوعين الفارطين؟ {br} {br}</Text> 
                 <TouchableWithoutFeedback onPress={() => this._onPressstatuszonecritique("yes")}>
                 <Animatable.View ref="viewoui" style={{ margin:10, paddingTop :10, paddingBottom: 10, paddingRight: 20, paddingLeft: 20, backgroundColor: this.state.statuszonecritique ==="yes" ? this.state.onColor : "#bdbdbd", borderRadius:20}}>
                 <Text style={{color:  "white" , fontWeight: "bold"}}>نعم </Text>
@@ -862,16 +904,16 @@ export default class Editpatient extends Component {
                 </Animatable.View>
             </TouchableWithoutFeedback>
    
-
-            </View> 
-            <View style={{ flex: 3}}> 
             <View style={styles.buttonContainer}>
             {this.state.current!= 0 ? <Button title={'Précédent'} onPress={() => this._onPrev(this.state.statustestanalys ==="yes"?1:2)} /> : null}
               
                 {!this.state.isLast ? <Button title={'Suivant'} onPress={() => this._onNext(this.state.statuszonecritique ==="yes"?1:2)} /> : <Button title={'Terminer'} onPress={() => this._addpatient()} />} 
             </View>
-            </View>
             </View> 
+
+     
+            </View>
+
             </Animated.View>
         );
         
@@ -890,14 +932,15 @@ export default class Editpatient extends Component {
              <View> 
 
           
-                <Text style={styles.textlabel}>  حدد المنطقة {br} {br}</Text> 
+                <Text style={styles.textlabel}>  حدد المنطقة {br} </Text> 
       
                 <TextInput
                     placeholder="المنطقة "
                     style={styles.textInput}
                     value={this.state.statusville} onChangeText={ (text) => this.setState({ statusville: text }) }
                     />
-            <Text style={styles.textlabel}>  متى قمت بزيارتها عدد الأيام  {br} {br}</Text> 
+                    <Text style={styles.textlabel}>  {br} </Text> 
+            <Text style={styles.textlabel}>  متى قمت بزيارتها عدد الأيام  {br} </Text> 
             <TextInput
                     placeholder="عدد الأيام "
                     style={styles.textInput}
@@ -905,15 +948,15 @@ export default class Editpatient extends Component {
                     />
  
           </View>  
-    
-          <View style={{ flex: 3}}>
-            </View>  
-            <View style={styles.buttonContainer}>
+          <View style={styles.buttonContainer}>
             {this.state.current!= 0 ? <Button title={'Précédent'} onPress={() => this._onPrev(1)} /> : null}
               
                 {!this.state.isLast ? <Button title={'Suivant'} onPress={() => this._onNext(1)} /> : <Button title={'Terminer'} onPress={() => this._addpatient()} />} 
-            </View>
+
             </View> 
+       
+            </View>  
+
             </View> 
             </Animated.View>
         );
@@ -928,7 +971,7 @@ export default class Editpatient extends Component {
                             <Text style={styles.pageText}> {this.state.current+1}/{nbreecran+1} </Text> 
                             </View>  
                         <View style={{ flex: 10}}>
-                                <Text style={styles.textlabel}>هل تشكو من ارتفاع في درجة حرارتك ؟  {br} {br}</Text> 
+                                <Text style={styles.textlabel}>هل تشكو من إرتفاع في درجة حرارتك ؟  {br} {br}</Text> 
                                 <TouchableWithoutFeedback onPress={() => this._onPressfievre("yes")}>
                                 <Animatable.View ref="viewoui" style={{ margin:10, paddingTop :10, paddingBottom: 10, paddingRight: 20, paddingLeft: 20, backgroundColor: this.state.statusfievre ==="yes"? this.state.onColor : "#bdbdbd", borderRadius:20}}>
                                 <Text style={{color:"white" , fontWeight: "bold"}}>نعم</Text>
@@ -940,9 +983,9 @@ export default class Editpatient extends Component {
                                 </Animatable.View>
                             </TouchableWithoutFeedback>
                             {this.state.statusfievre==="yes" ? (
-                            <View style={{ flex: 10}}>
+                            <View>
                                 <Text style={styles.textlabel}></Text> 
-                                <Text style={styles.textlabel}> ما هي درجة حرارتك {br} {br}</Text> 
+                                <Text style={styles.textlabel}> ما هي درجة حرارتك {br} </Text> 
                                 <TextInput
                                     placeholder="درجة حرارتك "
                                     style={styles.textInput}
@@ -952,16 +995,18 @@ export default class Editpatient extends Component {
                             ) : (
                                 <View/>
                             )}
-            
-                        </View>  
-                        <View style={{ flex: 3}}>
+
                     <View style={styles.buttonContainer}>
                     {this.state.current!= 0 ? <Button title={'Précédent'} onPress={() => this._onPrev(this.state.statuszonecritique ==="yes"?1:2)} /> : null}
                     
                         {!this.state.isLast ? <Button title={'Suivant'} onPress={() => this._onNext(1)} /> : <Button title={'Terminer'} onPress={() => this._addpatient()} />} 
                     </View>
+            
+                        </View>  
+
+            
                     </View>
-                </View>  
+         
             </Animated.View>
         );
     }
@@ -972,7 +1017,7 @@ export default class Editpatient extends Component {
             <Text style={styles.pageText}> {this.state.current+1}/{nbreecran+1} </Text> 
              </View>  
              <View style={{ flex: 5}}>
-                <Text style={styles.textlabel}> هل لديك سعال او ان درجة السعال التي تشكو منها في العادة ازدادت حدة ؟  {br} {br}</Text> 
+                <Text style={styles.textlabel}> هل لديك سعال أو أن درجة السعال التي تشكو منها في العادة إزدادت حدة ؟  {br} {br}</Text> 
                 <TouchableWithoutFeedback onPress={() => this._onPresstoux("yes")}>
                 <Animatable.View ref="viewoui" style={{ margin:10, paddingTop :10, paddingBottom: 10, paddingRight: 20, paddingLeft: 20, backgroundColor: this.state.statustoux ==="yes"? this.state.onColor : "#bdbdbd", borderRadius:20}}>
                 <Text style={{color: "white" , fontWeight: "bold"}}>نعم</Text>
@@ -983,16 +1028,18 @@ export default class Editpatient extends Component {
                 <Text style={{color: "white" , fontWeight: "bold"}}>لا</Text>
                 </Animatable.View>
             </TouchableWithoutFeedback>
-   
-            </View>  
-            <View style={{ flex: 3}}>
+
+            
             <View style={styles.buttonContainer}>
             {this.state.current!= 0 ? <Button title={'Précédent'} onPress={() => this._onPrev(1)} /> : null}
               
                 {!this.state.isLast ? <Button title={'Suivant'} onPress={() => this._onNext(1)} /> : <Button title={'Terminer'} onPress={() => this._addpatient()} />} 
             </View>
+   
             </View>  
-            </View> 
+
+            </View>  
+  
         );
     }
     else  if (this.state.current === 11) {
@@ -1002,7 +1049,7 @@ export default class Editpatient extends Component {
             <Text style={styles.pageText}> {this.state.current+1}/{nbreecran+1} </Text> 
              </View>  
              <View style={{ flex: 8}}>
-                <Text style={styles.textlabel}> هل تشكو من عدم القدرة على الحديث كما في السابق هل تشكو من ضيق تنفس او تعكر في قدرتك على التنفس مقارنة بالسابق ؟   {br} {br}</Text> 
+                <Text style={styles.textlabel}> هل تشكو من عدم القدرة على الحديث كما في السابق هل تشكو من ضيق تنفس أو تعكر في قدرتك على التنفس مقارنة بالسابق ؟   {br} {br}</Text> 
                 <TouchableWithoutFeedback onPress={() => this._onPressASPHYXIE("yes")}>
                 <Animatable.View ref="viewoui" style={{ margin:10, paddingTop :10, paddingBottom: 10, paddingRight: 20, paddingLeft: 20, backgroundColor: this.state.statusASPHYXIE ==="yes"? this.state.onColor : "#bdbdbd", borderRadius:20}}>
                 <Text style={{color: "white" , fontWeight: "bold"}}>نعم</Text>
@@ -1013,17 +1060,19 @@ export default class Editpatient extends Component {
                 <Text style={{color:  "white", fontWeight: "bold"}}>لا</Text>
                 </Animatable.View>
             </TouchableWithoutFeedback>
-   
-            </View> 
-            <View style={{ flex: 3}}>
-           
-            <View style={styles.buttonContainer}>
+
+                <View style={styles.buttonContainer}>
             {this.state.current!= 0 ? <Button title={'Précédent'} onPress={() => this._onPrev(1)} /> : null}
               
                 {!this.state.isLast ? <Button title={'Suivant'} onPress={() => this._onNext(this.state.statusASPHYXIE==="yes"?1:2)} /> : <Button title={'Terminer'} onPress={() => this._addpatient()} />} 
             </View>
-            </View>  
+   
             </View> 
+
+           
+        
+            </View>  
+        
         );
     }
     else  if (this.state.current === 12 )  {
@@ -1035,37 +1084,39 @@ export default class Editpatient extends Component {
              <View style={{ flex: 10}}>
                 <Text style={styles.textlabel}> لماذا ؟   {br} {br}</Text> 
                 <TouchableWithoutFeedback onPress={() => this._onPressWhyABILYTY("1")}>
-                <Animatable.View ref="view1" style={{ margin:10, paddingTop :10, paddingBottom: 10, paddingRight: 20, paddingLeft: 20, backgroundColor: this.state.statusWhyABILYTY ==="1" ? this.state.onColor : "#bdbdbd", borderRadius:20}}>
-                <Text style={{color:  "white" , fontWeight: "bold"}}>احس بضيق في التنفس</Text>
+                <Animatable.View ref="view1" style={{ margin:10, paddingTop :10, paddingBottom: 10, paddingRight: 20, paddingLeft: 20, backgroundColor: this.state.statusWhyABILYTY.findIndex(item => item === "1") !="-1"? this.state.onColor : "#bdbdbd", borderRadius:20}}>
+                <Text style={{color:  "white" , fontWeight: "bold"}}>أحس بضيق في التنفس</Text>
                 </Animatable.View>
             </TouchableWithoutFeedback>
             <TouchableWithoutFeedback onPress={() => this._onPressWhyABILYTY("2")}>
-                <Animatable.View ref="view2" style={{ margin:10, paddingTop :10, paddingBottom: 10, paddingRight: 20, paddingLeft: 20, backgroundColor: this.state.statusWhyABILYTY ==="2" ? this.state.onColor : "#bdbdbd", borderRadius:20}}>
+                <Animatable.View ref="view2" style={{ margin:10, paddingTop :10, paddingBottom: 10, paddingRight: 20, paddingLeft: 20, backgroundColor: this.state.statusWhyABILYTY.findIndex(item => item === "2") !="-1"? this.state.onColor : "#bdbdbd", borderRadius:20}}>
                 <Text style={{color: "white" , fontWeight: "bold"}}>صداع شديد يمنعني من الحديث</Text>
                 </Animatable.View>
             </TouchableWithoutFeedback>
 
                 <TouchableWithoutFeedback onPress={() => this._onPressWhyABILYTY("3")}>
-                <Animatable.View ref="view3" style={{ margin:10, paddingTop :10, paddingBottom: 10, paddingRight: 20, paddingLeft: 20, backgroundColor: this.state.statusWhyABILYTY ==="3" ? this.state.onColor : "#bdbdbd", borderRadius:20}}>
-                <Text style={{color: "white" , fontWeight: "bold"}}>احس بتعب شديد</Text>
+                <Animatable.View ref="view3" style={{ margin:10, paddingTop :10, paddingBottom: 10, paddingRight: 20, paddingLeft: 20, backgroundColor: this.state.statusWhyABILYTY.findIndex(item => item === "3") !="-1"? this.state.onColor : "#bdbdbd", borderRadius:20}}>
+                <Text style={{color: "white" , fontWeight: "bold"}}>أحس بتعب شديد</Text>
                 </Animatable.View>
                 </TouchableWithoutFeedback>
 
                   <TouchableWithoutFeedback onPress={() => this._onPressWhyABILYTY("4")}>
-                <Animatable.View ref="view4" style={{ margin:10, paddingTop :10, paddingBottom: 10, paddingRight: 20, paddingLeft: 20, backgroundColor: this.state.statusWhyABILYTY ==="4" ? this.state.onColor : "#bdbdbd", borderRadius:20}}>
-                <Text style={{color: "white" , fontWeight: "bold"}}>اخر</Text>
+                <Animatable.View ref="view4" style={{ margin:10, paddingTop :10, paddingBottom: 10, paddingRight: 20, paddingLeft: 20, backgroundColor: this.state.statusWhyABILYTY.findIndex(item => item === "4") !="-1"? this.state.onColor : "#bdbdbd", borderRadius:20}}>
+                <Text style={{color: "white" , fontWeight: "bold"}}>آخر</Text>
                 </Animatable.View>
                 </TouchableWithoutFeedback>
-   
-            </View>  
-            <View style={{ flex: 3}}>
-            <View style={styles.buttonContainer}>
+
+                            <View style={styles.buttonContainer}>
             {this.state.current!= 0 ? <Button title={'Précédent'} onPress={() => this._onPrev(1)} /> : null}
               
                 {!this.state.isLast ? <Button title={'Suivant'} onPress={() => this._onNext(1)} /> : <Button title={'Terminer'} onPress={() => this._addpatient()} />} 
             </View>
+   
+            </View>  
+
+
             </View>   
-            </View>
+
         );
     }
     else if (this.state.current === 13) {
@@ -1086,16 +1137,18 @@ export default class Editpatient extends Component {
                 <Text style={{color:  "white" , fontWeight: "bold"}}>لا</Text>
                 </Animatable.View>
             </TouchableWithoutFeedback>
-   
-            </View>  
-            <View style={{ flex: 3}}>
-            <View style={styles.buttonContainer}>
+
+                 <View style={styles.buttonContainer}>
             {this.state.current!= 0 ? <Button title={'Précédent'} onPress={() => this._onPrev(this.state.statusASPHYXIE==="yes"?1:2)} /> : null}
               
                 {!this.state.isLast ? <Button title={'Suivant'} onPress={() => this._onNext(this.state.statusABILYTY==="no"?1:2)} /> : <Button title={'Terminer'} onPress={() => this._addpatient()} />} 
             </View>
+   
+            </View>  
+
+       
             </View>
-            </View>
+
         );
     }
     else  if (this.state.current === 14 )  {
@@ -1108,18 +1161,18 @@ export default class Editpatient extends Component {
                 <Text style={styles.textlabel}>منذ متى ؟ {br} {br}</Text> 
                 <TouchableWithoutFeedback onPress={() => this._onPressABILYTY_DURATION("1")}>
                 <Animatable.View ref="view1" style={{ margin:10, paddingTop :10, paddingBottom: 10, paddingRight: 20, paddingLeft: 20, backgroundColor: this.state.statusABILYTY_DURATION ==="1" ? this.state.onColor : "#bdbdbd", borderRadius:20}}>
-                <Text style={{color:  "white" , fontWeight: "bold"}}>ايام  </Text>
+                <Text style={{color:  "white" , fontWeight: "bold"}}>أيام  </Text>
                 </Animatable.View>
             </TouchableWithoutFeedback>
             <TouchableWithoutFeedback onPress={() => this._onPressABILYTY_DURATION("2")}>
                 <Animatable.View ref="view2" style={{ margin:10, paddingTop :10, paddingBottom: 10, paddingRight: 20, paddingLeft: 20, backgroundColor: this.state.statusABILYTY_DURATION ==="2" ? this.state.onColor : "#bdbdbd", borderRadius:20}}>
-                <Text style={{color:  "white" , fontWeight: "bold"}}>اسابيع </Text>
+                <Text style={{color:  "white" , fontWeight: "bold"}}>أسابيع </Text>
                 </Animatable.View>
             </TouchableWithoutFeedback>
 
                     <TouchableWithoutFeedback onPress={() => this._onPressABILYTY_DURATION("3")}>
                 <Animatable.View ref="view3" style={{ margin:10, paddingTop :10, paddingBottom: 10, paddingRight: 20, paddingLeft: 20, backgroundColor: this.state.statusABILYTY_DURATION ==="3" ? this.state.onColor : "#bdbdbd", borderRadius:20}}>
-                <Text style={{color:  "white" , fontWeight: "bold"}}>اشهر   </Text>
+                <Text style={{color:  "white" , fontWeight: "bold"}}>أشهر   </Text>
                 </Animatable.View>
             </TouchableWithoutFeedback>
             <TouchableWithoutFeedback onPress={() => this._onPressABILYTY_DURATION("4")}>
@@ -1128,15 +1181,17 @@ export default class Editpatient extends Component {
                 </Animatable.View>
             </TouchableWithoutFeedback>
 
-            </View>  
-            <View style={{ flex: 3}}>
-            <View style={styles.buttonContainer}>
+                        <View style={styles.buttonContainer}>
             {this.state.current!= 0 ? <Button title={'Précédent'} onPress={() => this._onPrev(1)} /> : null}
               
                 {!this.state.isLast ? <Button title={'Suivant'} onPress={() => this._onNext(1)} /> : <Button title={'Terminer'} onPress={() => this._addpatient()} />} 
             </View>
+
+            </View>  
+
+
             </View> 
-            </View>
+
         );
     }
     else  if (this.state.current === 15) {
@@ -1144,54 +1199,56 @@ export default class Editpatient extends Component {
             <View style={styles.container}>
     
         <View style={{ flex: 10}}>
-                <Text style={styles.textlabel}>هل تشكو من احد هذه الاعراض ؟  {br} {br}</Text> 
+                <Text style={styles.textlabel}>هل تشكو من أحد هذه الأعراض ؟ {br}</Text> 
                 <TouchableWithoutFeedback onPress={() => this._onPressSYMTOME("1")}>
-                <Animatable.View ref="view1" style={{ margin:10, paddingTop :10, paddingBottom: 10, paddingRight: 20, paddingLeft: 20, backgroundColor: this.state.statusSYMTOME ==="1"? this.state.onColor : "#bdbdbd", borderRadius:20}}>
-                <Text style={{color:"white" , fontWeight: "bold"}}>اسهال</Text>
+                <Animatable.View ref="view1" style={{ margin:10, paddingTop :10, paddingBottom: 10, paddingRight: 20, paddingLeft: 20, backgroundColor: this.state.statusSYMTOME.findIndex(item => item === "1") !="-1"? this.state.onColor : "#bdbdbd", borderRadius:20}}>
+                <Text style={{color:"white" , fontWeight: "bold"}}>إسهال</Text>
                 </Animatable.View>
             </TouchableWithoutFeedback>
             <TouchableWithoutFeedback onPress={() => this._onPressSYMTOME("2")}>
-                <Animatable.View ref="view2" style={{ margin:10, paddingTop :10, paddingBottom: 10, paddingRight: 20, paddingLeft: 20, backgroundColor: this.state.statusSYMTOME ==="2"? this.state.onColor : "#bdbdbd", borderRadius:20}}>
+                <Animatable.View ref="view2" style={{ margin:10, paddingTop :10, paddingBottom: 10, paddingRight: 20, paddingLeft: 20, backgroundColor: this.state.statusSYMTOME.findIndex(item => item === "2") !="-1"? this.state.onColor : "#bdbdbd", borderRadius:20}}>
                 <Text style={{color:"white" , fontWeight: "bold"}}>تقيؤ</Text>
                 </Animatable.View>
             </TouchableWithoutFeedback>
 
                   <TouchableWithoutFeedback onPress={() => this._onPressSYMTOME("3")}>
-                <Animatable.View ref="view3" style={{ margin:10, paddingTop :10, paddingBottom: 10, paddingRight: 20, paddingLeft: 20, backgroundColor: this.state.statusSYMTOME ==="3"? this.state.onColor : "#bdbdbd", borderRadius:20}}>
-                <Text style={{color:"white" , fontWeight: "bold"}}>اوجاع في الصدر</Text>
+                <Animatable.View ref="view3" style={{ margin:10, paddingTop :10, paddingBottom: 10, paddingRight: 20, paddingLeft: 20, backgroundColor: this.state.statusSYMTOME.findIndex(item => item === "3") !="-1"? this.state.onColor : "#bdbdbd", borderRadius:20}}>
+                <Text style={{color:"white" , fontWeight: "bold"}}>أوجاع في الصدر</Text>
                 </Animatable.View>
             </TouchableWithoutFeedback>
             <TouchableWithoutFeedback onPress={() => this._onPressSYMTOME("4")}>
-                <Animatable.View ref="view4" style={{ margin:10, paddingTop :10, paddingBottom: 10, paddingRight: 20, paddingLeft: 20, backgroundColor: this.state.statusSYMTOME ==="4"? this.state.onColor : "#bdbdbd", borderRadius:20}}>
-                <Text style={{color:"white" , fontWeight: "bold"}}>اوجاع اعلى البطن</Text>
+                <Animatable.View ref="view4" style={{ margin:10, paddingTop :10, paddingBottom: 10, paddingRight: 20, paddingLeft: 20, backgroundColor: this.state.statusSYMTOME.findIndex(item => item === "4") !="-1"?this.state.onColor : "#bdbdbd", borderRadius:20}}>
+                <Text style={{color:"white" , fontWeight: "bold"}}>أوجاع اعلى البطن</Text>
                 </Animatable.View>
             </TouchableWithoutFeedback>
 
                    <TouchableWithoutFeedback onPress={() => this._onPressSYMTOME("5")}>
-                <Animatable.View ref="view5" style={{ margin:10, paddingTop :10, paddingBottom: 10, paddingRight: 20, paddingLeft: 20, backgroundColor: this.state.statusSYMTOME ==="5"? this.state.onColor : "#bdbdbd", borderRadius:20}}>
-                <Text style={{color:"white" , fontWeight: "bold"}}> الم حاد في الحنجرة</Text>
+                <Animatable.View ref="view5" style={{ margin:10, paddingTop :10, paddingBottom: 10, paddingRight: 20, paddingLeft: 20, backgroundColor: this.state.statusSYMTOME.findIndex(item => item === "5") !="-1"? this.state.onColor : "#bdbdbd", borderRadius:20}}>
+                <Text style={{color:"white" , fontWeight: "bold"}}> ألم حاد في الحنجرة</Text>
                 </Animatable.View>
             </TouchableWithoutFeedback>
             <TouchableWithoutFeedback onPress={() => this._onPressSYMTOME("6")}>
-                <Animatable.View ref="view6" style={{ margin:10, paddingTop :10, paddingBottom: 10, paddingRight: 20, paddingLeft: 20, backgroundColor: this.state.statusSYMTOME ==="6"? this.state.onColor : "#bdbdbd", borderRadius:20}}>
-                <Text style={{color:"white" , fontWeight: "bold"}}>اوجاع في المفاصل و العضلات </Text>
+                <Animatable.View ref="view6" style={{ margin:10, paddingTop :10, paddingBottom: 10, paddingRight: 20, paddingLeft: 20, backgroundColor: this.state.statusSYMTOME.findIndex(item => item === "6") !="-1"? this.state.onColor : "#bdbdbd", borderRadius:20}}>
+                <Text style={{color:"white" , fontWeight: "bold"}}>أوجاع في المفاصل و العضلات </Text>
                 </Animatable.View>
             </TouchableWithoutFeedback>
             <TouchableWithoutFeedback onPress={() => this._onPressSYMTOME("7")}>
-                <Animatable.View ref="view7" style={{ margin:10, paddingTop :10, paddingBottom: 10, paddingRight: 20, paddingLeft: 20, backgroundColor: this.state.statusSYMTOME ==="7"? this.state.onColor : "#bdbdbd", borderRadius:20}}>
-                <Text style={{color:"white" , fontWeight: "bold"}}>لا اشكو من هذه الاعراض </Text>
+                <Animatable.View ref="view7" style={{ margin:10, paddingTop :10, paddingBottom: 10, paddingRight: 20, paddingLeft: 20, backgroundColor: this.state.statusSYMTOME.findIndex(item => item === "7") !="-1"? this.state.onColor : "#bdbdbd", borderRadius:20}}>
+                <Text style={{color:"white" , fontWeight: "bold"}}>لا أشكو من هذه الأعراض </Text>
                 </Animatable.View>
             </TouchableWithoutFeedback>
-          
-            </View>  
-            <View style={{ flex: 3}}>
-            <View style={styles.buttonContainer}>
+
+                        <View style={styles.buttonContainer}>
             {this.state.current!= 0 ? <Button title={'Précédent'} onPress={() => this._onPrev(this.state.statusABILYTY==="no"?1:2)} /> : null}
               
                 {!this.state.isLast ? <Button title={'Suivant'} onPress={() => this._onNext(1)} /> : <Button title={'Terminer'} onPress={() => this._addpatient()} />} 
             </View>
+          
             </View>  
+
+
             </View>  
+  
         );
     }
     else  if (this.state.current === 16) {
@@ -1201,7 +1258,7 @@ export default class Editpatient extends Component {
             <Text style={styles.pageText}> {this.state.current+1}/{nbreecran+1} </Text> 
              </View>  
              <View style={{ flex: 10}}>
-                <Text style={styles.textlabel}> هل تشكو من تدهور قدرتك على الشم او التذوق ؟  {br} {br}</Text> 
+                <Text style={styles.textlabel}> هل تشكو من تدهور قدرتك على الشم أو التذوق ؟  {br} {br}</Text> 
                 <TouchableWithoutFeedback onPress={() => this._onPresssenseofsmell("yes")}>
                 <Animatable.View ref="viewoui" style={{ margin:10, paddingTop :10, paddingBottom: 10, paddingRight: 20, paddingLeft: 20, backgroundColor: this.state.statussenseofsmell ==="yes"? this.state.onColor : "#bdbdbd", borderRadius:20}}>
                 <Text style={{color: "white" , fontWeight: "bold"}}>نعم</Text>
@@ -1212,16 +1269,18 @@ export default class Editpatient extends Component {
                 <Text style={{color: "white" , fontWeight: "bold"}}>لا</Text>
                 </Animatable.View>
             </TouchableWithoutFeedback>
-   
-            </View>  
-            <View style={{ flex: 3}}>
-            <View style={styles.buttonContainer}>
+
+                        <View style={styles.buttonContainer}>
             {this.state.current!= 0 ? <Button title={'Précédent'} onPress={() => this._onPrev(1)} /> : null}
               
                 {!this.state.isLast ? <Button title={'Suivant'} onPress={() => this._onNext(1)} /> : <Button title={'Terminer'} onPress={() => this._addpatient()} />} 
             </View>
+   
             </View>  
-            </View> 
+
+
+            </View>  
+  
         );
     }
     else  if (this.state.current === 17) {
@@ -1231,7 +1290,7 @@ export default class Editpatient extends Component {
             <Text style={styles.pageText}> {this.state.current+1}/{nbreecran+1} </Text> 
              </View>  
              <View style={{ flex: 10}}>
-                <Text style={styles.textlabel}> هل تشكو من عدم القدرة على الحديث كما في السابق هل تشكو من ضيق تنفس او تعكر في قدرتك على التنفس مقارنة بالسابق ؟   {br} {br}</Text> 
+                <Text style={styles.textlabel}> هل تشكو من عدم القدرة على الحديث كما في السابق هل تشكو من ضيق تنفس أو تعكر في قدرتك على التنفس مقارنة بالسابق ؟   {br} {br}</Text> 
                 <TouchableWithoutFeedback onPress={() => this._onPressASPHEXIE("yes")}>
                 <Animatable.View ref="viewoui" style={{ margin:10, paddingTop :10, paddingBottom: 10, paddingRight: 20, paddingLeft: 20, backgroundColor: this.state.statusASPHEXIE ==="yes"? this.state.onColor : "#bdbdbd", borderRadius:20}}>
                 <Text style={{color: "white" , fontWeight: "bold"}}>نعم</Text>
@@ -1242,17 +1301,19 @@ export default class Editpatient extends Component {
                 <Text style={{color:  "white", fontWeight: "bold"}}>لا</Text>
                 </Animatable.View>
             </TouchableWithoutFeedback>
-   
-            </View> 
-           
-            <View style={{ flex: 3}}>
-            <View style={styles.buttonContainer}>
+
+                     <View style={styles.buttonContainer}>
             {this.state.current!= 0 ? <Button title={'Précédent'} onPress={() => this._onPrev(1)} /> : null}
               
                 {!this.state.isLast ? <Button title={'Suivant'} onPress={() => this._onNext(1)} /> : <Button title={'Terminer'} onPress={() => this._addpatient()} />} 
           
-            </View>  
+       
             </View> 
+   
+            </View> 
+           
+      
+   
             </View> 
         );
     }
@@ -1263,7 +1324,7 @@ export default class Editpatient extends Component {
             <Text style={styles.pageText}> {this.state.current+1}/{nbreecran+1} </Text> 
              </View>  
              <View style={{ flex: 10}}>
-                <Text style={styles.textlabel}> هل تتابع من اجل احد هذه الامراض ؟   {br} {br}</Text> 
+                <Text style={styles.textlabel}> هل تتابع من أجل أحد هذه الأمراض ؟   {br} {br}</Text> 
                 <TouchableWithoutFeedback onPress={() => this._onPressANTECEDENT("1")}>
                 <Animatable.View ref="view1" style={{ margin:10, paddingTop :10, paddingBottom: 10, paddingRight: 20, paddingLeft: 20, backgroundColor: this.state.statusANTECEDENT ==="1" ? this.state.onColor : "#bdbdbd", borderRadius:20}}>
                 <Text style={{color:  "white" , fontWeight: "bold"}}>ضيق تنفس مزمن : ربو</Text>
@@ -1271,26 +1332,27 @@ export default class Editpatient extends Component {
             </TouchableWithoutFeedback>
             <TouchableWithoutFeedback onPress={() => this._onPressANTECEDENT("2")}>
                 <Animatable.View ref="view2" style={{ margin:10, paddingTop :10, paddingBottom: 10, paddingRight: 20, paddingLeft: 20, backgroundColor: this.state.statusANTECEDENT ==="2" ? this.state.onColor : "#bdbdbd", borderRadius:20}}>
-                <Text style={{color: "white" , fontWeight: "bold"}}> مرض الانسداد الرئوي المزمن </Text>
+                <Text style={{color: "white" , fontWeight: "bold"}}> مرض الإنسداد الرئوي المزمن </Text>
                 </Animatable.View>
             </TouchableWithoutFeedback>
 
                 <TouchableWithoutFeedback onPress={() => this._onPressANTECEDENT("3")}>
                 <Animatable.View ref="view3" style={{ margin:10, paddingTop :10, paddingBottom: 10, paddingRight: 20, paddingLeft: 20, backgroundColor: this.state.statusANTECEDENT ==="3" ? this.state.onColor : "#bdbdbd", borderRadius:20}}>
-                <Text style={{color: "white" , fontWeight: "bold"}}>أجريت عملية على الصدر او القلب</Text>
+                <Text style={{color: "white" , fontWeight: "bold"}}>أجريت عملية على الصدر أو القلب</Text>
                 </Animatable.View>
                 </TouchableWithoutFeedback>
 
-   
-            </View>  
-            <View style={{ flex: 3}}>
-            <View style={styles.buttonContainer}>
+           <View style={styles.buttonContainer}>
             {this.state.current!= 0 ? <Button title={'Précédent'} onPress={() => this._onPrev(1)} /> : null}
               
                 {!this.state.isLast ? <Button title={'Suivant'} onPress={() => this._onNext(1)} /> : <Button title={'Terminer'} onPress={() => this._addpatient()} />} 
             </View>
+   
+            </View>  
+
+ 
             </View>   
-            </View> 
+  
         );
     }
     else  if (this.state.current === 19) {
@@ -1302,7 +1364,7 @@ export default class Editpatient extends Component {
 								<Text style={styles.pageText}> {this.state.current+1}/{nbreecran+1} </Text> 
 								</View>  
 							 <View style={{ flex: 10}}>
-								<Text style={styles.textlabel}> هل تعاني من مرض السكري ؟   {br} {br}</Text> 
+								<Text style={styles.textlabel}> هل تعاني من مرض السكري ؟  {br}</Text> 
 								<TouchableWithoutFeedback onPress={() => this._onPressDIABETE("yes")}>
 								<Animatable.View ref="viewoui" style={{ margin:10, paddingTop :10, paddingBottom: 10, paddingRight: 20, paddingLeft: 20, backgroundColor: this.state.statusDIABETE ==="yes" ? this.state.onColor : "#bdbdbd", borderRadius:20}}>
 								<Text style={{color:  "white" , fontWeight: "bold"}}>نعم</Text>
@@ -1315,9 +1377,9 @@ export default class Editpatient extends Component {
 							</TouchableWithoutFeedback>
 
 											{this.state.statusDIABETE==="yes" ? (
-											<View style={{ flex: 10}}>
+											<View >
 													<Text style={styles.textlabel}></Text> 
-												<Text style={styles.textlabel}>عدد سنوات الاصابة بالمرض  {br} {br}</Text> 
+												<Text style={styles.textlabel}>عدد سنوات الإصابة بالمرض   {br}</Text> 
 												<TextInput
 														placeholder="عدد سنوات "
                                                         style={styles.textInput}
@@ -1326,15 +1388,17 @@ export default class Editpatient extends Component {
 											</View>  
 									) : (
 										<View/>
-									)}
-							</View>  
-                            <View style={{ flex: 3}}>
-							<View style={styles.buttonContainer}>
+                                    )}
+                                    
+                                    <View style={styles.buttonContainer}>
 							{this.state.current!= 0 ? <Button title={'Précédent'} onPress={() => this._onPrev(1)} /> : null}
 							  
 								{!this.state.isLast ? <Button title={'Suivant'} onPress={() => this._onNext(this.state.statusDIABETE==="yes"?1:2)} /> : <Button title={'Terminer'} onPress={() => this._addpatient()} />} 
 							</View>
-                            </View>
+							</View>  
+
+					
+                           
 					</View>
             </Animated.View>  
         );
@@ -1387,28 +1451,30 @@ export default class Editpatient extends Component {
                 }  
                 </RadioForm>
                 </View>
-
-   
-            </View>  
-            <View style={{ flex: 3}}>
-            <View style={styles.buttonContainer}>
+                <View style={styles.buttonContainer}>
             {this.state.current!= 0 ? <Button title={'Précédent'} onPress={() => this._onPrev(1)} /> : null}
               
                 {!this.state.isLast ? <Button title={'Suivant'} onPress={() => this._onNext(1)} /> : <Button title={'Terminer'} onPress={() => this._addpatient()} />} 
             </View>
+   
+            </View>  
+   
+      
             </View>   
-            </View>   
+      
             </Animated.View>
         );
     }
     else  if (this.state.current === 21) {
+        const { shift } = this.state;
         return (
+            <Animated.View style={[styles.container, { transform: [{translateY: shift}] }]}>
             <View style={styles.container}>
             <View style={{ flex: 1}}>
             <Text style={styles.pageText}> {this.state.current+1}/{nbreecran+1} </Text> 
              </View>  
              <View style={{ flex: 10}}>
-                <Text style={styles.textlabel}> هل تعاني من ضغط الدم ؟   {br} {br}</Text> 
+                <Text style={styles.textlabel}> هل تعاني من ضغط الدم ؟  {br}</Text> 
                 <TouchableWithoutFeedback onPress={() => this._onPresshypertension("yes")}>
                 <Animatable.View ref="viewoui" style={{ margin:10, paddingTop :10, paddingBottom: 10, paddingRight: 20, paddingLeft: 20, backgroundColor: this.state.statushypertension ==="yes" ? this.state.onColor : "#bdbdbd", borderRadius:20}}>
                 <Text style={{color:  "white" , fontWeight: "bold"}}>نعم</Text>
@@ -1420,26 +1486,32 @@ export default class Editpatient extends Component {
                 </Animatable.View>
             </TouchableWithoutFeedback>
 
-             {this.state.statushypertensiont==="yes" ? (
-              <View style={{ flex: 10}}>
+             {this.state.statushypertension==="yes" ? (
+              <View>
                  <Text style={styles.textlabel}></Text> 
-               <Text style={styles.textlabel}>عدد سنوات الاصابة بالمرض  {br} {br}</Text> 
-               <Item stackedLabel  >
-                    <Input style={styles.selectedText}  value={this.state.tel} onChangeText={ (text) => this.setState({ tel: text }) }/>
-                  </Item>
+               <Text style={styles.textlabel}>عدد سنوات الإصابة بالمرض   {br}</Text> 
+               <TextInput
+					placeholder="عدد سنوات "
+                    style={styles.textInput}
+                    value={this.state.statusnbreanneehypertension} onChangeText={ (text) => this.setState({ statusnbreanneehypertension: text }) }
+					/>
           </View>  
       ) : (
         <View/>
       )}
-            </View>  
-            <View style={{ flex: 3}}>
-            <View style={styles.buttonContainer}>
+
+      
+
+                  <View style={styles.buttonContainer}>
             {this.state.current!= 0 ? <Button title={'Précédent'} onPress={() => this._onPrev(this.state.statusDIABETE==="yes"?1:2)} /> : null}
               
                 {!this.state.isLast ? <Button title={'Suivant'} onPress={() => this._onNext(1)} /> : <Button title={'Terminer'} onPress={() => this._addpatient()} />} 
             </View>
-            </View>   
             </View>  
+  
+
+            </View>   
+            </Animated.View>
         );
     }
     else  if (this.state.current === 22) {
@@ -1449,7 +1521,7 @@ export default class Editpatient extends Component {
             <Text style={styles.pageText}> {this.state.current+1}/{nbreecran+1} </Text> 
              </View>  
              <View style={{ flex: 10}}>
-                <Text style={styles.textlabel}> هل تعاني من امراض القلب: قصور في القلب/انسداد اوعية القلب ؟   {br} {br}</Text> 
+                <Text style={styles.textlabel}> هل تعاني من أمراض القلب: قصور في القلب/إنسداد أوعية القلب ؟   {br} {br}</Text> 
                 <TouchableWithoutFeedback onPress={() => this._onPresscoeur("yes")}>
                 <Animatable.View ref="viewoui" style={{ margin:10, paddingTop :10, paddingBottom: 10, paddingRight: 20, paddingLeft: 20, backgroundColor: this.state.statuscoeur ==="yes" ? this.state.onColor : "#bdbdbd", borderRadius:20}}>
                 <Text style={{color:  "white" , fontWeight: "bold"}}>نعم</Text>
@@ -1461,15 +1533,17 @@ export default class Editpatient extends Component {
                 </Animatable.View>
             </TouchableWithoutFeedback>
 
-            </View>  
-            <View style={{ flex: 3}}>
-            <View style={styles.buttonContainer}>
+                   <View style={styles.buttonContainer}>
             {this.state.current!= 0 ? <Button title={'Précédent'} onPress={() => this._onPrev(1)} /> : null}
               
                 {!this.state.isLast ? <Button title={'Suivant'} onPress={() => this._onNext(1)} /> : <Button title={'Terminer'} onPress={() => this._addpatient()} />} 
             </View>
+
+            </View>  
+
+     
             </View> 
-            </View>   
+          
         );
     }
     else  if (this.state.current === 23) {
@@ -1479,7 +1553,7 @@ export default class Editpatient extends Component {
             <Text style={styles.pageText}> {this.state.current+1}/{nbreecran+1} </Text> 
              </View>  
              <View style={{ flex: 10}}>
-                <Text style={styles.textlabel}> هل تعاني من امراض الكلى: قصور كلوي /تصفية الدم ؟   {br} {br}</Text> 
+                <Text style={styles.textlabel}> هل تعاني من أمراض الكلى: قصور كلوي /تصفية الدم ؟   {br} {br}</Text> 
                 <TouchableWithoutFeedback onPress={() => this._onPressRenal("yes")}>
                 <Animatable.View ref="viewoui" style={{ margin:10, paddingTop :10, paddingBottom: 10, paddingRight: 20, paddingLeft: 20, backgroundColor: this.state.statusRenal ==="yes" ? this.state.onColor : "#bdbdbd", borderRadius:20}}>
                 <Text style={{color:  "white" , fontWeight: "bold"}}>نعم</Text>
@@ -1491,15 +1565,17 @@ export default class Editpatient extends Component {
                 </Animatable.View>
             </TouchableWithoutFeedback>
 
-            </View>  
-            <View style={{ flex: 3}}>
-            <View style={styles.buttonContainer}>
+                        <View style={styles.buttonContainer}>
             {this.state.current!= 0 ? <Button title={'Précédent'} onPress={() => this._onPrev(1)} /> : null}
               
                 {!this.state.isLast ? <Button title={'Suivant'} onPress={() => this._onNext(1)} /> : <Button title={'Terminer'} onPress={() => this._addpatient()} />} 
             </View>
+
             </View>  
+
+
             </View>  
+ 
         );
     }
     else  if (this.state.current === 24) {
@@ -1509,7 +1585,7 @@ export default class Editpatient extends Component {
             <Text style={styles.pageText}> {this.state.current+1}/{nbreecran+1} </Text> 
              </View>  
              <View style={{ flex: 10}}>
-                <Text style={styles.textlabel}> هل تشكو من إعاقة ذهنية او جسدية ؟   {br} {br}</Text>  
+                <Text style={styles.textlabel}> هل تشكو من إعاقة ذهنية أو جسدية ؟   {br} {br}</Text>  
                 <TouchableWithoutFeedback onPress={() => this._onPresshindering("yes")}>
                 <Animatable.View ref="viewoui" style={{ margin:10, paddingTop :10, paddingBottom: 10, paddingRight: 20, paddingLeft: 20, backgroundColor: this.state.statushindering ==="yes" ? this.state.onColor : "#bdbdbd", borderRadius:20}}>
                 <Text style={{color:  "white" , fontWeight: "bold"}}>نعم</Text>
@@ -1522,17 +1598,17 @@ export default class Editpatient extends Component {
             </TouchableWithoutFeedback>
 
 
-
-
-            </View>  
-            <View style={{ flex: 3}}>
             <View style={styles.buttonContainer}>
             {this.state.current!= 0 ? <Button title={'Précédent'} onPress={() => this._onPrev(1)} /> : null}
               
                 {!this.state.isLast ? <Button title={'Suivant'} onPress={() => this._onNext(1)} /> : <Button title={'Terminer'} onPress={() => this._addpatient()} />} 
             </View>
+
             </View>  
+
+
             </View>  
+     
         );
     }
     else  if (this.state.current === 25) {
@@ -1554,15 +1630,17 @@ export default class Editpatient extends Component {
                 </Animatable.View>
             </TouchableWithoutFeedback>
 
-            </View>  
-            <View style={{ flex: 3}}>
-            <View style={styles.buttonContainer}>
+                        <View style={styles.buttonContainer}>
             {this.state.current!= 0 ? <Button title={'Précédent'} onPress={() => this._onPrev(1)} /> : null}
               
                 {!this.state.isLast ? <Button title={'Suivant'} onPress={() => this._onNext(this.state.statusconcer ==="yes"?1:3)} /> : <Button title={'Terminer'} onPress={() => this._addpatient()} />} 
             </View>
+
             </View>  
+
+
             </View>  
+       
         );
     }
 
@@ -1586,21 +1664,21 @@ export default class Editpatient extends Component {
             </TouchableWithoutFeedback>
             <TouchableWithoutFeedback onPress={() => this._onPressplaceconcer("3")}>
                 <Animatable.View ref="view3" style={{ margin:10, paddingTop :10, paddingBottom: 10, paddingRight: 20, paddingLeft: 20, backgroundColor: this.state.statusplaceconcer ==="3" ? this.state.onColor : "#bdbdbd", borderRadius:20}}>
-                <Text style={{color:  "white" , fontWeight: "bold"}}> الحلق و الانف و الاذنين </Text>
+                <Text style={{color:  "white" , fontWeight: "bold"}}> الحلق و الأنف و الأذنين </Text>
                 </Animatable.View>
             </TouchableWithoutFeedback>
 
 
-
-            </View>  
-            <View style={{ flex: 3}}>
             <View style={styles.buttonContainer}>
             {this.state.current!= 0 ? <Button title={'Précédent'} onPress={() => this._onPrev(1)} /> : null}
               
                 {!this.state.isLast ? <Button title={'Suivant'} onPress={() => this._onNext(1)} /> : <Button title={'Terminer'} onPress={() => this._addpatient()} />} 
             </View>
+            </View>  
+
+
             </View>   
-            </View> 
+
         );
     }
 
@@ -1619,7 +1697,7 @@ export default class Editpatient extends Component {
             </TouchableWithoutFeedback>
             <TouchableWithoutFeedback onPress={() => this._onPresstreatmentconcer("2")}>
                 <Animatable.View ref="view2" style={{ margin:10, paddingTop :10, paddingBottom: 10, paddingRight: 20, paddingLeft: 20, backgroundColor: this.state.statustreatmentconcer ==="2" ? this.state.onColor : "#bdbdbd", borderRadius:20}}>
-                <Text style={{color: "white" , fontWeight: "bold"}}> اشعة </Text>
+                <Text style={{color: "white" , fontWeight: "bold"}}> أشعة </Text>
                 </Animatable.View>
             </TouchableWithoutFeedback>
             <TouchableWithoutFeedback onPress={() => this._onPresstreatmentconcer("3")}>
@@ -1628,17 +1706,17 @@ export default class Editpatient extends Component {
                 </Animatable.View>
             </TouchableWithoutFeedback>
 
-
-
-            </View>  
-            <View style={{ flex: 3}}>
             <View style={styles.buttonContainer}>
             {this.state.current!= 0 ? <Button title={'Précédent'} onPress={() => this._onPrev(1)} /> : null}
               
                 {!this.state.isLast ? <Button title={'Suivant'} onPress={() => this._onNext(1)} /> : <Button title={'Terminer'} onPress={() => this._addpatient()} />} 
             </View>
+
+            </View>  
+
+
             </View>   
-            </View> 
+    
         );
     }
     else  if (this.state.current === 28) {
@@ -1660,18 +1738,18 @@ export default class Editpatient extends Component {
                 </Animatable.View>
             </TouchableWithoutFeedback>
 
-
-
-
-            </View>  
-            <View style={{ flex: 3}}>
-            <View style={styles.buttonContainer}>
+         <View style={styles.buttonContainer}>
             {this.state.current!= 0 ? <Button title={'Précédent'} onPress={() => this._onPrev(this.state.statusconcer ==="yes"?1:3)} /> : null}
               
                 {!this.state.isLast ? <Button title={'Suivant'} onPress={() => this._onNext(1)} /> : <Button title={'Terminer'} onPress={() => this._addpatient()} />} 
             </View>
+
+
+            </View>  
+
+   
             </View>   
-            </View> 
+    
         );
     }
 
