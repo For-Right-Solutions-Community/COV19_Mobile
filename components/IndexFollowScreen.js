@@ -145,6 +145,7 @@ render() {
                     <TextInput
                       placeholder="Login"
                       style={styles.textInput}
+                      autoCapitalize = 'none'
                       value={this.state.login} onChangeText={ (text) => this.setState({ login: text }) }
                     />
                       <Text style={styles.textlabel}> </Text> 
@@ -152,6 +153,7 @@ render() {
                     <TextInput
                       placeholder="Mot de passe" secureTextEntry={!this.state.hidepassword}
                       style={styles.textInput}
+                      autoCapitalize = 'none'
                       value={this.state.password} onChangeText={ (text) => this.setState({ password: text }) }
                     />
                          <Text style={styles.textlabel}> </Text> 

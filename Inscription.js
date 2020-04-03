@@ -156,6 +156,7 @@ try {
                   <TextInput
                     placeholder="Votre Email"
                     style={styles.textInput}
+                    autoCapitalize = 'none'
                     value={this.state.email} onChangeText={ (text) => this.setState({ email: text }) }
                   />
                     <Text style={styles.textlabel}> </Text> 
@@ -163,6 +164,7 @@ try {
                   <TextInput
                     placeholder="Votre mot de passe" secureTextEntry={!this.state.hidepassword}
                     style={styles.textInput}
+                    autoCapitalize = 'none'
                     value={this.state.password} onChangeText={ (text) => this.setState({ password: text }) }
                   />
                        <Text style={styles.textlabel}> </Text> 
@@ -170,6 +172,7 @@ try {
                     <TextInput
                     placeholder="Confirmer mot de passe" secureTextEntry={!this.state.hidepassword}
                     style={styles.textInput}
+                    autoCapitalize = 'none'
                     value={this.state.password1} onChangeText={ (text) => this.setState({ password1: text }) }
                   />
                 <Text style={styles.textlabel}> </Text> 
