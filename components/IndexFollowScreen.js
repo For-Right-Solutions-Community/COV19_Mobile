@@ -7,10 +7,13 @@ import { Container, Header,View, Tab, Tabs, TabHeading, Icon, Text,Button, Left,
 import { Col, Row, Grid } from 'react-native-easy-grid';
 import Editpatient from './patient/Editpatient';
 import Listpatient from './patient/Listpatient';
-//import Authentification  from '../Authentification';
+import { connect } from 'react-redux';
+import { bindActionCreators } from 'redux';
+import { _getToken,_deconnection} from '../Store/actions';
 const br = `\n`;
 var STORAGE_KEY = 'id_token'
-export default class IndexFollowScreen extends Component {
+var valuetoken=""
+ class IndexFollowScreen extends Component {
 
   constructor(props) {
 
@@ -51,67 +54,95 @@ _Inscription(imode,ititle)
 
   this.props.navigation.navigate("Inscription",{mode:imode,title:ititle})
 }
+_deconnexion()
+{
+
+  this.setState({
+    correctcompte: false,
+    password:""
+
+  })
+
+
+ this.props._deconnection();
+}
 _Connexion()
 {
 
   this.setState({correctcompte: true})
 
 }
-_userSignup() {
 
-
-    fetch("http://coronna.frsdev.ovh:8081/v2/register", {
-      method: "POST",
-      headers: {
-        'Content-Type': 'application/json'
-      },
-      body: JSON.stringify({
-        username: this.state.login,
-        password: this.state.password,
-      })
-    })
-    .then((response) => response.json())
-    .then((responseData) => {
-      this._onValueChange(STORAGE_KEY, responseData.token),
-     
-      Alert.alert(responseData.token===undefined?
-        'Problème !':"Signup Success!",
-        responseData.token===undefined?'compte n existe pas':'',
-        [
-          {text: 'OK', onPress: () => console.log('OK Pressed')},
-        ],
-        { cancelable: false }
-      )
-    })
-    .done();
-  
+_userSignup(login,password) {
+  this.props._getToken(login,password);
 }
 
-
-async _onValueChange(item, selectedValue) {
-  try {
-    await AsyncStorage.setItem(item, selectedValue);
-    if(selectedValue===undefined)
-    {
-      this.setState({correctcompte: false});
-    }
-    else{
-    this.setState({correctcompte: true});
-    }
-
-   
-  } catch (error) {
-    console.log('AsyncStorage error: ' + error.message);
-  }
-}
 render() {
-  if (this.state.correctcompte) {
+
+  console.log("gggggggggggggggggggggggggggg :             "+this.props.token)
+  if (this.props.token==-1||this.props.token==null) {
+    return (
+  
+      <View style={styles.container}>
+        <View style={styles.row}>
+          <Text style={styles.title}>Connexion!</Text>
+        </View>
+        <View style={styles.row}>
+        <Text style={styles.textlabel}> البريد الإلكتروني :  </Text> 
+                  
+                  <TextInput
+                    placeholder="البريد الإلكتروني"
+                    style={styles.textInput}
+                    autoCapitalize = 'none'
+                    value={this.state.login} onChangeText={ (text) => this.setState({ login: text }) }
+                  />
+                    <Text style={styles.textlabel}> </Text> 
+                    <Text style={styles.textlabel}> كلمة السر :  </Text> 
+                  <TextInput
+                    placeholder="كلمةالسر" 
+                    secureTextEntry={!this.state.hidepassword}
+                    style={styles.textInput}
+                    autoCapitalize = 'none'
+                    value={this.state.password} onChangeText={ (text) => this.setState({ password: text }) }
+                  />
+                       <Text style={styles.textlabel}> </Text> 
+
+                      <View style={{ flexDirection: 'row' }}>
+                      <CheckBox
+                        value={this.state.hidepassword}
+                        onValueChange={() => this._affichePassWord()}
+                      />
+                      <Text style={{marginTop: 5}}> إظهار كلمة المرور</Text>
+                    </View>
+       <Text style={styles.textlabel}> </Text> 
+        </View>
+        <View style={styles.row}>
+        <TouchableHighlight  onPress={() => this._userSignup(this.state.login,this.state.password)} style={styles.button} underlayColor='#99d9f4'>
+            <Text style={styles.buttonText}>تسجيل الدخول</Text>
+          </TouchableHighlight>
+          <TouchableHighlight  onPress={() => this._Inscription("Inscription","إنشاء حساب")} style={styles.button}  underlayColor='#99d9f4'>
+            <Text style={styles.buttonText}>إنشاء حساب</Text>
+          </TouchableHighlight>
+
+        </View>
+
+      </View>
+  
+);
+  }
+
+  else{
     return (
       <Container>
   
         <Header style={{backgroundColor:'white'}} hasTabs >
+        <View style={styles.innerContainer}> 
         <Image style={styles.picture} source={require('../assets/logo.png')}/>
-  
+        <Text style={{color: 'blue',fontSize: 20 ,textDecorationLine: 'underline'}}
+             onPress={() => this._deconnexion()}>
+            الخروج  
+            </Text>
+            </View>
         </Header>
         <Tabs  initialPage={0} tabBarPosition="top">
           <Tab heading={ <TabHeading style={{backgroundColor: '#2196F3'}}><Text>Patients</Text></TabHeading>}> 
@@ -130,59 +161,6 @@ render() {
         </Tabs>
    
       </Container>
-  );
-  }
-  else{
-    return (
-  
-        <View style={styles.container}>
-          <View style={styles.row}>
-            <Text style={styles.title}>Connexion!</Text>
-          </View>
-          <View style={styles.row}>
-          <Text style={styles.textlabel}> Login :  </Text> 
-                    
-                    <TextInput
-                      placeholder="Login"
-                      style={styles.textInput}
-                      autoCapitalize = 'none'
-                      value={this.state.login} onChangeText={ (text) => this.setState({ login: text }) }
-                    />
-                      <Text style={styles.textlabel}> </Text> 
-                      <Text style={styles.textlabel}> Mot de passe :  </Text> 
-                    <TextInput
-                      placeholder="Mot de passe" secureTextEntry={!this.state.hidepassword}
-                      style={styles.textInput}
-                      autoCapitalize = 'none'
-                      value={this.state.password} onChangeText={ (text) => this.setState({ password: text }) }
-                    />
-                         <Text style={styles.textlabel}> </Text> 
-  
-                        <View style={{ flexDirection: 'row' }}>
-                        <CheckBox
-                          value={this.state.hidepassword}
-                          onValueChange={() => this._affichePassWord()}
-                        />
-                        <Text style={{marginTop: 5}}> Afficher mot de passe</Text>
-                      </View>
-         <Text style={styles.textlabel}> </Text> 
-          </View>
-          <View style={styles.row}>
-          <TouchableHighlight  onPress={() => this._userSignup()} style={styles.button} underlayColor='#99d9f4'>
-              <Text style={styles.buttonText}>Connexion</Text>
-            </TouchableHighlight>
-            <TouchableHighlight  onPress={() => this._Inscription("Inscription","Créer un compte")} style={styles.button}  underlayColor='#99d9f4'>
-              <Text style={styles.buttonText}>S'inscrire</Text>
-            </TouchableHighlight>
-            <Text style={styles.buttonText}></Text>
-            <Text style={{color: 'blue',fontSize: 20 ,textDecorationLine: 'underline'}}
-             onPress={() => this._Inscription("Update","Modifier mot de passe")}>
-             J'ai oublié mon mot de passe
-            </Text>
-          </View>
-  
-        </View>
-    
   );
   }
 
@@ -264,5 +242,24 @@ textInput: {
   fontSize: 18,
   color:"black",
 
+},
+innerContainer:{  
+  // flex: 1,  
+   width: "100%",  
+   flexDirection: "row",  
+   justifyContent: "space-between",  
+   alignItems: "center"  
 }
-})
+});
+function mapDispatchToProps(dispatch) {
+  return bindActionCreators({
+    _getToken: _getToken,
+    _deconnection:_deconnection
+  }, dispatch);
+}
+function mapStateToProps(state) {
+  return {
+    token: state.token
+  }
+}
+export default connect(mapStateToProps,mapDispatchToProps)(IndexFollowScreen);

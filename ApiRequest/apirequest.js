@@ -1,45 +1,49 @@
 
-  var httpRequestToken = async (name,password) => {
-
-    const user = {
-        "username":name,
-        "password":password
-    };
+import { AsyncStorage,Alert} from "react-native";
+var STORAGE_KEY = 'id_token';
+  _onValueChange = async (item, selectedValue) => {
+    try {
+      await AsyncStorage.setItem(item, selectedValue);
+      if(selectedValue===undefined)
+      {
+        this.setState({correctcompte: false});
+      }
+      else{
+      this.setState({correctcompte: true});
+      }
   
-    fetch('http://192.168.0.5:8080/v2/register', {
-      method: 'post',
+     
+    } catch (error) {
+      console.log('AsyncStorage error: ' + error.message);
+    }
+  }
+
+  export function _userSignup(login,password) {
+
+
+    fetch("http://coronna.frsdev.ovh:8081/v2/register", {
+      method: "POST",
       headers: {
-        'Content-Type': 'application/json',
+        'Content-Type': 'application/json'
       },
-      body: JSON.stringify(user)
+      body: JSON.stringify({
+        username: login,
+        password: password,
+      })
     })
-      .then(res => res.json())
-      .then(data => {
-        //console.log(data.token);
-        return data.token;
-        // data should contain a JWT token from your backend
-        // which you can save in localStorage or a cookie
-      })
-      .catch(err => console.log(err));
+    .then((response) => response.json())
+    .then((responseData) => {
+      _onValueChange(STORAGE_KEY, responseData.token),
+     
+      Alert.alert(responseData.token===undefined?
+        'Problème !':"Signup Success!",
+        responseData.token===undefined?'compte n existe pas':'',
+        [
+          {text: 'OK', onPress: () => console.log('OK Pressed')},
+        ],
+        { cancelable: false }
+      )
+    })
+    .done();
   
-  }
-
-  export function httpRequestListPatient() {
-    httpRequestToken("chouchensamih@gmail.com","frs123456").then((resultat)=>{
-      fetch('http://192.168.0.5:8080/m/patient', {
-        method: 'GET',
-        headers: {
-          'Authorization': 'Bearer ' + resultat
-        }
-      })
-        .then(res => res.json())
-        .then(data => {
-          console.log("ccccccccccc"+resultat);
-          // data should contain a JWT token from your backend
-          // which you can save in localStorage or a cookie
-        })
-        .catch(err => console.log(err));
-    });
-
-  
-  }
+}

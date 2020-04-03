@@ -1,12 +1,13 @@
 import React from "react";
 import { AsyncStorage,Animated, Dimensions, Keyboard,UIManager,StyleSheet,TouchableHighlight,TextInput,CheckBox,Alert} from "react-native";
 import {Text,View,Input,Item,Icon,Textarea,DatePicker,Picker} from 'native-base';
-
-
+import { _Signup} from './Store/actions';
+import { connect } from 'react-redux';
+import { bindActionCreators } from 'redux';
 const br = `\n`;
 var STORAGE_KEY = 'id_token'
 const { State: TextInputState } = TextInput;
-export default class Inscription extends React.Component {
+ class Inscription extends React.Component {
   constructor(props) {
     super(props);
     this.state = ({
@@ -68,21 +69,7 @@ _enregistrer() {
 
   if(this.state.password===this.state.password1)
   {
-    fetch("http://coronna.frsdev.ovh:8081/m/user/create", {
-      method: "POST",
-      headers: {
-        'Content-Type': 'application/json'
-      },
-      body: JSON.stringify({
-        username: this.state.email,
-        password: this.state.password,
-      })
-    })
-    .then((response) => response.json())
-    .then((responseData) => {
-      this._userSignup(responseData)
-    })
-    .done();
+    this.props._Signup(this.state.email,this.state.password);
   }
   else{
     Alert.alert(
@@ -97,6 +84,7 @@ _enregistrer() {
 
 
 }
+/*
 _userSignup(responseData) {
 
 
@@ -126,6 +114,7 @@ _userSignup(responseData) {
   .done();
 
 }
+
 async _onValueChange(item, selectedValue) {
 try {
   await AsyncStorage.setItem(item, selectedValue);
@@ -142,7 +131,7 @@ try {
   console.log('AsyncStorage error: ' + error.message);
 }
 }
-
+*/
   render() {
     const { shift } = this.state;
     return (
@@ -151,26 +140,26 @@ try {
             <Text style={styles.title}>{this.props.navigation.state.params.title}</Text>
           </View>
         <View style={styles.row}>
-        <Text style={styles.textlabel}> Votre Email : </Text> 
+        <Text style={styles.textlabel}> البريد الإلكتروني : </Text> 
                   
                   <TextInput
-                    placeholder="Votre Email"
+                     placeholder="البريد الإلكتروني"
                     style={styles.textInput}
                     autoCapitalize = 'none'
                     value={this.state.email} onChangeText={ (text) => this.setState({ email: text }) }
                   />
                     <Text style={styles.textlabel}> </Text> 
-                    <Text style={styles.textlabel}> Votre mot de passe :  </Text> 
+                    <Text style={styles.textlabel}> كلمة المرور :  </Text> 
                   <TextInput
-                    placeholder="Votre mot de passe" secureTextEntry={!this.state.hidepassword}
+                    placeholder="كلمة المرور" secureTextEntry={!this.state.hidepassword}
                     style={styles.textInput}
                     autoCapitalize = 'none'
                     value={this.state.password} onChangeText={ (text) => this.setState({ password: text }) }
                   />
                        <Text style={styles.textlabel}> </Text> 
-                       <Text style={styles.textlabel}> Confirmer mot de passe :  </Text> 
+                       <Text style={styles.textlabel}> تأكيد كلمة المرور :  </Text> 
                     <TextInput
-                    placeholder="Confirmer mot de passe" secureTextEntry={!this.state.hidepassword}
+                    placeholder="تأكيد كلمة المرور" secureTextEntry={!this.state.hidepassword}
                     style={styles.textInput}
                     autoCapitalize = 'none'
                     value={this.state.password1} onChangeText={ (text) => this.setState({ password1: text }) }
@@ -182,13 +171,13 @@ try {
                   value={this.state.hidepassword}
                   onValueChange={() => this._affichePassWord()}
                 />
-                <Text style={{marginTop: 5}}> Afficher mot de passe</Text>
+                <Text style={{marginTop: 5}}> إظهار كلمة المرور </Text>
               </View>
        <Text style={styles.textlabel}> </Text> 
         </View>
         <View style={styles.row}>
         <TouchableHighlight style={styles.button} onPress={() => this._enregistrer()} underlayColor='#99d9f4'>
-            <Text style={styles.buttonText}>Enregistrer</Text>
+            <Text style={styles.buttonText}>تسجيل </Text>
           </TouchableHighlight>
    
         </View>
@@ -247,3 +236,14 @@ const styles = StyleSheet.create({
 
   }
 });
+function mapDispatchToProps(dispatch) {
+  return bindActionCreators({
+    _Signup: _Signup,
+  }, dispatch);
+}
+function mapStateToProps(state) {
+  return {
+    token: state.token
+  }
+}
+export default connect(mapStateToProps,mapDispatchToProps)(Inscription);

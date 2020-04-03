@@ -1,14 +1,15 @@
 import React from "react";
 import { StyleSheet } from "react-native";
 import Navigation from "./Navigation/Navigation";
+import Appstore from "./Appstore";
 console.ignoredYellowBox = ['Warning: Each', 'Warning: Failed'];
 console.disableYellowBox = true;
 export default class App extends React.Component {
   
  render() {
   return (
-    <Navigation>
-    </Navigation>
+    <Appstore>
+    </Appstore>
   );
 }
 }
