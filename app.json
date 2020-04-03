@@ -1,7 +1,7 @@
 {
   "expo": {
-    "name": "react-native-wizard",
-    "slug": "react-native-wizard",
+    "name": "AMU190",
+    "slug": "AMU190",
     "privacy": "public",
     "sdkVersion": "36.0.0",
     "platforms": [
@@ -17,6 +17,11 @@
       "resizeMode": "contain",
       "backgroundColor": "#ffffff"
     },
+    "android": {
+      "icon": "./assets/icons/logo.png",
+       "package": "com.frs.amu190"
+     }
+     ,
     "updates": {
       "fallbackToCacheTimeout": 0
     },
