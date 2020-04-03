@@ -60,7 +60,7 @@ _Connexion()
 _userSignup() {
 
 
-    fetch("http://192.168.0.5:8080/v2/register", {
+    fetch("http://coronna.frsdev.ovh:8081/v2/register", {
       method: "POST",
       headers: {
         'Content-Type': 'application/json'
