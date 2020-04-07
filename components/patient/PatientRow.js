@@ -1,6 +1,6 @@
 import React, { Component } from "react";
 import { StyleSheet, View,Text,TouchableOpacity, TextInput, Button } from "react-native";  
-const Suivi="     Suivi     "
+const Suivi=" + متابعة الحالة  "
 export default class UserRow extends Component {
   constructor(props)
 {
@@ -13,23 +13,23 @@ _suivipatient= () => {
 render() {  
   return (  
       <View style={styles.container}>  
-          <View style={styles.innerContainer}>  
+         
           <Text style={styles.primaryText}>
       
-      {`${this.props.firstName} ${this.props.lastName}`}
+           {`${this.props.firstName} ${this.props.lastName}`}
     </Text>
-
-               <TouchableOpacity  style={styles.suivibutton}  onPress={() => this._suivipatient()}>
+             <View>
+ <View style={styles.innerContainer}>  
+ <TouchableOpacity  style={styles.suivibutton}  onPress={() => this._suivipatient()}>
            <Text style={styles.suivibutton}>{      Suivi    } </Text>
            </TouchableOpacity>
-          </View>  
-
-             <View>
-
       <Text style={styles.secondaryText}>
-        age :{this.props.age}
+      العمر :{this.props.age}
       </Text>
-      <Text style={styles.secondaryText}>tel :{this.props.tel}</Text>
+   
+        
+      </View>  
+      <Text style={styles.secondaryText}>الهاتف :{this.props.tel}</Text>
     </View>
       </View>  
   );  
@@ -64,12 +64,13 @@ const styles = StyleSheet.create({
   },
   secondaryText: {
     color: "grey",
-    fontSize: 16,
+    fontSize: 20,
   },  
   suivibutton: {
-    backgroundColor: '#96C85B',
-    fontSize: 20,
+    backgroundColor: '#bdbdbd',
+    fontSize: 22,
     fontWeight: "bold",
     color:'white'
+ 
   }  
 });  

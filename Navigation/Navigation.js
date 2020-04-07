@@ -27,13 +27,13 @@ const IndexFollowScreenStackNavigator = createStackNavigator({
       Editpatient: {
         screen: Editpatient,
         navigationOptions: {
-          title: 'Edit patient'
+          title: 'إضافة مريض'
         }
       },
       Suivipatient: {
         screen: Suivipatient,
         navigationOptions: {
-          title: 'Suivi patient'
+          title: 'متابعة الحالة المريض'
         }
       },
       Authentification: {
@@ -45,7 +45,7 @@ const IndexFollowScreenStackNavigator = createStackNavigator({
       Inscription: {
         screen: Inscription,
         navigationOptions: {
-          title: 'Créer un compte'
+          title: 'إنشاء حساب'
         }
       }
 })

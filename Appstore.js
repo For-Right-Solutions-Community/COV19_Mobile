@@ -18,7 +18,7 @@ export default class Appstore extends React.Component {
  
     this._storgelogin().then((resultat)=>{
       console.log("xxxxxxxxxxxx "+JSON.stringify(resultat))
-      if(resultat===null)
+      if(resultat===null||resultat.login==null||resultat.password==null)
         store.dispatch(_getToken("@gmail.com","frs123456"));
       else
       store.dispatch(_getToken(resultat.login,resultat.password));

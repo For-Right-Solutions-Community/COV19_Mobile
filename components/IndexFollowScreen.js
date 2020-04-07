@@ -1,6 +1,6 @@
 import React, { Component} from 'react';
 
-import { AsyncStorage,StyleSheet,TouchableHighlight,TextInput,CheckBox,Image,Alert} from "react-native";
+import { AsyncStorage,StyleSheet,TouchableHighlight,TextInput,CheckBox,Image,Alert,ActivityIndicator} from "react-native";
 
 import { Container, Header,View, Tab, Tabs, TabHeading, Icon, Text,Button, Left, Body } from 'native-base';
 
@@ -79,13 +79,13 @@ _userSignup(login,password) {
 
 render() {
 
-  console.log("gggggggggggggggggggggggggggg :             "+this.props.token)
-  if (this.props.token==-1||this.props.token==null) {
+/*
+   if (this.props.token==-1 ||this.props.token==undefined) {
     return (
   
       <View style={styles.container}>
         <View style={styles.row}>
-          <Text style={styles.title}>Connexion!</Text>
+        <Image  source={require('../assets/icon1.png')}/>
         </View>
         <View style={styles.row}>
         <Text style={styles.textlabel}> البريد الإلكتروني :  </Text> 
@@ -118,7 +118,7 @@ render() {
         </View>
         <View style={styles.row}>
         <TouchableHighlight  onPress={() => this._userSignup(this.state.login,this.state.password)} style={styles.button} underlayColor='#99d9f4'>
-            <Text style={styles.buttonText}>تسجيل الدخول</Text>
+            <Text style={styles.buttonText}> دخول</Text>
           </TouchableHighlight>
           <TouchableHighlight  onPress={() => this._Inscription("Inscription","إنشاء حساب")} style={styles.button}  underlayColor='#99d9f4'>
             <Text style={styles.buttonText}>إنشاء حساب</Text>
@@ -130,34 +130,28 @@ render() {
   
 );
   }
-
-  else{
+*/
+  //else{
     return (
       <Container>
   
         <Header style={{backgroundColor:'white'}} hasTabs >
         <View style={styles.innerContainer}> 
-        <Image style={styles.picture} source={require('../assets/logo.png')}/>
-        <Text style={{color: 'blue',fontSize: 20 ,textDecorationLine: 'underline'}}
+        <Text> </Text> 
+        <Text style={{color: 'black',fontSize: 26 ,textDecorationLine: 'underline'}}
              onPress={() => this._deconnexion()}>
             الخروج  
             </Text>
             </View>
         </Header>
         <Tabs  initialPage={0} tabBarPosition="top">
-          <Tab heading={ <TabHeading style={{backgroundColor: '#2196F3'}}><Text>Patients</Text></TabHeading>}> 
+          <Tab heading={ <TabHeading style={{backgroundColor: '#F0493E'}}><Text style={styles.textlabel} >قائمة المرضى</Text></TabHeading>}> 
           <Grid>
            <Listpatient navigation = {this.props.navigation}>
                  </Listpatient>
           </Grid>
           </Tab>
-          <Tab heading={ <TabHeading style={{backgroundColor: '#2196F3'}}><Text>Suivi</Text></TabHeading>}> 
-           <Grid>
-            <Editpatient navigation = {this.props.navigation}>
-                 </Editpatient>
-          </Grid>
-          </Tab>
-   
+
         </Tabs>
    
       </Container>
@@ -165,7 +159,7 @@ render() {
   }
 
 
-}
+//}
 }
 
 const styles = StyleSheet.create({
@@ -173,27 +167,13 @@ const styles = StyleSheet.create({
     flex: 1,
     //marginTop: 20
   },
-  loading_container: {
-    position: 'absolute',
-    left: 0,
-    right: 0,
-    top: 100,
-    bottom: 0,
-    alignItems: 'center',
-    justifyContent: 'center'
-  },    addButton: {
-    position: 'absolute',
-    zIndex: 11,
-    right: 20,
-    bottom: 90,
-    backgroundColor: '#2196F3',
-    width: 70,
-    height: 70,
-    borderRadius: 35,
-    alignItems: 'center',
-    justifyContent: 'center',
-    elevation: 8
-},
+  containerind: {
+    marginTop: 10,
+    marginLeft: 10,
+    marginRight: 10,
+    padding: 10,
+    alignItems: 'center'
+  },
 textlabel: {
   fontSize: 22,
   paddingRight:10,
@@ -217,8 +197,8 @@ buttonText: {
 },
 button: {
   height: 36,
-  backgroundColor: '#48BBEC',
-  borderColor: '#48BBEC',
+  backgroundColor: '#F0493E',
+  borderColor: '#F0493E',
   borderWidth: 1,
   borderRadius: 8,
   marginBottom: 10,
@@ -230,11 +210,7 @@ textlabel: {
   paddingRight:30,
   left:10
 },
-selectedText:
-{
-    fontSize: 22,
-    backgroundColor: '#DCDCDC',
-},
+
 textInput: {
   backgroundColor: '#DCDCDC',
   height: 50,

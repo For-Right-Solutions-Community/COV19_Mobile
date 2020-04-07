@@ -5,9 +5,10 @@ export const SIGNUP = 'SIGNUP';
  var login = 'login'
 var  password = 'password';
 var STORAGE_KEY = 'id_token';
+/*
 export function _getToken(login1,password1) {
     return dispatch => {
-        fetch("http://coronna.frsdev.ovh:8081/v2/register", {
+        fetch("http://192.168.0.5:8080/v2/register", {
             method: "POST",
             headers: {
               'Content-Type': 'application/json'
@@ -47,6 +48,41 @@ export function _getToken(login1,password1) {
       }
 
   
+}
+*/
+export function _getToken(login1,password1) {
+  return dispatch => {
+      fetch("http://coronna.frsdev.ovh:8081/v2/register", {
+          method: "POST",
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({
+            username: login1,
+            password: password1,
+          })
+        })
+        .then((response) => response.json()).then((responseData) => {
+          _onValueChange(STORAGE_KEY, responseData.token);
+          _onValueChange(login,login1);
+          _onValueChange(password,password1);
+          dispatch({
+            type: GET_TOKEN,
+            payload: responseData.token
+          });
+        }).catch((err) => {
+          // TODO:
+          console.log(err);
+
+          dispatch({
+            type: GET_TOKEN,
+            payload: null
+          });
+          
+        });
+    }
+
+
 }
 
 export function _Signup(login1,password1) {
@@ -90,6 +126,8 @@ export function _Signup(login1,password1) {
 
 export function _deconnection() {
   return dispatch => {
+    _onValueChange(login,"login");
+    _onValueChange(password,"password");
     dispatch({
       type: DECONNECTION,
       payload: -1

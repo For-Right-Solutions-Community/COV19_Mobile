@@ -1,13 +1,15 @@
 import React, { Component } from "react";
 
-import { Animated, Dimensions, Keyboard, StyleSheet, Button,TouchableWithoutFeedback, UIManager,TextInput } from 'react-native';
+import { Alert,Animated, Dimensions, Keyboard, StyleSheet, Button,TouchableWithoutFeedback, UIManager,TextInput ,TouchableOpacity,ScrollView,TouchableHighlight} from 'react-native';
 import {Text,View,Input,Item,Icon,Textarea,DatePicker,Picker} from 'native-base';
 import * as Animatable from 'react-native-animatable';
 import RadioForm, {RadioButton, RadioButtonInput, RadioButtonLabel} from 'react-native-simple-radio-button';
-import {httpRequestListPatient} from "../../ApiRequest/apirequest"
+import { ProgressBar, Colors } from 'react-native-paper';
 const llll=' من يقوم بتعمير هذه الاستمارة ؟'
 const br = `\n`;
-const nbreecran=28;
+var malade="";
+var masculin="";
+const nbreecran=33;
 var radio_props = [
     {label: '   ذكر     ', value: 0 },
     {label: '  أنثى     ', value: 1 }
@@ -30,16 +32,18 @@ var radio_props = [
     {label: '    نعم    ', value: 1 }
   ];
   const { State: TextInputState } = TextInput;
+
 export default class Editpatient extends Component {
     constructor(props) {
         super(props);
         this.state = ({
             shift: new Animated.Value(0),
-            firstname:'',
-            lastname:'',
-            tel:'',
+            validitynext:false,
+            firstname:"",
+            lastname:"",
+            tel:"",
             telfamille:'',
-            age:'',
+            age:"",
             statuspaysvoyage:"",
             statusville:"",
             statusnbrejours:"",
@@ -63,6 +67,12 @@ export default class Editpatient extends Component {
               statusWhyuserfillform:"empty",
               statustestanalys:"empty",
               statusresultatanalys:"empty",
+              statustestanalysvoyag:"empty",
+              statusresultatanalysvoyag:"empty",
+              statuscontactmalade:"empty",
+              statusentourage:"empty",
+              statusnbepersentourage:"",
+              statusLivingentourage:"empty",
               statuszonecritique:"empty",
               statusASPHYXIE:"empty",
               statusABILYTY:"empty",
@@ -71,6 +81,7 @@ export default class Editpatient extends Component {
               statusSYMTOME:[],
               statussenseofsmell:"empty",
               statusASPHEXIE:"empty",
+              statusPARLE:"empty",
               statusANTECEDENT:"empty",
               statusDIABETE:"empty",
               statushypertension:"empty",
@@ -176,9 +187,35 @@ export default class Editpatient extends Component {
         const currentStatus = statusresultatanalys;
         this.setState({ statusresultatanalys: currentStatus});
         if(currentStatus==="yes")
-            this.refs.viewooui.tada(800);
+            this.refs.view1.tada(800);
         else if(currentStatus==="no")
-        this.refs.viewnnon.tada(800);
+        this.refs.view2.tada(800);
+    }
+
+    _onPresstestanalysvoyag(statustestanalysvoyag){
+        const currentStatus = statustestanalysvoyag;
+        this.setState({ statustestanalysvoyag: currentStatus});
+        if(currentStatus==="yes")
+            this.refs.viewoui.tada(800);
+            if(currentStatus==="no")
+            {
+                this.setState({ statusresultatanalys: "empty"});
+                this.refs.viewnon.tada(800)
+              
+            }
+        ;
+    }
+    _onPressresultatanalysvoyag(statusresultatanalysvoyag){
+        const currentStatus = statusresultatanalysvoyag;
+        this.setState({ statusresultatanalysvoyag: currentStatus});
+        if(currentStatus==="yes")
+            this.refs.view1.tada(800);
+        else if(currentStatus==="no")
+        {
+            this.setState({ statusville: '',statusnbrejours:''});
+            this.refs.view2.tada(800);
+        }
+ 
     }
 
     _onPressstatuszonecritique(statuszonecritique){
@@ -277,13 +314,25 @@ export default class Editpatient extends Component {
         else if(currentStatus==="no")
         this.refs.viewnon.tada(800);
     }
-    _onPressANTECEDENT(statusANTECEDENT){
-        const currentStatus = statusANTECEDENT;
-        this.setState({ statusANTECEDENT: currentStatus});
+    _onPressPARLE(statusPARLE){
+        const currentStatus = statusPARLE;
+        this.setState({ statusPARLE: currentStatus});
         if(currentStatus==="yes")
         this.refs.viewoui.tada(800);
         else if(currentStatus==="no")
         this.refs.viewnon.tada(800);
+    }
+    _onPressANTECEDENT(statusANTECEDENT){
+        const currentStatus = statusANTECEDENT;
+        this.setState({ statusANTECEDENT: currentStatus});
+        if(currentStatus==="1")
+        this.refs.view1.tada(800);
+        else if(currentStatus==="2")
+        this.refs.view2.tada(800);
+        else if(currentStatus==="3")
+        this.refs.view3.tada(800);
+        else if(currentStatus==="4")
+        this.refs.view4.tada(800);
     }
     _onPressDIABETE(statusDIABETE){
         const currentStatus = statusDIABETE;
@@ -342,6 +391,8 @@ export default class Editpatient extends Component {
         this.refs.view2.tada(800);
         else if(currentStatus==="3")
         this.refs.view3.tada(800);
+        else if(currentStatus==="4")
+        this.refs.view3.tada(800);
     }
     _onPressImmunity(statusImmunity){
         const currentStatus = statusImmunity;
@@ -385,7 +436,11 @@ export default class Editpatient extends Component {
         if(currentStatus==="yes")
         this.refs.viewoui.tada(800);
         else if(currentStatus==="no")
-        this.refs.viewnon.tada(800);
+        {
+            this.setState({ statuspaysvoyage: ""});
+            this.refs.viewnon.tada(800);
+        }
+       
     }
     _onPresscontact(statuscontact){
         const currentStatus =statuscontact ;
@@ -393,7 +448,39 @@ export default class Editpatient extends Component {
         if(currentStatus==="yes")
         this.refs.viewoui.tada(800);
         else if(currentStatus==="no")
+        {
+            this.setState({ statusLiving: -1});
+            this.refs.viewnon.tada(800);
+        }
+        
+    }
+
+    _onPresscontactmalade(statuscontactmalade){
+        const currentStatus =statuscontactmalade ;
+        this.setState({ statuscontactmalade: currentStatus});
+        if(currentStatus==="yes")
+        this.refs.viewoui.tada(800);
+        else if(currentStatus==="no")
         this.refs.viewnon.tada(800);
+    }
+
+    _onPressentourage(statusentourage){
+        const currentStatus =statusentourage ;
+        this.setState({ statusentourage: currentStatus});
+        if(currentStatus==="yes")
+        this.refs.viewoui.tada(800);
+        else if(currentStatus==="no")
+        this.refs.viewnon.tada(800);
+    }
+    _onPressLivingentourage(statusLivingentourage){
+        const currentStatus = statusLivingentourage;
+        this.setState({ statusLivingentourage: currentStatus});
+        if(currentStatus==="1")
+        this.refs.view1.tada(800);
+        else if(currentStatus==="2")
+        this.refs.view2.tada(800);
+        else if(currentStatus==="3")
+        this.refs.view3.tada(800);
     }
 
     _onPressWhyABILYTY(statusWhyABILYTY){
@@ -448,59 +535,72 @@ export default class Editpatient extends Component {
     }
     _onNext(value)
     {
-        let index=this.state.current+value;
-        if(index==nbreecran)
-        {
+  
+            let index=this.state.current+value;
+            if(index==nbreecran)
+            {
+                this.setState({
+                    isLast:true
+                }); 
+            }
+            else
+            {
+                this.setState({
+                    isLast:false
+                }); 
+            }
             this.setState({
-                isLast:true
-            }); 
-        }
-        else
-        {
-            this.setState({
-                isLast:false
-            }); 
-        }
-        this.setState({
-            current:index
-        });
+                current:index
+            });
+        
+  
 
-        httpRequestListPatient();
+
         
     }
 
 
   render() {
+    if(this.state.statususerfillform==="no")
+    {
+        malade=this.state.statusgender==1?'المريضة ':'المريض '
+    }
+
       if (this.state.current === 0) {
         const { shift } = this.state;
+        let pourcentage=(this.state.current)/(nbreecran);
+
         return (
-            <Animated.View style={[styles.container, { transform: [{translateY: shift}] }]}>
-                <View style={{ flex: 1}}>
-                <Text style={styles.pageText}> {this.state.current+1}/{nbreecran+1} </Text> 
-                 </View> 
-                 <View style={{ flex: 10}}>
-                 <Text style={styles.textlabel}> الإسم :</Text> 
+    
+            <ScrollView style={{  backgroundColor:  "white"}}>
+                  <View style={styles.row}>
+                    <Text style={styles.textlabel1}>{Math.floor(pourcentage*100)} % </Text>
+                    <ProgressBar progress={pourcentage} color={Colors.red800} />
+                    <Text style={styles.textlabel}> </Text> 
+         
+                    <Text style={styles.textlabel1}> الإسم :</Text> 
                   
-            <TextInput
-              placeholder="الإسم"
-              style={styles.textInput}
-              value={this.state.firstname} onChangeText={ (text) => this.setState({ firstname: text }) }
-            />
-              <Text style={styles.textlabel}> </Text> 
-              <Text style={styles.textlabel}> اللقب :</Text> 
-            <TextInput
-              placeholder="اللقب"
-              style={styles.textInput}
-              value={this.state.lastname} onChangeText={ (text) => this.setState({ lastname: text }) }
-            />
-              <Text style={styles.textlabel}> </Text> 
-             <Text style={styles.textlabel}> العمر :</Text> 
-            <TextInput
-              placeholder="العمر"
-              style={styles.textInput} value={this.state.age} onChangeText={ (text) => this.setState({ age: text }) }
-            />
-     <Text style={styles.textlabel}> </Text> 
-                  <View>
+                    <TextInput
+                    placeholder="الإسم"
+                    style={styles.textInput}
+                    value={this.state.firstname} onChangeText={ (text) => this.setState({ firstname: text }) }
+                    />
+                    <Text style={styles.textlabel}> </Text> 
+                    <Text style={styles.textlabel1}> اللقب :</Text> 
+                    <TextInput
+                    placeholder="اللقب"
+                    style={styles.textInput}
+                    value={this.state.lastname} onChangeText={ (text) => this.setState({ lastname: text }) }
+                    />
+                    <Text style={styles.textlabel}> </Text> 
+                    <Text style={styles.textlabel1}> العمر :</Text> 
+                    <TextInput keyboardType='numeric'
+                    placeholder="العمر"
+                    style={styles.textInput} value={this.state.age} onChangeText={ (text) => this.setState({ age: text }) }
+                    />
+                        <Text style={styles.textlabel}> </Text> 
+                        </View>
+                <View style={styles.row}>
                     <RadioForm
                         formHorizontal={true}
                         animation={true}
@@ -514,7 +614,7 @@ export default class Editpatient extends Component {
                                 obj={obj}
                                 index={i}
                                 isSelected={this.state.statusgender === i}
-                                onPress={(value) => {this.setState({statusgender:value})}}
+                                onPress={(value) => {this.setState({statusgender:value,validitynext:true})}}
                                 borderWidth={1}
                                 buttonInnerColor={'#96C85B'}
                                 buttonOuterColor={this.state.statusgender === i ? '#96C85B' : '#000'}
@@ -527,7 +627,7 @@ export default class Editpatient extends Component {
                                 obj={obj}
                                 index={i}
                                 labelHorizontal={true}
-                                onPress={(value) => {this.setState({statusgender:value})}}
+                                onPress={(value) => {this.setState({statusgender:value,validitynext:true})}}
                                 labelStyle={{fontSize: 20, color: 'black'}}
                                 labelWrapStyle={{}}
                                 />
@@ -535,50 +635,63 @@ export default class Editpatient extends Component {
                     ))
                 }  
                 </RadioForm>
-                <View style={styles.buttonContainer}>
-                {this.state.current!= 0 ? <Button title={'Précédent'} onPress={() => this._onPrev(1)} /> : null}
-              
-                {!this.state.isLast ? <Button title={'Suivant'} onPress={() => this._onNext(1)} /> : <Button title={'Terminer'} onPress={() => this._addpatient()} />} 
                 </View>
-                </View>
-               
-           
-               </View>
-             
-          </Animated.View>
+
+                 <Text style={styles.textlabel}>  </Text> 
+                     <View style={styles.innerContainer}> 
+                        {this.state.current!= 0 ? 
+                    <TouchableOpacity  style={styles.addButtonprev}  >
+                    <Text style={styles.addButtonText}> السابق </Text> 
+                        </TouchableOpacity>: <Text style={styles.addButtonText}>  </Text> }
+
+    
+                        {!this.state.isLast ? 
+                        <TouchableOpacity  style={(this.state.firstname == ''|| this.state.lastname == ''|| this.state.age == ''|| this.state.statusgender==-1)?styles.addButtonnextDisable:styles.addButtonnext}  disabled={(this.state.firstname == ''|| this.state.lastname == ''|| this.state.age == ''|| this.state.statusgender==-1) ? true : false}  onPress={() => this._onNext(1)}>
+                        <Text style={styles.addButtonText}> تسجيل </Text> 
+                        </TouchableOpacity>
+
+                        : <TouchableOpacity  style={styles.addButtonnext}  onPress={() => this._addpatient()}>
+                        <Text style={styles.addButtonText}> تسجيل </Text> 
+                        </TouchableOpacity>
+                        }
+   
+                  </View>
+                  </ScrollView >
       
           
         );
     }
     if (this.state.current === 1) {
         const { shift } = this.state;
+        let pourcentage=(this.state.current)/(nbreecran);
         return (
-            <Animated.View style={[styles.container, { transform: [{translateY: shift}] }]}>
-            <View style={styles.container}>
-                <View style={{ flex: 1}}>
-                <Text style={styles.pageText}> {this.state.current+1}/{nbreecran+1} </Text> 
-                 </View>  
-                <View style={{ flex: 10}}>
-                <Text style={styles.textlabel}> رقم الهاتف الشخصي :</Text> 
-                <Text style={styles.textlabel}> </Text> 
-                <TextInput
-                    placeholder="الهاتف"
-                    style={styles.textInput}
-                    value={this.state.tel} onChangeText={ (text) => this.setState({ tel: text }) }
-                    />
+            
+           
+                <ScrollView style={{  backgroundColor:  "white"}}>
+                 <View style={styles.row}>
+                    <Text style={styles.textlabel1}>{Math.floor(pourcentage*100)} % </Text>
+                    <ProgressBar progress={pourcentage} color={Colors.red800} />
+                    <Text style={styles.textlabel}> </Text> 
+                        <Text style={styles.textlabel1}> رقم الهاتف الشخصي :</Text> 
+                        <Text style={styles.textlabel}> </Text> 
+                        <TextInput keyboardType='numeric'
+                            placeholder="الهاتف"
+                            style={styles.textInput}
+                            value={this.state.tel} onChangeText={ (text) => this.setState({ tel: text }) }
+                            />
 
-                   <Text style={styles.textlabel}> رقم هاتف أحد الأقارب (في حالة عدم التحصل عليك) :</Text> 
-                   <Text style={styles.textlabel}> </Text> 
-                   <TextInput
-                    placeholder="هاتف أحد الأقارب"
-                    style={styles.textInput}
-                    value={this.state.telfamille} onChangeText={ (text) => this.setState({ telfamille: text }) }
-                    />
+                        <Text style={styles.textlabel1}> رقم هاتف أحد/إحدى  الأقارب (في حالة عدم التحصل عليك) :</Text> 
+                        <Text style={styles.textlabel}> </Text> 
+                        <TextInput keyboardType='numeric'
+                            placeholder="هاتف أحد الأقارب"
+                            style={styles.textInput}
+                            value={this.state.telfamille} onChangeText={ (text) => this.setState({ telfamille: text }) }
+                            />
 
-                  <Text style={styles.textlabel}> </Text> 
+                        <Text style={styles.textlabel}> </Text> 
               
-       
-                  <View>
+                    </View>
+                    <View style={styles.row}>
                      <RadioForm
                         formHorizontal={false}
                         animation={true}
@@ -599,7 +712,7 @@ export default class Editpatient extends Component {
                                 buttonSize={40}
                                 buttonOuterSize={50}
                                 buttonStyle={{}}
-                                buttonWrapStyle={{marginLeft: 120}}
+                                buttonWrapStyle={{marginLeft: 140}}
                                 />
                                 <RadioButtonLabel
                                 obj={obj}
@@ -609,111 +722,238 @@ export default class Editpatient extends Component {
                                 labelStyle={{fontSize: 20, color: 'black'}}
                                 labelWrapStyle={{}}
                                 />
-                    </RadioButton>
-                    ))
-                }  
-                </RadioForm>
+                                </RadioButton>
+                                ))
+                        }  
+                        </RadioForm>
                 
-                <View style={styles.buttonContainer}>
-                {this.state.current!= 0 ? <Button title={'Précédent'} onPress={() => this._onPrev(1)} /> : null}
-              
-                {!this.state.isLast ? <Button title={'Suivant'} onPress={() => this._onNext(1)} /> : <Button title={'Terminer'} onPress={() => this._addpatient()} />} 
- 
-                </View>   
-                </View>
-
-
-                </View> 
-        
-                </View> 
-         </Animated.View>
+                
           
+
+           
+                    </View>
+                   
+      
+                  <Text style={styles.textlabel}>  </Text> 
+                     <View style={styles.innerContainer}> 
+                        {this.state.current!= 0 ? 
+                    <TouchableOpacity  style={styles.addButtonprev}  onPress={() => this._onPrev(1)}>
+                    <Text style={styles.addButtonText}> السابق </Text> 
+                        </TouchableOpacity>: null}
+
+                        {!this.state.isLast ? 
+                        <TouchableOpacity  style={(this.state.tel==""||this.state.telfamille==""||this.state.statusetatcivil=="-1")?styles.addButtonnextDisable:styles.addButtonnext}  disabled={(this.state.tel==""||this.state.telfamille==""||this.state.statusetatcivil=="-1") ? true : false}  onPress={() => this._onNext(1)}>
+                        <Text style={styles.addButtonText}> الموالي </Text> 
+                        </TouchableOpacity>    
+
+                        : <TouchableOpacity  style={styles.addButtonnext}  onPress={() => this._addpatient()}>
+                        <Text style={styles.addButtonText}> تسجيل </Text> 
+                        </TouchableOpacity>
+                        }
+   
+                  </View>
+                  </ScrollView > 
+ 
+        
         );
     }
     else if (this.state.current === 2) {
+        let pourcentage=(this.state.current)/(nbreecran);
         return (
-            <View style={styles.container}>
-            <View style={{ flex: 1}}>
-            <Text style={styles.pageText}> {this.state.current+1}/{nbreecran+1} </Text> 
-             </View>  
-             <View style={{ flex: 10}}>
-                <Text style={styles.textlabel}>  من يقوم بتعمير هذه الإستمارة ؟ {br} </Text> 
-                <TouchableWithoutFeedback onPress={() => this._onPressuserfillform("yes")}>
-                <Animatable.View ref="viewoui" style={{ margin:10, paddingTop :10, paddingBottom: 10, paddingRight: 20, paddingLeft: 20, backgroundColor: this.state.statususerfillform ==="yes" ? this.state.onColor : "#bdbdbd", borderRadius:20}}>
-                <Text style={{color:"white", fontWeight: "bold"}}>المريض </Text>
-                </Animatable.View>
-            </TouchableWithoutFeedback>
-            <TouchableWithoutFeedback onPress={() => this._onPressuserfillform("no")}>
-                <Animatable.View ref="viewnon" style={{ margin:10, paddingTop :10, paddingBottom: 10, paddingRight: 20, paddingLeft: 20, backgroundColor: this.state.statususerfillform ==="no"? this.state.onColor : "#bdbdbd", borderRadius:20}}>
-                <Text style={{color:  "white" , fontWeight: "bold"}}>شخص اخر</Text>
-                </Animatable.View>
-            </TouchableWithoutFeedback>
- 
-            {this.state.statususerfillform==="no" ? (
-              <View>
-                <Text style={styles.textlabel}></Text> 
-              <Text style={styles.textlabel}>لماذا ؟ {br} </Text> 
-              <TouchableWithoutFeedback onPress={() => this._onPressWhyuserfillform("yes")}>
-              <Animatable.View ref="viewooui" style={{ margin:10, paddingTop :10, paddingBottom: 10, paddingRight: 20, paddingLeft: 20, backgroundColor: this.state.statusWhyuserfillform ==="yes" ? this.state.onColor : "#bdbdbd", borderRadius:20}}>
-              <Text style={{color:"white", fontWeight: "bold"}}>لا يعرف التعامل مع التطبيقة</Text>
-              </Animatable.View>
-          </TouchableWithoutFeedback>
-          <TouchableWithoutFeedback onPress={() => this._onPressWhyuserfillform("no")}>
-              <Animatable.View ref="viewnnon" style={{ margin:10, paddingTop :10, paddingBottom: 10, paddingRight: 20, paddingLeft: 20, backgroundColor: this.state.statusWhyuserfillform ==="no"? this.state.onColor : "#bdbdbd", borderRadius:20}}>
-              <Text style={{color:  "white" , fontWeight: "bold"}}>حالته الصحية لا تسمح : فقدان وعي/ضيق تنفس حاد</Text>
-              </Animatable.View>
-          </TouchableWithoutFeedback>
- 
-          </View>  
-      ) : (
-        <View/>
-      )}
-   
-            <View style={styles.buttonContainer}>
+            <ScrollView style={{  backgroundColor:  "white"}}>
+            <View style={styles.row}>
+               <Text style={styles.textlabel1}>{Math.floor(pourcentage*100)} % </Text>
+               <ProgressBar progress={pourcentage} color={Colors.red800} />
+               <Text style={styles.textlabel}> </Text> 
+                        <View style={{ margin:10, paddingTop :10, paddingBottom: 10, paddingRight: 20, paddingLeft: 20, backgroundColor:  "#F0493E", borderRadius:20}}>
+                            <Text style={styles.textlabel}>  من يقوم بتعمير هذه الإستمارة ؟  </Text> 
+                            </View>
+                            <Text style={styles.textlabel}> {br} </Text> 
+                            <TouchableWithoutFeedback onPress={() => this._onPressuserfillform("yes")}>
+                            <Animatable.View ref="viewoui" style={{ margin:10, paddingTop :10, paddingBottom: 10, paddingRight: 20, paddingLeft: 20, backgroundColor: this.state.statususerfillform ==="yes" ? this.state.onColor : "#bdbdbd", borderRadius:20}}>
+                            <Text style={{color:"white", fontWeight: "bold"}}>{this.state.statusgender==1?'المريضة ':'المريض '}   </Text>
+                            </Animatable.View>
+                        </TouchableWithoutFeedback>
+                        <TouchableWithoutFeedback onPress={() => this._onPressuserfillform("no")}>
+                            <Animatable.View ref="viewnon" style={{ margin:10, paddingTop :10, paddingBottom: 10, paddingRight: 20, paddingLeft: 20, backgroundColor: this.state.statususerfillform ==="no"? this.state.onColor : "#bdbdbd", borderRadius:20}}>
+                            <Text style={{color:  "white" , fontWeight: "bold"}}>شخص اخر</Text>
+                            </Animatable.View>
+                        </TouchableWithoutFeedback>
             
-            {this.state.current!= 0 ? <Button title={'Précédent'} onPress={() => this._onPrev(1)} /> : null}
-              
-                {!this.state.isLast ? <Button title={'Suivant'} onPress={() => this._onNext(1)} /> : <Button title={'Terminer'} onPress={() => this._addpatient()} />} 
-            </View>
+                        {this.state.statususerfillform==="no" ? (
+                        <View>
+                            <Text style={styles.textlabel}></Text> 
+                        <Text style={styles.textlabel1}>لماذا ؟ {br} </Text> 
+                        <TouchableWithoutFeedback onPress={() => this._onPressWhyuserfillform("yes")}>
+                        <Animatable.View ref="viewooui" style={{ margin:10, paddingTop :10, paddingBottom: 10, paddingRight: 20, paddingLeft: 20, backgroundColor: this.state.statusWhyuserfillform ==="yes" ? this.state.onColor : "#bdbdbd", borderRadius:20}}>
+                        <Text style={{color:"white", fontWeight: "bold"}}>لا يعرف التعامل مع التطبيقة</Text>
+                        </Animatable.View>
+                    </TouchableWithoutFeedback>
+                    <TouchableWithoutFeedback onPress={() => this._onPressWhyuserfillform("no")}>
+                        <Animatable.View ref="viewnnon" style={{ margin:10, paddingTop :10, paddingBottom: 10, paddingRight: 20, paddingLeft: 20, backgroundColor: this.state.statusWhyuserfillform ==="no"? this.state.onColor : "#bdbdbd", borderRadius:20}}>
+                        <Text style={{color:  "white" , fontWeight: "bold"}}>حالته الصحية لا تسمح : فقدان وعي/ضيق تنفس حاد</Text>
+                        </Animatable.View>
+                    </TouchableWithoutFeedback>
+            
+                            </View>  
+                        ) : (
+                            <View/>
+                        )}
+   
+        
            
                 </View>
+                <Text style={styles.textlabel}> {br} {br} </Text> 
+            <View style={styles.innerContainer}> 
+                {this.state.current!= 0 ? 
+               <TouchableOpacity  style={styles.addButtonprev}  onPress={() => this._onPrev(1)}>
+               <Text style={styles.addButtonText}> السابق </Text> 
+                </TouchableOpacity>: null}
 
+                {!this.state.isLast ? 
+                <TouchableOpacity  style={(this.state.statususerfillform=="empty")||(this.state.statususerfillform=="no" && this.state.statusWhyuserfillform=="empty")?styles.addButtonnextDisable:styles.addButtonnext}  disabled={(this.state.statususerfillform=="empty")||(this.state.statususerfillform=="no" && this.state.statusWhyuserfillform=="empty") ? true : false}  onPress={() => this._onNext(1)}>
+                 <Text style={styles.addButtonText}> الموالي </Text> 
+                  </TouchableOpacity>    
 
-
+                  : <TouchableOpacity  style={styles.addButtonnext}  onPress={() => this._addpatient()}>
+                  <Text style={styles.addButtonText}> تسجيل </Text> 
+                  </TouchableOpacity>
+                }
 
    
         
             </View>
-     
+            </ScrollView > 
         );
     }
-
     else if (this.state.current === 3) {
-        const { shift } = this.state;
+        let pourcentage=(this.state.current)/(nbreecran);
         return (
-            <Animated.View style={[styles.container, { transform: [{translateY: shift}] }]}>
-            <View style={styles.container}>
-            <View style={{ flex: 1}}>
-            <Text style={styles.pageText}> {this.state.current+1}/{nbreecran+1} </Text> 
-             </View>  
-             <View style={{ flex: 10}}>
-                <Text style={styles.textlabel}>  هل سافرت خارج البلاد خلال الشهر الفارط ؟ {br} {br}</Text> 
-                <TouchableWithoutFeedback onPress={() => this._onPressvoyage("yes")}>
-                <Animatable.View ref="viewoui" style={{ margin:10, paddingTop :10, paddingBottom: 10, paddingRight: 20, paddingLeft: 20, backgroundColor: this.state.statusvoyage ==="yes" ? this.state.onColor : "#bdbdbd", borderRadius:20}}>
-                <Text style={{color:"white", fontWeight: "bold"}}>نعم </Text>
-                </Animatable.View>
-            </TouchableWithoutFeedback>
-            <TouchableWithoutFeedback onPress={() => this._onPressvoyage("no")}>
-                <Animatable.View ref="viewnon" style={{ margin:10, paddingTop :10, paddingBottom: 10, paddingRight: 20, paddingLeft: 20, backgroundColor: this.state.statusvoyage ==="no"? this.state.onColor : "#bdbdbd", borderRadius:20}}>
-                <Text style={{color:  "white" , fontWeight: "bold"}}> لا </Text>
-                </Animatable.View>
-            </TouchableWithoutFeedback>
+            <ScrollView style={{  backgroundColor:  "white"}}>
+            <View style={styles.row}>
+               <Text style={styles.textlabel1}>{Math.floor(pourcentage*100)} % </Text>
+               <ProgressBar progress={pourcentage} color={Colors.red800} />
+               <Text style={styles.textlabel}> </Text> 
+                        <View style={{ margin:10, paddingTop :10, paddingBottom: 10, paddingRight: 20, paddingLeft: 20, backgroundColor:  "#F0493E", borderRadius:20}}>
+                            <Text style={styles.textlabel}> هل خضعت لتحليل الاصابة بفيروس كورونا ؟  </Text> 
+                            </View>
+                            <Text style={styles.textlabel}> {br} </Text> 
+                            <TouchableWithoutFeedback onPress={() => this._onPresstestanalys("yes")}>
+                            <Animatable.View ref="viewoui" style={{ margin:10, paddingTop :10, paddingBottom: 10, paddingRight: 20, paddingLeft: 20, backgroundColor: this.state.statustestanalys ==="yes" ? this.state.onColor : "#bdbdbd", borderRadius:20}}>
+                            <Text style={{color:"white", fontWeight: "bold"}}>نعم </Text>
+                            </Animatable.View>
+                        </TouchableWithoutFeedback>
+                        <TouchableWithoutFeedback onPress={() => this._onPresstestanalys("no")}>
+                            <Animatable.View ref="viewnon" style={{ margin:10, paddingTop :10, paddingBottom: 10, paddingRight: 20, paddingLeft: 20, backgroundColor: this.state.statustestanalys ==="no"? this.state.onColor : "#bdbdbd", borderRadius:20}}>
+                            <Text style={{color:  "white" , fontWeight: "bold"}}> لا </Text>
+                            </Animatable.View>
+                        </TouchableWithoutFeedback>
+            
+   
+        
+           
+                </View>
+                <Text style={styles.textlabel}> {br} {br} </Text> 
+            <View style={styles.innerContainer}> 
+                {this.state.current!= 0 ? 
+               <TouchableOpacity  style={styles.addButtonprev}  onPress={() => this._onPrev(1)}>
+               <Text style={styles.addButtonText}> السابق </Text> 
+                </TouchableOpacity>: null}
 
+                {!this.state.isLast ? 
+                  <TouchableOpacity  style={(this.state.statustestanalys=="empty")?styles.addButtonnextDisable:styles.addButtonnext}  disabled={(this.state.statustestanalys=="empty") ? true : false}  onPress={() => this._onNext(this.state.statustestanalys ==="yes"?1:2)}>
+                 <Text style={styles.addButtonText}> الموالي </Text> 
+                  </TouchableOpacity>    
 
-                    {this.state.statusvoyage==="yes" ? (
+                  : <TouchableOpacity  style={styles.addButtonnext}  onPress={() => this._addpatient()}>
+                  <Text style={styles.addButtonText}> تسجيل </Text> 
+                  </TouchableOpacity>
+                }
+
+   
+        
+            </View>
+            </ScrollView > 
+        );
+    }
+    else if (this.state.current === 4) {
+        let pourcentage=(this.state.current)/(nbreecran);
+        return (
+            <ScrollView style={{  backgroundColor:  "white"}}>
+            <View style={styles.row}>
+               <Text style={styles.textlabel1}>{Math.floor(pourcentage*100)} % </Text>
+               <ProgressBar progress={pourcentage} color={Colors.red800} />
+               <Text style={styles.textlabel}> </Text> 
+                        <View style={{ margin:10, paddingTop :10, paddingBottom: 10, paddingRight: 20, paddingLeft: 20, backgroundColor:  "#F0493E", borderRadius:20}}>
+                            <Text style={styles.textlabel}>  ماهي نتيجة التحليل ؟  </Text> 
+                            </View>
+                            <Text style={styles.textlabel}> {br} </Text> 
+                            <TouchableWithoutFeedback onPress={() => this._onPressresultatanalys("yes")}>
+                            <Animatable.View ref="view1" style={{ margin:10, paddingTop :10, paddingBottom: 10, paddingRight: 20, paddingLeft: 20, backgroundColor: this.state.statusresultatanalys ==="yes" ? this.state.onColor : "#bdbdbd", borderRadius:20}}>
+                            <Text style={{color:"white", fontWeight: "bold"}}>{this.state.statusgender==1?'مصابة ':'مصاب '}    </Text>
+                            </Animatable.View>
+                        </TouchableWithoutFeedback>
+                        <TouchableWithoutFeedback onPress={() => this._onPressresultatanalys("no")}>
+                            <Animatable.View ref="view2" style={{ margin:10, paddingTop :10, paddingBottom: 10, paddingRight: 20, paddingLeft: 20, backgroundColor: this.state.statusresultatanalys ==="no"? this.state.onColor : "#bdbdbd", borderRadius:20}}>
+                            <Text style={{color:  "white" , fontWeight: "bold"}}> {this.state.statusgender==1?'غير مصابة ':'غير مصاب '}   </Text>
+                            </Animatable.View>
+                        </TouchableWithoutFeedback>
+            
+   
+        
+           
+                </View>
+                <Text style={styles.textlabel}> {br} {br} </Text> 
+            <View style={styles.innerContainer}> 
+                {this.state.current!= 0 ? 
+               <TouchableOpacity  style={styles.addButtonprev}  onPress={() => this._onPrev(1)}>
+               <Text style={styles.addButtonText}> السابق </Text> 
+                </TouchableOpacity>: null}
+
+                {!this.state.isLast ? 
+                <TouchableOpacity  style={(this.state.statusresultatanalys=="empty")?styles.addButtonnextDisable:styles.addButtonnext}  disabled={(this.state.statusresultatanalys=="empty") ? true : false}  onPress={() => this._onNext(1)}>
+                 <Text style={styles.addButtonText}> الموالي </Text> 
+                  </TouchableOpacity>    
+
+                  : <TouchableOpacity  style={styles.addButtonnext}  onPress={() => this._addpatient()}>
+                  <Text style={styles.addButtonText}> تسجيل </Text> 
+                  </TouchableOpacity>
+                }
+
+   
+        
+            </View>
+            </ScrollView > 
+        );
+    }
+    
+    else if (this.state.current === 5) {
+        let pourcentage=(this.state.current)/(nbreecran);
+        return (
+            <ScrollView style={{  backgroundColor:  "white"}}>
+            <View style={styles.row}>
+               <Text style={styles.textlabel1}>{Math.floor(pourcentage*100)} % </Text>
+               <ProgressBar progress={pourcentage} color={Colors.red800} />
+               <Text style={styles.textlabel}> </Text> 
+                        <View style={{ margin:10, paddingTop :10, paddingBottom: 10, paddingRight: 20, paddingLeft: 20, backgroundColor:  "#F0493E", borderRadius:20}}>
+                            <Text style={styles.textlabel}> هل سافرت خارج البلاد خلال الشهر الفارط ؟  </Text> 
+                            </View>
+                            <Text style={styles.textlabel}> {br} </Text> 
+                            <TouchableWithoutFeedback onPress={() => this._onPressvoyage("yes")}>
+                            <Animatable.View ref="viewoui" style={{ margin:10, paddingTop :10, paddingBottom: 10, paddingRight: 20, paddingLeft: 20, backgroundColor: this.state.statusvoyage ==="yes" ? this.state.onColor : "#bdbdbd", borderRadius:20}}>
+                            <Text style={{color:"white", fontWeight: "bold"}}>نعم </Text>
+                            </Animatable.View>
+                        </TouchableWithoutFeedback>
+                        <TouchableWithoutFeedback onPress={() => this._onPressvoyage("no")}>
+                            <Animatable.View ref="viewnon" style={{ margin:10, paddingTop :10, paddingBottom: 10, paddingRight: 20, paddingLeft: 20, backgroundColor: this.state.statusvoyage ==="no"? this.state.onColor : "#bdbdbd", borderRadius:20}}>
+                            <Text style={{color:  "white" , fontWeight: "bold"}}> لا </Text>
+                            </Animatable.View>
+                        </TouchableWithoutFeedback>
+            
+                        {this.state.statusvoyage==="yes" ? (
                         <View>
                             <Text style={styles.textlabel}></Text> 
-                        <Text style={styles.textlabel}>  إلى أي بلد؟ {br}</Text> 
+                        <Text style={styles.textlabel1}>  إلى أي بلد؟ {br}</Text> 
                         <TextInput
                                 placeholder="البلاد "
                                 style={styles.textInput}
@@ -723,47 +963,62 @@ export default class Editpatient extends Component {
                 ) : (
                     <View/>
                 )}
-
-                <View style={styles.buttonContainer}>
-            {this.state.current!= 0 ? <Button title={'Précédent'} onPress={() => this._onPrev(1)} /> : null}
-              
-                {!this.state.isLast ? <Button title={'Suivant'} onPress={() => this._onNext(1)} /> : <Button title={'Terminer'} onPress={() => this._addpatient()} />} 
-         
-            </View>
    
-            </View>  
-     
+        
+           
+                </View>
+                <Text style={styles.textlabel}>  </Text> 
+            <View style={styles.innerContainer}> 
+            {this.state.current!= 0 ? 
+               <TouchableOpacity  style={styles.addButtonprev}  onPress={() => this._onPrev(this.state.statustestanalys ==="yes"?1:2)}>
+               <Text style={styles.addButtonText}> السابق </Text> 
+                </TouchableOpacity>: null}
+
+                {!this.state.isLast ? 
+                <TouchableOpacity  style={(this.state.statusvoyage=="empty")||(this.state.statusvoyage==="yes" && this.state.statuspaysvoyage=="")?styles.addButtonnextDisable:styles.addButtonnext}  disabled={(this.state.statusvoyage=="empty")||(this.state.statusvoyage==="yes" && this.state.statuspaysvoyage=="") ? true : false}  onPress={() => this._onNext(1)}>
+                 <Text style={styles.addButtonText}> الموالي </Text> 
+                  </TouchableOpacity>    
+
+                  : <TouchableOpacity  style={styles.addButtonnext}  onPress={() => this._addpatient()}>
+                  <Text style={styles.addButtonText}> تسجيل </Text> 
+                  </TouchableOpacity>
+                }
+
+   
         
             </View>
-            </Animated.View>
+            </ScrollView > 
         );
     }
-    else if (this.state.current === 4) {
-        const { shift } = this.state;
-        return (
-            <Animated.View style={[styles.container, { transform: [{translateY: shift}] }]}>
-            <View style={styles.container}>
-            <View style={{ flex: 1}}>
-            <Text style={styles.pageText}> {this.state.current+1}/{nbreecran+1} </Text> 
-             </View>  
-             <View style={{ flex: 10}}>
-                <Text style={styles.textlabel}>هل كان لك إتصال مباشر بشخص سافر خارج البلاد الشهر الفارط ؟ {br} {br}</Text> 
-                <TouchableWithoutFeedback onPress={() => this._onPresscontact("yes")}>
-                <Animatable.View ref="viewoui" style={{ margin:10, paddingTop :10, paddingBottom: 10, paddingRight: 20, paddingLeft: 20, backgroundColor: this.state.statuscontact==="yes" ? this.state.onColor : "#bdbdbd", borderRadius:20}}>
-                <Text style={{color:"white", fontWeight: "bold"}}>نعم</Text>
-                </Animatable.View>
-            </TouchableWithoutFeedback>
-            <TouchableWithoutFeedback onPress={() => this._onPresscontact("no")}>
-                <Animatable.View ref="viewnon" style={{ margin:10, paddingTop :10, paddingBottom: 10, paddingRight: 20, paddingLeft: 20, backgroundColor: this.state.statuscontact ==="no"? this.state.onColor : "#bdbdbd", borderRadius:20}}>
-                <Text style={{color:  "white" , fontWeight: "bold"}}> لا </Text>
-                </Animatable.View>
-            </TouchableWithoutFeedback>
 
-          
+    else if (this.state.current === 6) {
+        let pourcentage=(this.state.current)/(nbreecran);
+        return (
+            <ScrollView style={{  backgroundColor:  "white"}}>
+            <View style={styles.row}>
+               <Text style={styles.textlabel1}>{Math.floor(pourcentage*100)} % </Text>
+               <ProgressBar progress={pourcentage} color={Colors.red800} />
+               <Text style={styles.textlabel}> </Text> 
+                        <View style={{ margin:10, paddingTop :10, paddingBottom: 10, paddingRight: 20, paddingLeft: 20, backgroundColor:  "#F0493E", borderRadius:20}}>
+                         <Text style={styles.textlabel}>هل كان لك إتصال مباشر بشخص سافر خارج البلاد الشهر الفارط ؟ </Text> 
+                            </View>
+                            <Text style={styles.textlabel}> {br} </Text> 
+                            <TouchableWithoutFeedback onPress={() => this._onPresscontact("yes")}>
+                            <Animatable.View ref="viewoui" style={{ margin:10, paddingTop :10, paddingBottom: 10, paddingRight: 20, paddingLeft: 20, backgroundColor: this.state.statuscontact ==="yes" ? this.state.onColor : "#bdbdbd", borderRadius:20}}>
+                            <Text style={{color:"white", fontWeight: "bold"}}>نعم </Text>
+                            </Animatable.View>
+                        </TouchableWithoutFeedback>
+                        <TouchableWithoutFeedback onPress={() => this._onPresscontact("no")}>
+                            <Animatable.View ref="viewnon" style={{ margin:10, paddingTop :10, paddingBottom: 10, paddingRight: 20, paddingLeft: 20, backgroundColor: this.state.statuscontact ==="no"? this.state.onColor : "#bdbdbd", borderRadius:20}}>
+                            <Text style={{color:  "white" , fontWeight: "bold"}}> لا </Text>
+                            </Animatable.View>
+                        </TouchableWithoutFeedback>
+            
+                       
             {this.state.statuscontact==="yes" ? (
               <View >
                  <Text style={styles.textlabel}></Text> 
-                 <Text style={styles.textlabel}>  هل يسكن معك في نفس المنزل ؟  {br}</Text> 
+                 <Text style={styles.textlabel1}>  هل يسكن معك في نفس المنزل ؟  {br}</Text> 
                  <View>
                      <RadioForm
                         formHorizontal={true}
@@ -804,174 +1059,426 @@ export default class Editpatient extends Component {
       ) : (
         <View/>
       )}
-                <View style={styles.buttonContainer}>
-            {this.state.current!= 0 ? <Button title={'Précédent'} onPress={() => this._onPrev(1)} /> : null}
-              
-                {!this.state.isLast ? <Button title={'Suivant'} onPress={() => this._onNext(1)} /> : <Button title={'Terminer'} onPress={() => this._addpatient()} />} 
-            </View>
-            </View>  
-       
+   
+        
+           
+                </View>
+                <Text style={styles.textlabel}> </Text> 
+            <View style={styles.innerContainer}> 
+            {this.state.current!= 0 ? 
+               <TouchableOpacity  style={styles.addButtonprev}  onPress={() => this._onPrev(1)}>
+               <Text style={styles.addButtonText}> السابق </Text> 
+                </TouchableOpacity>: null}
+
+                {!this.state.isLast ? 
+                <TouchableOpacity  style={(this.state.statuscontact=="empty")||(this.state.statuscontact==="yes" && this.state.statusLiving=="-1")?styles.addButtonnextDisable:styles.addButtonnext}  disabled={(this.state.statuscontact=="empty")||(this.state.statuscontact==="yes" && this.state.statusLiving=="-1") ? true : false}  onPress={() => this._onNext(this.state.statuscontact ==="yes"?1:3)}>
+                <Text style={styles.addButtonText}> الموالي </Text> 
+                  </TouchableOpacity>    
+
+                  : <TouchableOpacity  style={styles.addButtonnext}  onPress={() => this._addpatient()}>
+                  <Text style={styles.addButtonText}> تسجيل </Text> 
+                  </TouchableOpacity>
+                }
+
+   
         
             </View>
-         
-
-            </Animated.View>
+            </ScrollView > 
         );
     }
-    else if (this.state.current === 5) {
+ 
+    else if (this.state.current === 7) {
+        let pourcentage=(this.state.current)/(nbreecran);
         return (
-            <View style={styles.container}>
-            <View style={{ flex: 1}}>
-            <Text style={styles.pageText}> {this.state.current+1}/{nbreecran+1} </Text> 
-             </View>  
-             <View style={{ flex: 10}}>
-                <Text style={styles.textlabel}>هل خضعت أنت أو الشخص المذكور لتحليل الإصابة بفيروس كورونا ؟ {br} {br}</Text> 
-  
-                <TouchableWithoutFeedback onPress={() => this._onPresstestanalys("yes")}>
-                <Animatable.View ref="viewoui" style={{ margin:10, paddingTop :10, paddingBottom: 10, paddingRight: 20, paddingLeft: 20, backgroundColor: this.state.statustestanalys ==="yes" ? this.state.onColor : "#bdbdbd", borderRadius:20}}>
-                <Text style={{color:"white", fontWeight: "bold"}}>نعم</Text>
-                </Animatable.View>
-            </TouchableWithoutFeedback>
-            <TouchableWithoutFeedback onPress={() => this._onPresstestanalys("no")}>
-                <Animatable.View ref="viewnon" style={{ margin:10, paddingTop :10, paddingBottom: 10, paddingRight: 20, paddingLeft: 20, backgroundColor: this.state.statustestanalys ==="no"? this.state.onColor : "#bdbdbd", borderRadius:20}}>
-                <Text style={{color:  "white" , fontWeight: "bold"}}>لا </Text>
-                </Animatable.View>
-            </TouchableWithoutFeedback>
-
-            <View style={styles.buttonContainer}>
-            {this.state.current!= 0 ? <Button title={'Précédent'} onPress={() => this._onPrev(1)} /> : null}
-              
-                {!this.state.isLast ? <Button title={'Suivant'} onPress={() => this._onNext(this.state.statustestanalys ==="yes"?1:2)} /> : <Button title={'Terminer'} onPress={() => this._addpatient()} />} 
-            </View>
-            </View>  
-
+            <ScrollView style={{  backgroundColor:  "white"}}>
+            <View style={styles.row}>
+               <Text style={styles.textlabel1}>{Math.floor(pourcentage*100)} % </Text>
+               <ProgressBar progress={pourcentage} color={Colors.red800} />
+               <Text style={styles.textlabel}> </Text> 
+                        <View style={{ margin:10, paddingTop :10, paddingBottom: 10, paddingRight: 20, paddingLeft: 20, backgroundColor:  "#F0493E", borderRadius:20}}>
+                            <Text style={styles.textlabel}> هل خضع الشخص المذكور لتحليل الاصابة بفيروس كورونا   </Text> 
+                            </View>
+                            <Text style={styles.textlabel}> {br} </Text> 
+                            <TouchableWithoutFeedback onPress={() => this._onPresstestanalysvoyag("yes")}>
+                            <Animatable.View ref="viewoui" style={{ margin:10, paddingTop :10, paddingBottom: 10, paddingRight: 20, paddingLeft: 20, backgroundColor: this.state.statustestanalysvoyag ==="yes" ? this.state.onColor : "#bdbdbd", borderRadius:20}}>
+                            <Text style={{color:"white", fontWeight: "bold"}}>نعم </Text>
+                            </Animatable.View>
+                        </TouchableWithoutFeedback>
+                        <TouchableWithoutFeedback onPress={() => this._onPresstestanalysvoyag("no")}>
+                            <Animatable.View ref="viewnon" style={{ margin:10, paddingTop :10, paddingBottom: 10, paddingRight: 20, paddingLeft: 20, backgroundColor: this.state.statustestanalysvoyag ==="no"? this.state.onColor : "#bdbdbd", borderRadius:20}}>
+                            <Text style={{color:  "white" , fontWeight: "bold"}}> لا </Text>
+                            </Animatable.View>
+                        </TouchableWithoutFeedback>
+            
    
-            </View>
-  
-        );
-    }
-    else if (this.state.current === 6) {
-        return (
-            <View style={styles.container}>
-            <View style={{ flex: 1}}>
-            <Text style={styles.pageText}> {this.state.current+1}/{nbreecran+1} </Text> 
-             </View>  
-             <View style={{ flex: 10}}>
-                <Text style={styles.textlabel}></Text> 
-              <Text style={styles.textlabel}>ماهي نتيجة التحليل ؟ {br} {br}</Text> 
-              <TouchableWithoutFeedback onPress={() => this._onPressresultatanalys("yes")}>
-              <Animatable.View ref="viewooui" style={{ margin:10, paddingTop :10, paddingBottom: 10, paddingRight: 20, paddingLeft: 20, backgroundColor: this.state.statusresultatanalys ==="yes" ? this.state.onColor : "#bdbdbd", borderRadius:20}}>
-              <Text style={{color:"white", fontWeight: "bold"}}>مصاب</Text>
-              </Animatable.View>
-          </TouchableWithoutFeedback>
-          <TouchableWithoutFeedback onPress={() => this._onPressresultatanalys("no")}>
-              <Animatable.View ref="viewnnon" style={{ margin:10, paddingTop :10, paddingBottom: 10, paddingRight: 20, paddingLeft: 20, backgroundColor: this.state.statusresultatanalys ==="no"? this.state.onColor : "#bdbdbd", borderRadius:20}}>
-              <Text style={{color:  "white" , fontWeight: "bold"}}>غير مصاب</Text>
-              </Animatable.View>
-          </TouchableWithoutFeedback>
-
-                   <View style={styles.buttonContainer}>
-            {this.state.current!= 0 ? <Button title={'Précédent'} onPress={() => this._onPrev(1)} /> : null}
-              
-                {!this.state.isLast ? <Button title={'Suivant'} onPress={() => this._onNext(1)} /> : <Button title={'Terminer'} onPress={() => this._addpatient()} />} 
-            </View>
-   
-            </View> 
-
-   
-            </View>
-
-        );
-    }
-    else  if (this.state.current === 7) {
-        const { shift } = this.state;
-        return (
-            <Animated.View style={[styles.container, { transform: [{translateY: shift}] }]}>
-            <View style={styles.container}>
-            <View style={{ flex: 1}}>
-            <Text style={styles.pageText}> {this.state.current+1}/{nbreecran+1} </Text> 
-             </View>  
-             <View style={{ flex: 10}}>
-                <Text style={styles.textlabel}>هل كنت في إحدى المناطق التي أعلنت عنها وزارة الصحة كبؤرة لإنتشار المرض خلال الأسبوعين الفارطين؟ {br} {br}</Text> 
-                <TouchableWithoutFeedback onPress={() => this._onPressstatuszonecritique("yes")}>
-                <Animatable.View ref="viewoui" style={{ margin:10, paddingTop :10, paddingBottom: 10, paddingRight: 20, paddingLeft: 20, backgroundColor: this.state.statuszonecritique ==="yes" ? this.state.onColor : "#bdbdbd", borderRadius:20}}>
-                <Text style={{color:  "white" , fontWeight: "bold"}}>نعم </Text>
-                </Animatable.View>
-            </TouchableWithoutFeedback>
-            <TouchableWithoutFeedback onPress={() => this._onPressstatuszonecritique("no")}>
-                <Animatable.View ref="viewnon" style={{ margin:10, paddingTop :10, paddingBottom: 10, paddingRight: 20, paddingLeft: 20, backgroundColor: this.state.statuszonecritique ==="no" ? this.state.onColor : "#bdbdbd", borderRadius:20}}>
-                <Text style={{color:  "white" , fontWeight: "bold"}}>لا </Text>
-                </Animatable.View>
-            </TouchableWithoutFeedback>
-   
-            <View style={styles.buttonContainer}>
-            {this.state.current!= 0 ? <Button title={'Précédent'} onPress={() => this._onPrev(this.state.statustestanalys ==="yes"?1:2)} /> : null}
-              
-                {!this.state.isLast ? <Button title={'Suivant'} onPress={() => this._onNext(this.state.statuszonecritique ==="yes"?1:2)} /> : <Button title={'Terminer'} onPress={() => this._addpatient()} />} 
-            </View>
-            </View> 
-
-     
-            </View>
-
-            </Animated.View>
-        );
         
+           
+                </View>
+                <Text style={styles.textlabel}> {br} {br} </Text> 
+            <View style={styles.innerContainer}> 
+                {this.state.current!= 0 ? 
+               <TouchableOpacity  style={styles.addButtonprev}  onPress={() => this._onPrev(1)}>
+               <Text style={styles.addButtonText}> السابق </Text> 
+                </TouchableOpacity>: null}
+
+                {!this.state.isLast ? 
+                 <TouchableOpacity  style={(this.state.statustestanalysvoyag=="empty")?styles.addButtonnextDisable:styles.addButtonnext}  disabled={(this.state.statustestanalysvoyag=="empty") ? true : false}  onPress={() => this._onNext(this.state.statustestanalysvoyag ==="yes"?1:2)}>
+                 <Text style={styles.addButtonText}> الموالي </Text> 
+                  </TouchableOpacity>    
+
+                  : <TouchableOpacity  style={styles.addButtonnext}  onPress={() => this._addpatient()}>
+                  <Text style={styles.addButtonText}> تسجيل </Text> 
+                  </TouchableOpacity>
+                }
+
+   
+        
+            </View>
+            </ScrollView > 
+        );
     }
-    else  if (this.state.current === 8) {
-        const { shift } = this.state;
+    else if (this.state.current === 8) {
+        let pourcentage=(this.state.current)/(nbreecran);
         return (
-            <Animated.View style={[styles.container, { transform: [{translateY: shift}] }]}>
-            <View style={styles.container}>
-                <View style={{ flex: 1}}>
-                <Text style={styles.pageText}> {this.state.current+1}/{nbreecran+1} </Text> 
-                </View>  
-             <View style={{ flex: 10}}>
+            <ScrollView style={{  backgroundColor:  "white"}}>
+            <View style={styles.row}>
+               <Text style={styles.textlabel1}>{Math.floor(pourcentage*100)} % </Text>
+               <ProgressBar progress={pourcentage} color={Colors.red800} />
+               <Text style={styles.textlabel}> </Text> 
+                        <View style={{ margin:10, paddingTop :10, paddingBottom: 10, paddingRight: 20, paddingLeft: 20, backgroundColor:  "#F0493E", borderRadius:20}}>
+                            <Text style={styles.textlabel}>  ماهي نتيجة التحليل ؟  </Text> 
+                            </View>
+                            <Text style={styles.textlabel}> {br} </Text> 
+                            <TouchableWithoutFeedback onPress={() => this._onPressresultatanalysvoyag("yes")}>
+                            <Animatable.View ref="view1" style={{ margin:10, paddingTop :10, paddingBottom: 10, paddingRight: 20, paddingLeft: 20, backgroundColor: this.state.statusresultatanalysvoyag ==="yes" ? this.state.onColor : "#bdbdbd", borderRadius:20}}>
+                            <Text style={{color:"white", fontWeight: "bold"}}>مصاب   </Text>
+                            </Animatable.View>
+                        </TouchableWithoutFeedback>
+                        <TouchableWithoutFeedback onPress={() => this._onPressresultatanalysvoyag("no")}>
+                            <Animatable.View ref="view2" style={{ margin:10, paddingTop :10, paddingBottom: 10, paddingRight: 20, paddingLeft: 20, backgroundColor: this.state.statusresultatanalysvoyag ==="no"? this.state.onColor : "#bdbdbd", borderRadius:20}}>
+                            <Text style={{color:  "white" , fontWeight: "bold"}}> غير مصاب   </Text>
+                            </Animatable.View>
+                        </TouchableWithoutFeedback>
+            
+   
+        
+           
+                </View>
+                <Text style={styles.textlabel}> {br} {br} </Text> 
+            <View style={styles.innerContainer}> 
+                {this.state.current!= 0 ? 
+               <TouchableOpacity  style={styles.addButtonprev}  onPress={() => this._onPrev(1)}>
+               <Text style={styles.addButtonText}> السابق </Text> 
+                </TouchableOpacity>: null}
+
+                {!this.state.isLast ? 
+                  <TouchableOpacity  style={(this.state.statusresultatanalysvoyag=="empty")?styles.addButtonnextDisable:styles.addButtonnext}  disabled={(this.state.statusresultatanalysvoyag=="empty") ? true : false}  onPress={() => this._onNext(1)}>
+                 <Text style={styles.addButtonText}> الموالي </Text> 
+                  </TouchableOpacity>    
+
+                  : <TouchableOpacity  style={styles.addButtonnext}  onPress={() => this._addpatient()}>
+                  <Text style={styles.addButtonText}> تسجيل </Text> 
+                  </TouchableOpacity>
+                }
+
+   
+        
+            </View>
+            </ScrollView > 
+        );
+    }
 
 
-             <View> 
+    else if (this.state.current === 9) {
+        let pourcentage=(this.state.current)/(nbreecran);
+        return (
+            <ScrollView style={{  backgroundColor:  "white"}}>
+            <View style={styles.row}>
+               <Text style={styles.textlabel1}>{Math.floor(pourcentage*100)} % </Text>
+               <ProgressBar progress={pourcentage} color={Colors.red800} />
+               <Text style={styles.textlabel}> </Text> 
+                        <View style={{ margin:10, paddingTop :10, paddingBottom: 10, paddingRight: 20, paddingLeft: 20, backgroundColor:  "#F0493E", borderRadius:20}}>
+                        <Text style={styles.textlabel}>هل كنت في إحدى المناطق التي أعلنت عنها وزارة الصحة كبؤرة لإنتشار المرض خلال الأسبوعين الفارطين؟ </Text>
+                            </View>
+                            <Text style={styles.textlabel}> {br} </Text> 
+                            <TouchableWithoutFeedback onPress={() => this._onPressstatuszonecritique("yes")}>
+                            <Animatable.View ref="viewoui" style={{ margin:10, paddingTop :10, paddingBottom: 10, paddingRight: 20, paddingLeft: 20, backgroundColor: this.state.statuszonecritique ==="yes" ? this.state.onColor : "#bdbdbd", borderRadius:20}}>
+                            <Text style={{color:  "white" , fontWeight: "bold"}}>نعم </Text>
+                            </Animatable.View>
+                        </TouchableWithoutFeedback>
+                        <TouchableWithoutFeedback onPress={() => this._onPressstatuszonecritique("no")}>
+                            <Animatable.View ref="viewnon" style={{ margin:10, paddingTop :10, paddingBottom: 10, paddingRight: 20, paddingLeft: 20, backgroundColor: this.state.statuszonecritique ==="no" ? this.state.onColor : "#bdbdbd", borderRadius:20}}>
+                            <Text style={{color:  "white" , fontWeight: "bold"}}>لا </Text>
+                            </Animatable.View>
+                        </TouchableWithoutFeedback>
+            
+   
+        
+           
+                </View>
+                <Text style={styles.textlabel}> {br} {br} </Text> 
+            <View style={styles.innerContainer}> 
+            {this.state.current!= 0 ? 
+               <TouchableOpacity  style={styles.addButtonprev}  onPress={() => this._onPrev(this.state.statuscontact ==="yes"?(this.state.statustestanalys ==="yes"?1:2):3)}>
+               <Text style={styles.addButtonText}> السابق </Text> 
+                </TouchableOpacity>: null}
 
-          
-                <Text style={styles.textlabel}>  حدد المنطقة {br} </Text> 
-      
+                {!this.state.isLast ? 
+                 <TouchableOpacity  style={(this.state.statuszonecritique=="empty")?styles.addButtonnextDisable:styles.addButtonnext}  disabled={(this.state.statuszonecritique=="empty") ? true : false}  onPress={() => this._onNext(this.state.statuszonecritique ==="yes"?1:2)}>
+                 <Text style={styles.addButtonText}> الموالي </Text> 
+                  </TouchableOpacity>    
+
+                  : <TouchableOpacity  style={styles.addButtonnext}  onPress={() => this._addpatient()}>
+                  <Text style={styles.addButtonText}> تسجيل </Text> 
+                  </TouchableOpacity>
+                }
+
+   
+        
+            </View>
+            </ScrollView > 
+        );
+    }
+
+
+    else if (this.state.current === 10) {
+        let pourcentage=(this.state.current)/(nbreecran);
+        return (
+            <ScrollView style={{  backgroundColor:  "white"}}>
+            <View style={styles.row}>
+               <Text style={styles.textlabel1}>{Math.floor(pourcentage*100)} % </Text>
+               <ProgressBar progress={pourcentage} color={Colors.red800} />
+               <Text style={styles.textlabel}> </Text> 
+              
+                        <Text style={styles.textlabel1}>  حدد المنطقة  </Text> 
+                         
+                          
+                            <Text style={styles.textlabel}> {br} </Text> 
                 <TextInput
                     placeholder="المنطقة "
                     style={styles.textInput}
                     value={this.state.statusville} onChangeText={ (text) => this.setState({ statusville: text }) }
                     />
-                    <Text style={styles.textlabel}>  {br} </Text> 
-            <Text style={styles.textlabel}>  متى قمت بزيارتها عدد الأيام  {br} </Text> 
-            <TextInput
+                        <Text style={styles.textlabel}>  {br} </Text> 
+                     
+                        <Text style={styles.textlabel1}>   منذ متى قمت بزيارتها  </Text> 
+                       
+                            <Text style={styles.textlabel}> {br} </Text> 
+                    <TextInput keyboardType='numeric'
                     placeholder="عدد الأيام "
                     style={styles.textInput}
                     value={this.state.statusnbrejours} onChangeText={ (text) => this.setState({ statusnbrejours: text }) }
                     />
- 
-          </View>  
-          <View style={styles.buttonContainer}>
-            {this.state.current!= 0 ? <Button title={'Précédent'} onPress={() => this._onPrev(1)} /> : null}
-              
-                {!this.state.isLast ? <Button title={'Suivant'} onPress={() => this._onNext(1)} /> : <Button title={'Terminer'} onPress={() => this._addpatient()} />} 
-
-            </View> 
-       
-            </View>  
-
-            </View> 
-            </Animated.View>
-        );
+            
+   
         
+           
+                </View>
+                <Text style={styles.textlabel}> {br} </Text> 
+            <View style={styles.innerContainer}> 
+            {this.state.current!= 0 ? 
+               <TouchableOpacity  style={styles.addButtonprev}  onPress={() => this._onPrev(1)}>
+               <Text style={styles.addButtonText}> السابق </Text> 
+                </TouchableOpacity>: null}
+
+                {!this.state.isLast ? 
+                  <TouchableOpacity  style={(this.state.statusville==""||this.state.statusnbrejours=="")?styles.addButtonnextDisable:styles.addButtonnext}  disabled={(this.state.statusville==""||this.state.statusnbrejours=="") ? true : false}  onPress={() => this._onNext(1)}>
+                 <Text style={styles.addButtonText}> الموالي </Text> 
+                  </TouchableOpacity>    
+
+                  : <TouchableOpacity  style={styles.addButtonnext}  onPress={() => this._addpatient()}>
+                  <Text style={styles.addButtonText}> تسجيل </Text> 
+                  </TouchableOpacity>
+                }
+
+   
+        
+            </View>
+            </ScrollView > 
+        );
     }
-    else  if (this.state.current === 9) {
-        const { shift } = this.state;
+
+    else if (this.state.current === 11) {
+        let pourcentage=(this.state.current)/(nbreecran);
         return (
-            <Animated.View style={[styles.container, { transform: [{translateY: shift}] }]}>
-                <View style={styles.container}>
-                            <View style={{ flex: 1}}>
-                            <Text style={styles.pageText}> {this.state.current+1}/{nbreecran+1} </Text> 
-                            </View>  
-                        <View style={{ flex: 10}}>
-                                <Text style={styles.textlabel}>هل تشكو من إرتفاع في درجة حرارتك ؟  {br} {br}</Text> 
+            <ScrollView style={{  backgroundColor:  "white"}}>
+            <View style={styles.row}>
+               <Text style={styles.textlabel1}>{Math.floor(pourcentage*100)} % </Text>
+               <ProgressBar progress={pourcentage} color={Colors.red800} />
+               <Text style={styles.textlabel}> </Text> 
+                        <View style={{ margin:10, paddingTop :10, paddingBottom: 10, paddingRight: 20, paddingLeft: 20, backgroundColor:  "#F0493E", borderRadius:20}}>
+                        <Text style={styles.textlabel}> هل كان لك اتصال مباشر بمريض(ة) تاكدت اصابته(ا) بفيروس الكورونا  خلال الاسبوعين الفارطين </Text>
+                            </View>
+                            <Text style={styles.textlabel}> {br} </Text> 
+                            <TouchableWithoutFeedback onPress={() => this._onPresscontactmalade("yes")}>
+                            <Animatable.View ref="viewoui" style={{ margin:10, paddingTop :10, paddingBottom: 10, paddingRight: 20, paddingLeft: 20, backgroundColor: this.state.statuscontactmalade==="yes" ? this.state.onColor : "#bdbdbd", borderRadius:20}}>
+                            <Text style={{color:  "white" , fontWeight: "bold"}}>نعم </Text>
+                            </Animatable.View>
+                        </TouchableWithoutFeedback>
+                        <TouchableWithoutFeedback onPress={() => this._onPresscontactmalade("no")}>
+                            <Animatable.View ref="viewnon" style={{ margin:10, paddingTop :10, paddingBottom: 10, paddingRight: 20, paddingLeft: 20, backgroundColor: this.state.statuscontactmalade ==="no" ? this.state.onColor : "#bdbdbd", borderRadius:20}}>
+                            <Text style={{color:  "white" , fontWeight: "bold"}}>لا </Text>
+                            </Animatable.View>
+                        </TouchableWithoutFeedback>
+            
+   
+        
+           
+                </View>
+                <Text style={styles.textlabel}> {br} {br} </Text> 
+            <View style={styles.innerContainer}> 
+            {this.state.current!= 0 ? 
+               <TouchableOpacity  style={styles.addButtonprev}  onPress={() => this._onPrev(this.state.statuszonecritique ==="yes"?1:2)}>
+               <Text style={styles.addButtonText}> السابق </Text> 
+                </TouchableOpacity>: null}
+
+                {!this.state.isLast ? 
+                <TouchableOpacity  style={(this.state.statuscontactmalade=="empty")?styles.addButtonnextDisable:styles.addButtonnext}  disabled={(this.state.statuscontactmalade=="empty") ? true : false}  onPress={() => this._onNext(1)}>
+                
+                 <Text style={styles.addButtonText}> الموالي </Text> 
+                  </TouchableOpacity>    
+
+                  : <TouchableOpacity  style={styles.addButtonnext}  onPress={() => this._addpatient()}>
+                  <Text style={styles.addButtonText}> تسجيل </Text> 
+                  </TouchableOpacity>
+                }
+
+   
+        
+            </View>
+            </ScrollView > 
+        );
+    }
+
+    else if (this.state.current === 12) {
+        let pourcentage=(this.state.current)/(nbreecran);
+        return (
+            <ScrollView style={{  backgroundColor:  "white"}}>
+            <View style={styles.row}>
+               <Text style={styles.textlabel1}>{Math.floor(pourcentage*100)} % </Text>
+               <ProgressBar progress={pourcentage} color={Colors.red800} />
+               <Text style={styles.textlabel}> </Text> 
+                        <View style={{ margin:10, paddingTop :10, paddingBottom: 10, paddingRight: 20, paddingLeft: 20, backgroundColor:  "#F0493E", borderRadius:20}}>
+                        <Text style={styles.textlabel}> هل يوجد في محيطك الاجتماعي (العمل ،المنزل..)أشخاص يعانون نفس الاعراض حمى،سعال،ضيق تنفس, ضيق تنفس شديد  </Text>
+                            </View>
+                            <Text style={styles.textlabel}> {br} </Text> 
+                            <TouchableWithoutFeedback onPress={() => this._onPressentourage("yes")}>
+                            <Animatable.View ref="viewoui" style={{ margin:10, paddingTop :10, paddingBottom: 10, paddingRight: 20, paddingLeft: 20, backgroundColor: this.state.statusentourage ==="yes" ? this.state.onColor : "#bdbdbd", borderRadius:20}}>
+                            <Text style={{color:  "white" , fontWeight: "bold"}}>نعم </Text>
+                            </Animatable.View>
+                        </TouchableWithoutFeedback>
+                        <TouchableWithoutFeedback onPress={() => this._onPressentourage("no")}>
+                            <Animatable.View ref="viewnon" style={{ margin:10, paddingTop :10, paddingBottom: 10, paddingRight: 20, paddingLeft: 20, backgroundColor: this.state.statusentourage ==="no" ? this.state.onColor : "#bdbdbd", borderRadius:20}}>
+                            <Text style={{color:  "white" , fontWeight: "bold"}}>لا </Text>
+                            </Animatable.View>
+                        </TouchableWithoutFeedback>
+            
+   
+        
+           
+                </View>
+                <Text style={styles.textlabel}> {br} {br} </Text> 
+            <View style={styles.innerContainer}> 
+            {this.state.current!= 0 ? 
+               <TouchableOpacity  style={styles.addButtonprev}  onPress={() => this._onPrev(1)}>
+               <Text style={styles.addButtonText}> السابق </Text> 
+                </TouchableOpacity>: null}
+
+                {!this.state.isLast ? 
+                <TouchableOpacity  style={(this.state.statusentourage=="empty")?styles.addButtonnextDisable:styles.addButtonnext}  disabled={(this.state.statusentourage=="empty") ? true : false}  onPress={() => this._onNext(this.state.statusentourage ==="yes"?1:2)}>
+                 <Text style={styles.addButtonText}> الموالي </Text> 
+                  </TouchableOpacity>    
+
+                  : <TouchableOpacity  style={styles.addButtonnext}  onPress={() => this._addpatient()}>
+                  <Text style={styles.addButtonText}> تسجيل </Text> 
+                  </TouchableOpacity>
+                }
+
+   
+        
+            </View>
+            </ScrollView > 
+        );
+    }
+
+    else if (this.state.current === 13) {
+        let pourcentage=(this.state.current)/(nbreecran);
+        return (
+            <ScrollView style={{  backgroundColor:  "white"}}>
+            <View style={styles.row}>
+               <Text style={styles.textlabel1}>{Math.floor(pourcentage*100)} % </Text>
+               <ProgressBar progress={pourcentage} color={Colors.red800} />
+               <Text style={styles.textlabel}> </Text> 
+              
+                        <Text style={styles.textlabel1}> عدد الاشخاص  </Text> 
+                         
+                          
+                            <Text style={styles.textlabel}> {br} </Text> 
+                <TextInput keyboardType='numeric'
+                    placeholder="عدد الاشخاص "
+                    style={styles.textInput}
+                    value={this.state.statusnbepersentourage} onChangeText={ (text) => this.setState({ statusnbepersentourage: text }) }
+                    />
+             
+                            
+                            <Text style={styles.textlabel}> {br} </Text> 
+                            <TouchableWithoutFeedback onPress={() => this._onPressLivingentourage("1")}>
+                            <Animatable.View ref="view1" style={{ margin:10, paddingTop :10, paddingBottom: 10, paddingRight: 20, paddingLeft: 20, backgroundColor: this.state.statusLivingentourage ==="1" ? this.state.onColor : "#bdbdbd", borderRadius:20}}>
+                            <Text style={{color:  "white" , fontWeight: "bold"}}> تسكنون في نفس المنزل </Text>
+                            </Animatable.View>
+                        </TouchableWithoutFeedback>
+                        <TouchableWithoutFeedback onPress={() => this._onPressLivingentourage("2")}>
+                            <Animatable.View ref="view2" style={{ margin:10, paddingTop :10, paddingBottom: 10, paddingRight: 20, paddingLeft: 20, backgroundColor: this.state.statusLivingentourage ==="2" ? this.state.onColor : "#bdbdbd", borderRadius:20}}>
+                            <Text style={{color:  "white" , fontWeight: "bold"}}> تشتغلون معا </Text>
+                            </Animatable.View>
+                        </TouchableWithoutFeedback>
+
+                        <TouchableWithoutFeedback onPress={() => this._onPressLivingentourage("3")}>
+                            <Animatable.View ref="view3" style={{ margin:10, paddingTop :10, paddingBottom: 10, paddingRight: 20, paddingLeft: 20, backgroundColor: this.state.statusLivingentourage ==="3" ? this.state.onColor : "#bdbdbd", borderRadius:20}}>
+                            <Text style={{color:  "white" , fontWeight: "bold"}}>فضاء لقاء اخر </Text>
+                            </Animatable.View>
+                        </TouchableWithoutFeedback>
+   
+        
+           
+                </View>
+                <Text style={styles.textlabel}> {br} </Text> 
+            <View style={styles.innerContainer}> 
+            {this.state.current!= 0 ? 
+               <TouchableOpacity  style={styles.addButtonprev}  onPress={() => this._onPrev(1)}>
+               <Text style={styles.addButtonText}> السابق </Text> 
+                </TouchableOpacity>: null}
+
+                {!this.state.isLast ? 
+                <TouchableOpacity  style={(this.state.statusLivingentourage=="empty"|| this.state.statusnbepersentourage=="")?styles.addButtonnextDisable:styles.addButtonnext}  disabled={(this.state.statusLivingentourage=="empty"||this.state.statusnbepersentourage=="") ? true : false}  onPress={() => this._onNext(1)}>
+                 <Text style={styles.addButtonText}> الموالي </Text> 
+                  </TouchableOpacity>    
+
+                  : <TouchableOpacity  style={styles.addButtonnext}  onPress={() => this._addpatient()}>
+                  <Text style={styles.addButtonText}> تسجيل </Text> 
+                  </TouchableOpacity>
+                }
+
+   
+        
+            </View>
+            </ScrollView > 
+        );
+    }
+
+
+    else if (this.state.current === 14) {
+        let pourcentage=(this.state.current)/(nbreecran);
+        return (
+            <ScrollView style={{  backgroundColor:  "white"}}>
+            <View style={styles.row}>
+               <Text style={styles.textlabel1}>{Math.floor(pourcentage*100)} % </Text>
+               <ProgressBar progress={pourcentage} color={Colors.red800} />
+               <Text style={styles.textlabel}> </Text> 
+                        <View style={{ margin:10, paddingTop :10, paddingBottom: 10, paddingRight: 20, paddingLeft: 20, backgroundColor:  "#F0493E", borderRadius:20}}>
+                        <Text style={styles.textlabel}>هل تشكو من إرتفاع في درجة حرارتك ؟ </Text> 
+                            </View>
+                            <Text style={styles.textlabel}> {br} </Text> 
                                 <TouchableWithoutFeedback onPress={() => this._onPressfievre("yes")}>
                                 <Animatable.View ref="viewoui" style={{ margin:10, paddingTop :10, paddingBottom: 10, paddingRight: 20, paddingLeft: 20, backgroundColor: this.state.statusfievre ==="yes"? this.state.onColor : "#bdbdbd", borderRadius:20}}>
                                 <Text style={{color:"white" , fontWeight: "bold"}}>نعم</Text>
@@ -982,11 +1489,12 @@ export default class Editpatient extends Component {
                                 <Text style={{color:"white" , fontWeight: "bold"}}>لا</Text>
                                 </Animatable.View>
                             </TouchableWithoutFeedback>
+            
                             {this.state.statusfievre==="yes" ? (
                             <View>
                                 <Text style={styles.textlabel}></Text> 
-                                <Text style={styles.textlabel}> ما هي درجة حرارتك {br} </Text> 
-                                <TextInput
+                                <Text style={styles.textlabel1}> ما هي درجة حرارتك  </Text> 
+                                <TextInput keyboardType='numeric'
                                     placeholder="درجة حرارتك "
                                     style={styles.textInput}
                                     value={this.state.statusdugreefievre} onChangeText={ (text) => this.setState({ statusdugreefievre: text }) }
@@ -995,376 +1503,549 @@ export default class Editpatient extends Component {
                             ) : (
                                 <View/>
                             )}
-
-                    <View style={styles.buttonContainer}>
-                    {this.state.current!= 0 ? <Button title={'Précédent'} onPress={() => this._onPrev(this.state.statuszonecritique ==="yes"?1:2)} /> : null}
-                    
-                        {!this.state.isLast ? <Button title={'Suivant'} onPress={() => this._onNext(1)} /> : <Button title={'Terminer'} onPress={() => this._addpatient()} />} 
-                    </View>
-            
-                        </View>  
-
-            
-                    </View>
-         
-            </Animated.View>
-        );
-    }
-    else  if (this.state.current === 10) {
-        return (
-            <View style={styles.container}>
-            <View style={{ flex: 1}}>
-            <Text style={styles.pageText}> {this.state.current+1}/{nbreecran+1} </Text> 
-             </View>  
-             <View style={{ flex: 5}}>
-                <Text style={styles.textlabel}> هل لديك سعال أو أن درجة السعال التي تشكو منها في العادة إزدادت حدة ؟  {br} {br}</Text> 
-                <TouchableWithoutFeedback onPress={() => this._onPresstoux("yes")}>
-                <Animatable.View ref="viewoui" style={{ margin:10, paddingTop :10, paddingBottom: 10, paddingRight: 20, paddingLeft: 20, backgroundColor: this.state.statustoux ==="yes"? this.state.onColor : "#bdbdbd", borderRadius:20}}>
-                <Text style={{color: "white" , fontWeight: "bold"}}>نعم</Text>
-                </Animatable.View>
-            </TouchableWithoutFeedback>
-            <TouchableWithoutFeedback onPress={() => this._onPresstoux("no")}>
-                <Animatable.View ref="viewnon" style={{ margin:10, paddingTop :10, paddingBottom: 10, paddingRight: 20, paddingLeft: 20, backgroundColor: this.state.statustoux ==="no"? this.state.onColor : "#bdbdbd", borderRadius:20}}>
-                <Text style={{color: "white" , fontWeight: "bold"}}>لا</Text>
-                </Animatable.View>
-            </TouchableWithoutFeedback>
-
-            
-            <View style={styles.buttonContainer}>
-            {this.state.current!= 0 ? <Button title={'Précédent'} onPress={() => this._onPrev(1)} /> : null}
-              
-                {!this.state.isLast ? <Button title={'Suivant'} onPress={() => this._onNext(1)} /> : <Button title={'Terminer'} onPress={() => this._addpatient()} />} 
-            </View>
-   
-            </View>  
-
-            </View>  
-  
-        );
-    }
-    else  if (this.state.current === 11) {
-        return (
-            <View style={styles.container}>
-            <View style={{ flex: 1}}>
-            <Text style={styles.pageText}> {this.state.current+1}/{nbreecran+1} </Text> 
-             </View>  
-             <View style={{ flex: 8}}>
-                <Text style={styles.textlabel}> هل تشكو من عدم القدرة على الحديث كما في السابق هل تشكو من ضيق تنفس أو تعكر في قدرتك على التنفس مقارنة بالسابق ؟   {br} {br}</Text> 
-                <TouchableWithoutFeedback onPress={() => this._onPressASPHYXIE("yes")}>
-                <Animatable.View ref="viewoui" style={{ margin:10, paddingTop :10, paddingBottom: 10, paddingRight: 20, paddingLeft: 20, backgroundColor: this.state.statusASPHYXIE ==="yes"? this.state.onColor : "#bdbdbd", borderRadius:20}}>
-                <Text style={{color: "white" , fontWeight: "bold"}}>نعم</Text>
-                </Animatable.View>
-            </TouchableWithoutFeedback>
-            <TouchableWithoutFeedback onPress={() => this._onPressASPHYXIE("no")}>
-                <Animatable.View ref="viewnon" style={{ margin:10, paddingTop :10, paddingBottom: 10, paddingRight: 20, paddingLeft: 20, backgroundColor: this.state.statusASPHYXIE ==="no"? this.state.onColor : "#bdbdbd", borderRadius:20}}>
-                <Text style={{color:  "white", fontWeight: "bold"}}>لا</Text>
-                </Animatable.View>
-            </TouchableWithoutFeedback>
-
-                <View style={styles.buttonContainer}>
-            {this.state.current!= 0 ? <Button title={'Précédent'} onPress={() => this._onPrev(1)} /> : null}
-              
-                {!this.state.isLast ? <Button title={'Suivant'} onPress={() => this._onNext(this.state.statusASPHYXIE==="yes"?1:2)} /> : <Button title={'Terminer'} onPress={() => this._addpatient()} />} 
-            </View>
-   
-            </View> 
-
+        
            
-        
-            </View>  
-        
-        );
-    }
-    else  if (this.state.current === 12 )  {
-        return (
-            <View style={styles.container}>
-            <View style={{ flex: 1}}>
-            <Text style={styles.pageText}> {this.state.current+1}/{nbreecran+1} </Text> 
-             </View>  
-             <View style={{ flex: 10}}>
-                <Text style={styles.textlabel}> لماذا ؟   {br} {br}</Text> 
-                <TouchableWithoutFeedback onPress={() => this._onPressWhyABILYTY("1")}>
-                <Animatable.View ref="view1" style={{ margin:10, paddingTop :10, paddingBottom: 10, paddingRight: 20, paddingLeft: 20, backgroundColor: this.state.statusWhyABILYTY.findIndex(item => item === "1") !="-1"? this.state.onColor : "#bdbdbd", borderRadius:20}}>
-                <Text style={{color:  "white" , fontWeight: "bold"}}>أحس بضيق في التنفس</Text>
-                </Animatable.View>
-            </TouchableWithoutFeedback>
-            <TouchableWithoutFeedback onPress={() => this._onPressWhyABILYTY("2")}>
-                <Animatable.View ref="view2" style={{ margin:10, paddingTop :10, paddingBottom: 10, paddingRight: 20, paddingLeft: 20, backgroundColor: this.state.statusWhyABILYTY.findIndex(item => item === "2") !="-1"? this.state.onColor : "#bdbdbd", borderRadius:20}}>
-                <Text style={{color: "white" , fontWeight: "bold"}}>صداع شديد يمنعني من الحديث</Text>
-                </Animatable.View>
-            </TouchableWithoutFeedback>
+                </View>
+                <Text style={styles.textlabel}> {br} {br} </Text> 
+            <View style={styles.innerContainer}> 
+            {this.state.current!= 0 ? 
+               <TouchableOpacity  style={styles.addButtonprev}  onPress={() => this._onPrev(this.state.statusentourage ==="yes"?1:2)}>
+               <Text style={styles.addButtonText}> السابق </Text> 
+                </TouchableOpacity>: null}
 
-                <TouchableWithoutFeedback onPress={() => this._onPressWhyABILYTY("3")}>
-                <Animatable.View ref="view3" style={{ margin:10, paddingTop :10, paddingBottom: 10, paddingRight: 20, paddingLeft: 20, backgroundColor: this.state.statusWhyABILYTY.findIndex(item => item === "3") !="-1"? this.state.onColor : "#bdbdbd", borderRadius:20}}>
-                <Text style={{color: "white" , fontWeight: "bold"}}>أحس بتعب شديد</Text>
-                </Animatable.View>
-                </TouchableWithoutFeedback>
+                {!this.state.isLast ? 
+                <TouchableOpacity  style={(this.state.statusfievre=="empty")?styles.addButtonnextDisable:styles.addButtonnext}  disabled={(this.state.statusfievre=="empty") ? true : false}  onPress={() => this._onNext(1)}>
+                 <Text style={styles.addButtonText}> الموالي </Text> 
+                  </TouchableOpacity>    
 
-                  <TouchableWithoutFeedback onPress={() => this._onPressWhyABILYTY("4")}>
-                <Animatable.View ref="view4" style={{ margin:10, paddingTop :10, paddingBottom: 10, paddingRight: 20, paddingLeft: 20, backgroundColor: this.state.statusWhyABILYTY.findIndex(item => item === "4") !="-1"? this.state.onColor : "#bdbdbd", borderRadius:20}}>
-                <Text style={{color: "white" , fontWeight: "bold"}}>آخر</Text>
-                </Animatable.View>
-                </TouchableWithoutFeedback>
+                  : <TouchableOpacity  style={styles.addButtonnext}  onPress={() => this._addpatient()}>
+                  <Text style={styles.addButtonText}> تسجيل </Text> 
+                  </TouchableOpacity>
+                }
 
-                            <View style={styles.buttonContainer}>
-            {this.state.current!= 0 ? <Button title={'Précédent'} onPress={() => this._onPrev(1)} /> : null}
-              
-                {!this.state.isLast ? <Button title={'Suivant'} onPress={() => this._onNext(1)} /> : <Button title={'Terminer'} onPress={() => this._addpatient()} />} 
-            </View>
    
-            </View>  
-
-
-            </View>   
-
+        
+            </View>
+            </ScrollView > 
         );
     }
-    else if (this.state.current === 13) {
-        return (
-            <View style={styles.container}>
-            <View style={{ flex: 1}}>
-            <Text style={styles.pageText}> {this.state.current+1}/{nbreecran+1} </Text> 
-             </View>  
-             <View style={{ flex: 10}}>
-                <Text style={styles.textlabel}>هل تستطيع الحركة و القيام بحاجياتك دون مساعدة ؟ {br} {br}</Text> 
-                <TouchableWithoutFeedback onPress={() => this._onPressABILYTY("yes")}>
-                <Animatable.View ref="viewoui" style={{ margin:10, paddingTop :10, paddingBottom: 10, paddingRight: 20, paddingLeft: 20, backgroundColor: this.state.statusABILYTY ==="yes" ? this.state.onColor : "#bdbdbd", borderRadius:20}}>
-                <Text style={{color:"white", fontWeight: "bold"}}>نعم</Text>
-                </Animatable.View>
-            </TouchableWithoutFeedback>
-            <TouchableWithoutFeedback onPress={() => this._onPressABILYTY("no")}>
-                <Animatable.View ref="viewnon" style={{ margin:10, paddingTop :10, paddingBottom: 10, paddingRight: 20, paddingLeft: 20, backgroundColor: this.state.statusABILYTY ==="no"? this.state.onColor : "#bdbdbd", borderRadius:20}}>
-                <Text style={{color:  "white" , fontWeight: "bold"}}>لا</Text>
-                </Animatable.View>
-            </TouchableWithoutFeedback>
 
-                 <View style={styles.buttonContainer}>
-            {this.state.current!= 0 ? <Button title={'Précédent'} onPress={() => this._onPrev(this.state.statusASPHYXIE==="yes"?1:2)} /> : null}
-              
-                {!this.state.isLast ? <Button title={'Suivant'} onPress={() => this._onNext(this.state.statusABILYTY==="no"?1:2)} /> : <Button title={'Terminer'} onPress={() => this._addpatient()} />} 
-            </View>
+
+    else if (this.state.current === 15) {
+        let pourcentage=(this.state.current)/(nbreecran);
+        return (
+            <ScrollView style={{  backgroundColor:  "white"}}>
+            <View style={styles.row}>
+               <Text style={styles.textlabel1}>{Math.floor(pourcentage*100)} % </Text>
+               <ProgressBar progress={pourcentage} color={Colors.red800} />
+               <Text style={styles.textlabel}> </Text> 
+                        <View style={{ margin:10, paddingTop :10, paddingBottom: 10, paddingRight: 20, paddingLeft: 20, backgroundColor:  "#F0493E", borderRadius:20}}>
+                        <Text style={styles.textlabel}> هل لديك سعال أو أن درجة السعال التي تشكو منها في العادة إزدادت حدة ؟ </Text> 
+                            </View>
+                            <Text style={styles.textlabel}> {br} </Text> 
+                            <TouchableWithoutFeedback onPress={() => this._onPresstoux("yes")}>
+                            <Animatable.View ref="viewoui" style={{ margin:10, paddingTop :10, paddingBottom: 10, paddingRight: 20, paddingLeft: 20, backgroundColor: this.state.statustoux ==="yes"? this.state.onColor : "#bdbdbd", borderRadius:20}}>
+                            <Text style={{color: "white" , fontWeight: "bold"}}>نعم</Text>
+                            </Animatable.View>
+                        </TouchableWithoutFeedback>
+                        <TouchableWithoutFeedback onPress={() => this._onPresstoux("no")}>
+                            <Animatable.View ref="viewnon" style={{ margin:10, paddingTop :10, paddingBottom: 10, paddingRight: 20, paddingLeft: 20, backgroundColor: this.state.statustoux ==="no"? this.state.onColor : "#bdbdbd", borderRadius:20}}>
+                            <Text style={{color: "white" , fontWeight: "bold"}}>لا</Text>
+                            </Animatable.View>
+                        </TouchableWithoutFeedback>
+
+                </View>
+                <Text style={styles.textlabel}> {br} {br} </Text> 
+            <View style={styles.innerContainer}> 
+            {this.state.current!= 0 ? 
+               <TouchableOpacity  style={styles.addButtonprev}  onPress={() => this._onPrev(1)}>
+               <Text style={styles.addButtonText}> السابق </Text> 
+                </TouchableOpacity>: null}
+
+                {!this.state.isLast ? 
+                  <TouchableOpacity  style={(this.state.statustoux=="empty")?styles.addButtonnextDisable:styles.addButtonnext}  disabled={(this.state.statustoux=="empty") ? true : false}  onPress={() => this._onNext(1)}>
+                 <Text style={styles.addButtonText}> الموالي </Text> 
+                  </TouchableOpacity>    
+
+                  : <TouchableOpacity  style={styles.addButtonnext}  onPress={() => this._addpatient()}>
+                  <Text style={styles.addButtonText}> تسجيل </Text> 
+                  </TouchableOpacity>
+                }
+
    
-            </View>  
-
-       
+        
             </View>
-
+            </ScrollView > 
         );
     }
-    else  if (this.state.current === 14 )  {
+
+    else if (this.state.current === 16) {
+        let pourcentage=(this.state.current)/(nbreecran);
         return (
-            <View style={styles.container}>
-            <View style={{ flex: 1}}>
-            <Text style={styles.pageText}> {this.state.current+1}/{nbreecran+1} </Text> 
-             </View>  
-             <View style={{ flex: 10}}>
-                <Text style={styles.textlabel}>منذ متى ؟ {br} {br}</Text> 
-                <TouchableWithoutFeedback onPress={() => this._onPressABILYTY_DURATION("1")}>
-                <Animatable.View ref="view1" style={{ margin:10, paddingTop :10, paddingBottom: 10, paddingRight: 20, paddingLeft: 20, backgroundColor: this.state.statusABILYTY_DURATION ==="1" ? this.state.onColor : "#bdbdbd", borderRadius:20}}>
-                <Text style={{color:  "white" , fontWeight: "bold"}}>أيام  </Text>
-                </Animatable.View>
-            </TouchableWithoutFeedback>
-            <TouchableWithoutFeedback onPress={() => this._onPressABILYTY_DURATION("2")}>
-                <Animatable.View ref="view2" style={{ margin:10, paddingTop :10, paddingBottom: 10, paddingRight: 20, paddingLeft: 20, backgroundColor: this.state.statusABILYTY_DURATION ==="2" ? this.state.onColor : "#bdbdbd", borderRadius:20}}>
-                <Text style={{color:  "white" , fontWeight: "bold"}}>أسابيع </Text>
-                </Animatable.View>
-            </TouchableWithoutFeedback>
+            <ScrollView style={{  backgroundColor:  "white"}}>
+            <View style={styles.row}>
+               <Text style={styles.textlabel1}>{Math.floor(pourcentage*100)} % </Text>
+               <ProgressBar progress={pourcentage} color={Colors.red800} />
+               <Text style={styles.textlabel}> </Text> 
+                        <View style={{ margin:10, paddingTop :10, paddingBottom: 10, paddingRight: 20, paddingLeft: 20, backgroundColor:  "#F0493E", borderRadius:20}}>
+                        <Text style={styles.textlabel}>  هل تشكو من ضيق تنفس أو تعكر في قدرتك على التنفس مقارنة بالسابق ؟ </Text> 
+                            </View>
+                            <Text style={styles.textlabel}> {br} </Text> 
+                            <TouchableWithoutFeedback onPress={() => this._onPressASPHYXIE("yes")}>
+                            <Animatable.View ref="viewoui" style={{ margin:10, paddingTop :10, paddingBottom: 10, paddingRight: 20, paddingLeft: 20, backgroundColor: this.state.statusASPHYXIE ==="yes"? this.state.onColor : "#bdbdbd", borderRadius:20}}>
+                            <Text style={{color: "white" , fontWeight: "bold"}}>نعم</Text>
+                            </Animatable.View>
+                        </TouchableWithoutFeedback>
+                        <TouchableWithoutFeedback onPress={() => this._onPressASPHYXIE("no")}>
+                            <Animatable.View ref="viewnon" style={{ margin:10, paddingTop :10, paddingBottom: 10, paddingRight: 20, paddingLeft: 20, backgroundColor: this.state.statusASPHYXIE ==="no"? this.state.onColor : "#bdbdbd", borderRadius:20}}>
+                            <Text style={{color:  "white", fontWeight: "bold"}}>لا</Text>
+                            </Animatable.View>
+                        </TouchableWithoutFeedback>
 
-                    <TouchableWithoutFeedback onPress={() => this._onPressABILYTY_DURATION("3")}>
-                <Animatable.View ref="view3" style={{ margin:10, paddingTop :10, paddingBottom: 10, paddingRight: 20, paddingLeft: 20, backgroundColor: this.state.statusABILYTY_DURATION ==="3" ? this.state.onColor : "#bdbdbd", borderRadius:20}}>
-                <Text style={{color:  "white" , fontWeight: "bold"}}>أشهر   </Text>
-                </Animatable.View>
-            </TouchableWithoutFeedback>
-            <TouchableWithoutFeedback onPress={() => this._onPressABILYTY_DURATION("4")}>
-                <Animatable.View ref="view4" style={{ margin:10, paddingTop :10, paddingBottom: 10, paddingRight: 20, paddingLeft: 20, backgroundColor: this.state.statusABILYTY_DURATION ==="4" ? this.state.onColor : "#bdbdbd", borderRadius:20}}>
-                <Text style={{color:  "white" , fontWeight: "bold"}}>سنوات </Text>
-                </Animatable.View>
-            </TouchableWithoutFeedback>
+                </View>
+                <Text style={styles.textlabel}> {br} {br} </Text> 
+            <View style={styles.innerContainer}> 
+            {this.state.current!= 0 ? 
+               <TouchableOpacity  style={styles.addButtonprev}  onPress={() => this._onPrev(1)}>
+               <Text style={styles.addButtonText}> السابق </Text> 
+                </TouchableOpacity>: null}
 
-                        <View style={styles.buttonContainer}>
-            {this.state.current!= 0 ? <Button title={'Précédent'} onPress={() => this._onPrev(1)} /> : null}
+                {!this.state.isLast ? 
+                 <TouchableOpacity  style={(this.state.statusASPHYXIE=="empty")?styles.addButtonnextDisable:styles.addButtonnext}  disabled={(this.state.statusASPHYXIE=="empty") ? true : false}  onPress={() => this._onNext(this.state.statusASPHYXIE==="yes"?1:3)}>
+                 <Text style={styles.addButtonText}> الموالي </Text> 
+                  </TouchableOpacity>    
+
+                  : <TouchableOpacity  style={styles.addButtonnext}  onPress={() => this._addpatient()}>
+                  <Text style={styles.addButtonText}> تسجيل </Text> 
+                  </TouchableOpacity>
+                }
+
+   
+        
+            </View>
+            </ScrollView > 
+        );
+    }
+
+    else if (this.state.current === 17) {
+        let pourcentage=(this.state.current)/(nbreecran);
+        return (
+            <ScrollView style={{  backgroundColor:  "white"}}>
+            <View style={styles.row}>
+               <Text style={styles.textlabel1}>{Math.floor(pourcentage*100)} % </Text>
+               <ProgressBar progress={pourcentage} color={Colors.red800} />
+               <Text style={styles.textlabel}> </Text> 
+                        <View style={{ margin:10, paddingTop :10, paddingBottom: 10, paddingRight: 20, paddingLeft: 20, backgroundColor:  "#F0493E", borderRadius:20}}>
+                        <Text style={styles.textlabel}> هل تشكو من عدم القدرة على الحديث كما في السابق  ؟ </Text> 
+                            </View>
+                            <Text style={styles.textlabel}> {br} </Text> 
+                            <TouchableWithoutFeedback onPress={() => this._onPressPARLE("yes")}>
+                            <Animatable.View ref="viewoui" style={{ margin:10, paddingTop :10, paddingBottom: 10, paddingRight: 20, paddingLeft: 20, backgroundColor: this.state.statusPARLE ==="yes"? this.state.onColor : "#bdbdbd", borderRadius:20}}>
+                            <Text style={{color: "white" , fontWeight: "bold"}}>نعم</Text>
+                            </Animatable.View>
+                        </TouchableWithoutFeedback>
+                        <TouchableWithoutFeedback onPress={() => this._onPressPARLE("no")}>
+                            <Animatable.View ref="viewnon" style={{ margin:10, paddingTop :10, paddingBottom: 10, paddingRight: 20, paddingLeft: 20, backgroundColor: this.state.statusPARLE ==="no"? this.state.onColor : "#bdbdbd", borderRadius:20}}>
+                            <Text style={{color:  "white", fontWeight: "bold"}}>لا</Text>
+                            </Animatable.View>
+                        </TouchableWithoutFeedback>
+
+                </View>
+                <Text style={styles.textlabel}> {br} {br} </Text> 
+            <View style={styles.innerContainer}> 
+            {this.state.current!= 0 ? 
+               <TouchableOpacity  style={styles.addButtonprev}  onPress={() => this._onPrev(1)}>
+               <Text style={styles.addButtonText}> السابق </Text> 
+                </TouchableOpacity>: null}
+
+                {!this.state.isLast ? 
+                 <TouchableOpacity  style={(this.state.statusPARLE=="empty")?styles.addButtonnextDisable:styles.addButtonnext}  disabled={(this.state.statusPARLE=="empty") ? true : false}  onPress={() => this._onNext(this.state.statusPARLE==="yes"?1:2)}>
+                 <Text style={styles.addButtonText}> الموالي </Text> 
+                  </TouchableOpacity>    
+
+                  : <TouchableOpacity  style={styles.addButtonnext}  onPress={() => this._addpatient()}>
+                  <Text style={styles.addButtonText}> تسجيل </Text> 
+                  </TouchableOpacity>
+                }
+
+   
+        
+            </View>
+            </ScrollView > 
+        );
+    }
+
+    else if (this.state.current === 18) {
+        let pourcentage=(this.state.current)/(nbreecran);
+        return (
+            <ScrollView style={{  backgroundColor:  "white"}}>
+            <View style={styles.row}>
+               <Text style={styles.textlabel1}>{Math.floor(pourcentage*100)} % </Text>
+               <ProgressBar progress={pourcentage} color={Colors.red800} />
+               <Text style={styles.textlabel}> </Text> 
+                        <View style={{ margin:10, paddingTop :10, paddingBottom: 10, paddingRight: 20, paddingLeft: 20, backgroundColor:  "#F0493E", borderRadius:20}}>
+                            <Text style={styles.textlabel}> لماذا ؟   </Text> 
+                            </View>
+                            <Text style={styles.textlabel}> {br} </Text> 
+                            <TouchableWithoutFeedback onPress={() => this._onPressWhyABILYTY("1")}>
+                            <Animatable.View ref="view1" style={{ margin:10, paddingTop :10, paddingBottom: 10, paddingRight: 20, paddingLeft: 20, backgroundColor: this.state.statusWhyABILYTY.findIndex(item => item === "1") !="-1"? this.state.onColor : "#bdbdbd", borderRadius:20}}>
+                            <Text style={{color:  "white" , fontWeight: "bold"}}>أحس بضيق في التنفس</Text>
+                            </Animatable.View>
+                        </TouchableWithoutFeedback>
+                        <TouchableWithoutFeedback onPress={() => this._onPressWhyABILYTY("2")}>
+                            <Animatable.View ref="view2" style={{ margin:10, paddingTop :10, paddingBottom: 10, paddingRight: 20, paddingLeft: 20, backgroundColor: this.state.statusWhyABILYTY.findIndex(item => item === "2") !="-1"? this.state.onColor : "#bdbdbd", borderRadius:20}}>
+                            <Text style={{color: "white" , fontWeight: "bold"}}>صداع شديد يمنعني من الحديث</Text>
+                            </Animatable.View>
+                        </TouchableWithoutFeedback>
+
+                            <TouchableWithoutFeedback onPress={() => this._onPressWhyABILYTY("3")}>
+                            <Animatable.View ref="view3" style={{ margin:10, paddingTop :10, paddingBottom: 10, paddingRight: 20, paddingLeft: 20, backgroundColor: this.state.statusWhyABILYTY.findIndex(item => item === "3") !="-1"? this.state.onColor : "#bdbdbd", borderRadius:20}}>
+                            <Text style={{color: "white" , fontWeight: "bold"}}>أحس بتعب شديد</Text>
+                            </Animatable.View>
+                            </TouchableWithoutFeedback>
+
+                            <TouchableWithoutFeedback onPress={() => this._onPressWhyABILYTY("4")}>
+                            <Animatable.View ref="view4" style={{ margin:10, paddingTop :10, paddingBottom: 10, paddingRight: 20, paddingLeft: 20, backgroundColor: this.state.statusWhyABILYTY.findIndex(item => item === "4") !="-1"? this.state.onColor : "#bdbdbd", borderRadius:20}}>
+                            <Text style={{color: "white" , fontWeight: "bold"}}>آخر</Text>
+                            </Animatable.View>
+                            </TouchableWithoutFeedback>
+
+                </View>
+                <Text style={styles.textlabel}> {br}  </Text> 
+            <View style={styles.innerContainer}> 
+            {this.state.current!= 0 ? 
+               <TouchableOpacity  style={styles.addButtonprev}  onPress={() => this._onPrev(1)}>
+               <Text style={styles.addButtonText}> السابق </Text> 
+                </TouchableOpacity>: null}
+
+                {!this.state.isLast ? 
+                 <TouchableOpacity  style={(this.state.statusWhyABILYTY=="empty")?styles.addButtonnextDisable:styles.addButtonnext}  disabled={(this.state.statusWhyABILYTY=="empty") ? true : false}  onPress={() => this._onNext(1)}>
+                 <Text style={styles.addButtonText}> الموالي </Text> 
+                  </TouchableOpacity>    
+
+                  : <TouchableOpacity  style={styles.addButtonnext}  onPress={() => this._addpatient()}>
+                  <Text style={styles.addButtonText}> تسجيل </Text> 
+                  </TouchableOpacity>
+                }
+
+   
+        
+            </View>
+            </ScrollView > 
+        );
+    }
+   
+    else if (this.state.current === 19) {
+        let pourcentage=(this.state.current)/(nbreecran);
+        return (
+            <ScrollView style={{  backgroundColor:  "white"}}>
+            <View style={styles.row}>
+               <Text style={styles.textlabel1}>{Math.floor(pourcentage*100)} % </Text>
+               <ProgressBar progress={pourcentage} color={Colors.red800} />
+               <Text style={styles.textlabel}> </Text> 
+                        <View style={{ margin:10, paddingTop :10, paddingBottom: 10, paddingRight: 20, paddingLeft: 20, backgroundColor:  "#F0493E", borderRadius:20}}>
+                        <Text style={styles.textlabel}>هل تستطيع الحركة و القيام بحاجياتك دون مساعدة ؟</Text> 
+                            </View>
+                            <Text style={styles.textlabel}> {br} </Text> 
+                            <TouchableWithoutFeedback onPress={() => this._onPressABILYTY("yes")}>
+                            <Animatable.View ref="viewoui" style={{ margin:10, paddingTop :10, paddingBottom: 10, paddingRight: 20, paddingLeft: 20, backgroundColor: this.state.statusABILYTY ==="yes" ? this.state.onColor : "#bdbdbd", borderRadius:20}}>
+                            <Text style={{color:"white", fontWeight: "bold"}}>نعم</Text>
+                            </Animatable.View>
+                        </TouchableWithoutFeedback>
+                        <TouchableWithoutFeedback onPress={() => this._onPressABILYTY("no")}>
+                            <Animatable.View ref="viewnon" style={{ margin:10, paddingTop :10, paddingBottom: 10, paddingRight: 20, paddingLeft: 20, backgroundColor: this.state.statusABILYTY ==="no"? this.state.onColor : "#bdbdbd", borderRadius:20}}>
+                            <Text style={{color:  "white" , fontWeight: "bold"}}>لا</Text>
+                            </Animatable.View>
+                        </TouchableWithoutFeedback>
+
+                </View>
+                <Text style={styles.textlabel}> {br} {br} </Text> 
+            <View style={styles.innerContainer}> 
+            {this.state.current!= 0 ? 
+               <TouchableOpacity  style={styles.addButtonprev}  onPress={() =>  this._onPrev(this.state.statusASPHYXIE ==="yes"?(this.state.statusPARLE ==="yes"?1:2):3)}>
               
-                {!this.state.isLast ? <Button title={'Suivant'} onPress={() => this._onNext(1)} /> : <Button title={'Terminer'} onPress={() => this._addpatient()} />} 
+               <Text style={styles.addButtonText}> السابق </Text> 
+                </TouchableOpacity>: null}
+
+                {!this.state.isLast ? 
+                 <TouchableOpacity  style={(this.state.statusABILYTY=="empty")?styles.addButtonnextDisable:styles.addButtonnext}  disabled={(this.state.statusABILYTY=="empty") ? true : false}  onPress={() => this._onNext(this.state.statusABILYTY==="no"?1:2)}>
+                 <Text style={styles.addButtonText}> الموالي </Text> 
+                  </TouchableOpacity>    
+
+                  : <TouchableOpacity  style={styles.addButtonnext}  onPress={() => this._addpatient()}>
+                  <Text style={styles.addButtonText}> تسجيل </Text> 
+                  </TouchableOpacity>
+                }
+
+   
+        
             </View>
-
-            </View>  
-
-
-            </View> 
-
+            </ScrollView > 
         );
     }
-    else  if (this.state.current === 15) {
+
+
+    else if (this.state.current === 20) {
+        let pourcentage=(this.state.current)/(nbreecran);
         return (
-            <View style={styles.container}>
+            <ScrollView style={{  backgroundColor:  "white"}}>
+            <View style={styles.row}>
+               <Text style={styles.textlabel1}>{Math.floor(pourcentage*100)} % </Text>
+               <ProgressBar progress={pourcentage} color={Colors.red800} />
+               <Text style={styles.textlabel}> </Text> 
+                        <View style={{ margin:10, paddingTop :10, paddingBottom: 10, paddingRight: 20, paddingLeft: 20, backgroundColor:  "#F0493E", borderRadius:20}}>
+                        <Text style={styles.textlabel}>منذ متى ؟ </Text> 
+                            </View>
+                            <Text style={styles.textlabel}> {br} </Text> 
+                            <TouchableWithoutFeedback onPress={() => this._onPressABILYTY_DURATION("1")}>
+                            <Animatable.View ref="view1" style={{ margin:10, paddingTop :10, paddingBottom: 10, paddingRight: 20, paddingLeft: 20, backgroundColor: this.state.statusABILYTY_DURATION ==="1" ? this.state.onColor : "#bdbdbd", borderRadius:20}}>
+                            <Text style={{color:  "white" , fontWeight: "bold"}}>أيام  </Text>
+                            </Animatable.View>
+                        </TouchableWithoutFeedback>
+                        <TouchableWithoutFeedback onPress={() => this._onPressABILYTY_DURATION("2")}>
+                            <Animatable.View ref="view2" style={{ margin:10, paddingTop :10, paddingBottom: 10, paddingRight: 20, paddingLeft: 20, backgroundColor: this.state.statusABILYTY_DURATION ==="2" ? this.state.onColor : "#bdbdbd", borderRadius:20}}>
+                            <Text style={{color:  "white" , fontWeight: "bold"}}>أسابيع </Text>
+                            </Animatable.View>
+                        </TouchableWithoutFeedback>
+
+                                <TouchableWithoutFeedback onPress={() => this._onPressABILYTY_DURATION("3")}>
+                            <Animatable.View ref="view3" style={{ margin:10, paddingTop :10, paddingBottom: 10, paddingRight: 20, paddingLeft: 20, backgroundColor: this.state.statusABILYTY_DURATION ==="3" ? this.state.onColor : "#bdbdbd", borderRadius:20}}>
+                            <Text style={{color:  "white" , fontWeight: "bold"}}>أشهر   </Text>
+                            </Animatable.View>
+                        </TouchableWithoutFeedback>
+                        <TouchableWithoutFeedback onPress={() => this._onPressABILYTY_DURATION("4")}>
+                            <Animatable.View ref="view4" style={{ margin:10, paddingTop :10, paddingBottom: 10, paddingRight: 20, paddingLeft: 20, backgroundColor: this.state.statusABILYTY_DURATION ==="4" ? this.state.onColor : "#bdbdbd", borderRadius:20}}>
+                            <Text style={{color:  "white" , fontWeight: "bold"}}>سنوات </Text>
+                            </Animatable.View>
+                        </TouchableWithoutFeedback>
+                </View>
+                <Text style={styles.textlabel}> {br}  </Text> 
+            <View style={styles.innerContainer}> 
+          
+            {this.state.current!= 0 ? 
+               <TouchableOpacity  style={styles.addButtonprev}  onPress={() => this._onPrev(1)}>
+               <Text style={styles.addButtonText}> السابق </Text> 
+                </TouchableOpacity>: null}
+
+                {!this.state.isLast ? 
+                 <TouchableOpacity  style={(this.state.statusABILYTY_DURATION=="empty")?styles.addButtonnextDisable:styles.addButtonnext}  disabled={(this.state.statusABILYTY_DURATION=="empty") ? true : false}  onPress={() => this._onNext(1)}>
+                 <Text style={styles.addButtonText}> الموالي </Text> 
+                  </TouchableOpacity>    
+
+                  : <TouchableOpacity  style={styles.addButtonnext}  onPress={() => this._addpatient()}>
+                  <Text style={styles.addButtonText}> تسجيل </Text> 
+                  </TouchableOpacity>
+                }
+
+   
+        
+            </View>
+            </ScrollView > 
+        );
+    }
+
+
     
-        <View style={{ flex: 10}}>
-                <Text style={styles.textlabel}>هل تشكو من أحد هذه الأعراض ؟ {br}</Text> 
-                <TouchableWithoutFeedback onPress={() => this._onPressSYMTOME("1")}>
-                <Animatable.View ref="view1" style={{ margin:10, paddingTop :10, paddingBottom: 10, paddingRight: 20, paddingLeft: 20, backgroundColor: this.state.statusSYMTOME.findIndex(item => item === "1") !="-1"? this.state.onColor : "#bdbdbd", borderRadius:20}}>
-                <Text style={{color:"white" , fontWeight: "bold"}}>إسهال</Text>
-                </Animatable.View>
-            </TouchableWithoutFeedback>
-            <TouchableWithoutFeedback onPress={() => this._onPressSYMTOME("2")}>
-                <Animatable.View ref="view2" style={{ margin:10, paddingTop :10, paddingBottom: 10, paddingRight: 20, paddingLeft: 20, backgroundColor: this.state.statusSYMTOME.findIndex(item => item === "2") !="-1"? this.state.onColor : "#bdbdbd", borderRadius:20}}>
-                <Text style={{color:"white" , fontWeight: "bold"}}>تقيؤ</Text>
-                </Animatable.View>
-            </TouchableWithoutFeedback>
+    else if (this.state.current === 21) {
+        let pourcentage=(this.state.current)/(nbreecran);
+        return (
+            <ScrollView style={{  backgroundColor:  "white"}}>
+            <View style={styles.row}>
+               <Text style={styles.textlabel1}>{Math.floor(pourcentage*100)} % </Text>
+               <ProgressBar progress={pourcentage} color={Colors.red800} />
+               <Text style={styles.textlabel}> </Text> 
+                        <View style={{ margin:10, paddingTop :10, paddingBottom: 10, paddingRight: 20, paddingLeft: 20, backgroundColor:  "#F0493E", borderRadius:20}}>
+                        <Text style={styles.textlabel}>هل تشكو من أحد هذه الأعراض ؟ </Text> 
+                            </View>
+                            <Text style={styles.textlabel}> </Text> 
+                            <TouchableWithoutFeedback onPress={() => this._onPressSYMTOME("1")}>
+                        <Animatable.View ref="view1" style={{ margin:10, paddingTop :10, paddingBottom: 10, paddingRight: 20, paddingLeft: 20, backgroundColor: this.state.statusSYMTOME.findIndex(item => item === "1") !="-1"? this.state.onColor : "#bdbdbd", borderRadius:20}}>
+                        <Text style={{color:"white" , fontWeight: "bold"}}>إسهال</Text>
+                        </Animatable.View>
+                    </TouchableWithoutFeedback>
+                    <TouchableWithoutFeedback onPress={() => this._onPressSYMTOME("2")}>
+                        <Animatable.View ref="view2" style={{ margin:10, paddingTop :10, paddingBottom: 10, paddingRight: 20, paddingLeft: 20, backgroundColor: this.state.statusSYMTOME.findIndex(item => item === "2") !="-1"? this.state.onColor : "#bdbdbd", borderRadius:20}}>
+                        <Text style={{color:"white" , fontWeight: "bold"}}>تقيؤ</Text>
+                        </Animatable.View>
+                    </TouchableWithoutFeedback>
 
-                  <TouchableWithoutFeedback onPress={() => this._onPressSYMTOME("3")}>
-                <Animatable.View ref="view3" style={{ margin:10, paddingTop :10, paddingBottom: 10, paddingRight: 20, paddingLeft: 20, backgroundColor: this.state.statusSYMTOME.findIndex(item => item === "3") !="-1"? this.state.onColor : "#bdbdbd", borderRadius:20}}>
-                <Text style={{color:"white" , fontWeight: "bold"}}>أوجاع في الصدر</Text>
-                </Animatable.View>
-            </TouchableWithoutFeedback>
-            <TouchableWithoutFeedback onPress={() => this._onPressSYMTOME("4")}>
-                <Animatable.View ref="view4" style={{ margin:10, paddingTop :10, paddingBottom: 10, paddingRight: 20, paddingLeft: 20, backgroundColor: this.state.statusSYMTOME.findIndex(item => item === "4") !="-1"?this.state.onColor : "#bdbdbd", borderRadius:20}}>
-                <Text style={{color:"white" , fontWeight: "bold"}}>أوجاع اعلى البطن</Text>
-                </Animatable.View>
-            </TouchableWithoutFeedback>
+                        <TouchableWithoutFeedback onPress={() => this._onPressSYMTOME("3")}>
+                        <Animatable.View ref="view3" style={{ margin:10, paddingTop :10, paddingBottom: 10, paddingRight: 20, paddingLeft: 20, backgroundColor: this.state.statusSYMTOME.findIndex(item => item === "3") !="-1"? this.state.onColor : "#bdbdbd", borderRadius:20}}>
+                        <Text style={{color:"white" , fontWeight: "bold"}}>أوجاع في الصدر</Text>
+                        </Animatable.View>
+                    </TouchableWithoutFeedback>
+                    <TouchableWithoutFeedback onPress={() => this._onPressSYMTOME("4")}>
+                        <Animatable.View ref="view4" style={{ margin:10, paddingTop :10, paddingBottom: 10, paddingRight: 20, paddingLeft: 20, backgroundColor: this.state.statusSYMTOME.findIndex(item => item === "4") !="-1"?this.state.onColor : "#bdbdbd", borderRadius:20}}>
+                        <Text style={{color:"white" , fontWeight: "bold"}}>أوجاع اعلى البطن</Text>
+                        </Animatable.View>
+                    </TouchableWithoutFeedback>
 
-                   <TouchableWithoutFeedback onPress={() => this._onPressSYMTOME("5")}>
-                <Animatable.View ref="view5" style={{ margin:10, paddingTop :10, paddingBottom: 10, paddingRight: 20, paddingLeft: 20, backgroundColor: this.state.statusSYMTOME.findIndex(item => item === "5") !="-1"? this.state.onColor : "#bdbdbd", borderRadius:20}}>
-                <Text style={{color:"white" , fontWeight: "bold"}}> ألم حاد في الحنجرة</Text>
-                </Animatable.View>
-            </TouchableWithoutFeedback>
-            <TouchableWithoutFeedback onPress={() => this._onPressSYMTOME("6")}>
-                <Animatable.View ref="view6" style={{ margin:10, paddingTop :10, paddingBottom: 10, paddingRight: 20, paddingLeft: 20, backgroundColor: this.state.statusSYMTOME.findIndex(item => item === "6") !="-1"? this.state.onColor : "#bdbdbd", borderRadius:20}}>
-                <Text style={{color:"white" , fontWeight: "bold"}}>أوجاع في المفاصل و العضلات </Text>
-                </Animatable.View>
-            </TouchableWithoutFeedback>
-            <TouchableWithoutFeedback onPress={() => this._onPressSYMTOME("7")}>
-                <Animatable.View ref="view7" style={{ margin:10, paddingTop :10, paddingBottom: 10, paddingRight: 20, paddingLeft: 20, backgroundColor: this.state.statusSYMTOME.findIndex(item => item === "7") !="-1"? this.state.onColor : "#bdbdbd", borderRadius:20}}>
-                <Text style={{color:"white" , fontWeight: "bold"}}>لا أشكو من هذه الأعراض </Text>
-                </Animatable.View>
-            </TouchableWithoutFeedback>
-
-                        <View style={styles.buttonContainer}>
-            {this.state.current!= 0 ? <Button title={'Précédent'} onPress={() => this._onPrev(this.state.statusABILYTY==="no"?1:2)} /> : null}
-              
-                {!this.state.isLast ? <Button title={'Suivant'} onPress={() => this._onNext(1)} /> : <Button title={'Terminer'} onPress={() => this._addpatient()} />} 
-            </View>
+                        <TouchableWithoutFeedback onPress={() => this._onPressSYMTOME("5")}>
+                        <Animatable.View ref="view5" style={{ margin:10, paddingTop :10, paddingBottom: 10, paddingRight: 20, paddingLeft: 20, backgroundColor: this.state.statusSYMTOME.findIndex(item => item === "5") !="-1"? this.state.onColor : "#bdbdbd", borderRadius:20}}>
+                        <Text style={{color:"white" , fontWeight: "bold"}}> ألم حاد في الحنجرة</Text>
+                        </Animatable.View>
+                    </TouchableWithoutFeedback>
+                    <TouchableWithoutFeedback onPress={() => this._onPressSYMTOME("6")}>
+                        <Animatable.View ref="view6" style={{ margin:10, paddingTop :10, paddingBottom: 10, paddingRight: 20, paddingLeft: 20, backgroundColor: this.state.statusSYMTOME.findIndex(item => item === "6") !="-1"? this.state.onColor : "#bdbdbd", borderRadius:20}}>
+                        <Text style={{color:"white" , fontWeight: "bold"}}>أوجاع في المفاصل و العضلات </Text>
+                        </Animatable.View>
+                    </TouchableWithoutFeedback>
+                    <TouchableWithoutFeedback onPress={() => this._onPressSYMTOME("7")}>
+                        <Animatable.View ref="view7" style={{ margin:10, paddingTop :10, paddingBottom: 10, paddingRight: 20, paddingLeft: 20, backgroundColor: this.state.statusSYMTOME.findIndex(item => item === "7") !="-1"? this.state.onColor : "#bdbdbd", borderRadius:20}}>
+                        <Text style={{color:"white" , fontWeight: "bold"}}>لا أشكو من هذه الأعراض </Text>
+                        </Animatable.View>
+                    </TouchableWithoutFeedback>
+                </View>
+                <Text style={styles.textlabel}>  </Text> 
+            <View style={styles.innerContainer}> 
           
-            </View>  
+            {this.state.current!= 0 ? 
+               <TouchableOpacity  style={styles.addButtonprev}  onPress={() => this._onPrev(1)}>
+               <Text style={styles.addButtonText}> السابق </Text> 
+                </TouchableOpacity>: null}
 
+                {!this.state.isLast ? 
+                 <TouchableOpacity  style={(this.state.statusSYMTOME=="empty")?styles.addButtonnextDisable:styles.addButtonnext}  disabled={(this.state.statusSYMTOME=="empty") ? true : false}  onPress={() => this._onNext(1)}>
+                 <Text style={styles.addButtonText}> الموالي </Text> 
+                  </TouchableOpacity>    
 
-            </View>  
-  
-        );
-    }
-    else  if (this.state.current === 16) {
-        return (
-            <View style={styles.container}>
-            <View style={{ flex: 1}}>
-            <Text style={styles.pageText}> {this.state.current+1}/{nbreecran+1} </Text> 
-             </View>  
-             <View style={{ flex: 10}}>
-                <Text style={styles.textlabel}> هل تشكو من تدهور قدرتك على الشم أو التذوق ؟  {br} {br}</Text> 
-                <TouchableWithoutFeedback onPress={() => this._onPresssenseofsmell("yes")}>
-                <Animatable.View ref="viewoui" style={{ margin:10, paddingTop :10, paddingBottom: 10, paddingRight: 20, paddingLeft: 20, backgroundColor: this.state.statussenseofsmell ==="yes"? this.state.onColor : "#bdbdbd", borderRadius:20}}>
-                <Text style={{color: "white" , fontWeight: "bold"}}>نعم</Text>
-                </Animatable.View>
-            </TouchableWithoutFeedback>
-            <TouchableWithoutFeedback onPress={() => this._onPresssenseofsmell("no")}>
-                <Animatable.View ref="viewnon" style={{ margin:10, paddingTop :10, paddingBottom: 10, paddingRight: 20, paddingLeft: 20, backgroundColor: this.state.statussenseofsmell ==="no"? this.state.onColor : "#bdbdbd", borderRadius:20}}>
-                <Text style={{color: "white" , fontWeight: "bold"}}>لا</Text>
-                </Animatable.View>
-            </TouchableWithoutFeedback>
+                  : <TouchableOpacity  style={styles.addButtonnext}  onPress={() => this._addpatient()}>
+                  <Text style={styles.addButtonText}> تسجيل </Text> 
+                  </TouchableOpacity>
+                }
 
-                        <View style={styles.buttonContainer}>
-            {this.state.current!= 0 ? <Button title={'Précédent'} onPress={() => this._onPrev(1)} /> : null}
-              
-                {!this.state.isLast ? <Button title={'Suivant'} onPress={() => this._onNext(1)} /> : <Button title={'Terminer'} onPress={() => this._addpatient()} />} 
+   
+        
             </View>
-   
-            </View>  
-
-
-            </View>  
+            </ScrollView > 
+        );
+    }
   
-        );
-    }
-    else  if (this.state.current === 17) {
+  
+    else if (this.state.current === 22) {
+        let pourcentage=(this.state.current)/(nbreecran);
         return (
-            <View style={styles.container}>
-            <View style={{ flex: 1}}>
-            <Text style={styles.pageText}> {this.state.current+1}/{nbreecran+1} </Text> 
-             </View>  
-             <View style={{ flex: 10}}>
-                <Text style={styles.textlabel}> هل تشكو من عدم القدرة على الحديث كما في السابق هل تشكو من ضيق تنفس أو تعكر في قدرتك على التنفس مقارنة بالسابق ؟   {br} {br}</Text> 
-                <TouchableWithoutFeedback onPress={() => this._onPressASPHEXIE("yes")}>
-                <Animatable.View ref="viewoui" style={{ margin:10, paddingTop :10, paddingBottom: 10, paddingRight: 20, paddingLeft: 20, backgroundColor: this.state.statusASPHEXIE ==="yes"? this.state.onColor : "#bdbdbd", borderRadius:20}}>
-                <Text style={{color: "white" , fontWeight: "bold"}}>نعم</Text>
-                </Animatable.View>
-            </TouchableWithoutFeedback>
-            <TouchableWithoutFeedback onPress={() => this._onPressASPHEXIE("no")}>
-                <Animatable.View ref="viewnon" style={{ margin:10, paddingTop :10, paddingBottom: 10, paddingRight: 20, paddingLeft: 20, backgroundColor: this.state.statusASPHEXIE ==="no"? this.state.onColor : "#bdbdbd", borderRadius:20}}>
-                <Text style={{color:  "white", fontWeight: "bold"}}>لا</Text>
-                </Animatable.View>
-            </TouchableWithoutFeedback>
+            <ScrollView style={{  backgroundColor:  "white"}}>
+            <View style={styles.row}>
+               <Text style={styles.textlabel1}>{Math.floor(pourcentage*100)} % </Text>
+               <ProgressBar progress={pourcentage} color={Colors.red800} />
+               <Text style={styles.textlabel}> </Text> 
+                        <View style={{ margin:10, paddingTop :10, paddingBottom: 10, paddingRight: 20, paddingLeft: 20, backgroundColor:  "#F0493E", borderRadius:20}}>
+                        <Text style={styles.textlabel}> هل تشكو من تدهور قدرتك على الشم أو التذوق ؟ </Text> 
+                            </View>
+                            <Text style={styles.textlabel}> {br} </Text> 
+                            <TouchableWithoutFeedback onPress={() => this._onPresssenseofsmell("yes")}>
+                            <Animatable.View ref="viewoui" style={{ margin:10, paddingTop :10, paddingBottom: 10, paddingRight: 20, paddingLeft: 20, backgroundColor: this.state.statussenseofsmell ==="yes"? this.state.onColor : "#bdbdbd", borderRadius:20}}>
+                            <Text style={{color: "white" , fontWeight: "bold"}}>نعم</Text>
+                            </Animatable.View>
+                        </TouchableWithoutFeedback>
+                        <TouchableWithoutFeedback onPress={() => this._onPresssenseofsmell("no")}>
+                            <Animatable.View ref="viewnon" style={{ margin:10, paddingTop :10, paddingBottom: 10, paddingRight: 20, paddingLeft: 20, backgroundColor: this.state.statussenseofsmell ==="no"? this.state.onColor : "#bdbdbd", borderRadius:20}}>
+                            <Text style={{color: "white" , fontWeight: "bold"}}>لا</Text>
+                            </Animatable.View>
+                        </TouchableWithoutFeedback>
 
-                     <View style={styles.buttonContainer}>
-            {this.state.current!= 0 ? <Button title={'Précédent'} onPress={() => this._onPrev(1)} /> : null}
-              
-                {!this.state.isLast ? <Button title={'Suivant'} onPress={() => this._onNext(1)} /> : <Button title={'Terminer'} onPress={() => this._addpatient()} />} 
-          
-       
-            </View> 
+                </View>
+                <Text style={styles.textlabel}> {br} {br} </Text> 
+            <View style={styles.innerContainer}> 
+            {this.state.current!= 0 ? 
+               <TouchableOpacity  style={styles.addButtonprev}  onPress={() => this._onPrev(1)}>
+               <Text style={styles.addButtonText}> السابق </Text> 
+                </TouchableOpacity>: null}
+
+                {!this.state.isLast ? 
+                 <TouchableOpacity  style={(this.state.statussenseofsmell=="empty")?styles.addButtonnextDisable:styles.addButtonnext}  disabled={(this.state.statussenseofsmell=="empty") ? true : false}  onPress={() => this._onNext(1)}>
+
+                 <Text style={styles.addButtonText}> الموالي </Text> 
+                  </TouchableOpacity>    
+
+                  : <TouchableOpacity  style={styles.addButtonnext}  onPress={() => this._addpatient()}>
+                  <Text style={styles.addButtonText}> تسجيل </Text> 
+                  </TouchableOpacity>
+                }
+
    
-            </View> 
-           
-      
-   
-            </View> 
-        );
-    }
-    else  if (this.state.current === 18) {
-        return (
-            <View style={styles.container}>
-            <View style={{ flex: 1}}>
-            <Text style={styles.pageText}> {this.state.current+1}/{nbreecran+1} </Text> 
-             </View>  
-             <View style={{ flex: 10}}>
-                <Text style={styles.textlabel}> هل تتابع من أجل أحد هذه الأمراض ؟   {br} {br}</Text> 
-                <TouchableWithoutFeedback onPress={() => this._onPressANTECEDENT("1")}>
-                <Animatable.View ref="view1" style={{ margin:10, paddingTop :10, paddingBottom: 10, paddingRight: 20, paddingLeft: 20, backgroundColor: this.state.statusANTECEDENT ==="1" ? this.state.onColor : "#bdbdbd", borderRadius:20}}>
-                <Text style={{color:  "white" , fontWeight: "bold"}}>ضيق تنفس مزمن : ربو</Text>
-                </Animatable.View>
-            </TouchableWithoutFeedback>
-            <TouchableWithoutFeedback onPress={() => this._onPressANTECEDENT("2")}>
-                <Animatable.View ref="view2" style={{ margin:10, paddingTop :10, paddingBottom: 10, paddingRight: 20, paddingLeft: 20, backgroundColor: this.state.statusANTECEDENT ==="2" ? this.state.onColor : "#bdbdbd", borderRadius:20}}>
-                <Text style={{color: "white" , fontWeight: "bold"}}> مرض الإنسداد الرئوي المزمن </Text>
-                </Animatable.View>
-            </TouchableWithoutFeedback>
-
-                <TouchableWithoutFeedback onPress={() => this._onPressANTECEDENT("3")}>
-                <Animatable.View ref="view3" style={{ margin:10, paddingTop :10, paddingBottom: 10, paddingRight: 20, paddingLeft: 20, backgroundColor: this.state.statusANTECEDENT ==="3" ? this.state.onColor : "#bdbdbd", borderRadius:20}}>
-                <Text style={{color: "white" , fontWeight: "bold"}}>أجريت عملية على الصدر أو القلب</Text>
-                </Animatable.View>
-                </TouchableWithoutFeedback>
-
-           <View style={styles.buttonContainer}>
-            {this.state.current!= 0 ? <Button title={'Précédent'} onPress={() => this._onPrev(1)} /> : null}
-              
-                {!this.state.isLast ? <Button title={'Suivant'} onPress={() => this._onNext(1)} /> : <Button title={'Terminer'} onPress={() => this._addpatient()} />} 
+        
             </View>
-   
-            </View>  
-
- 
-            </View>   
-  
+            </ScrollView > 
         );
     }
-    else  if (this.state.current === 19) {
-        const { shift } = this.state;
+
+    else if (this.state.current === 23) {
+        let pourcentage=(this.state.current)/(nbreecran);
         return (
-            <Animated.View style={[styles.container, { transform: [{translateY: shift}] }]}>
-					<View style={styles.container}>
-								<View style={{ flex: 1}}>
-								<Text style={styles.pageText}> {this.state.current+1}/{nbreecran+1} </Text> 
-								</View>  
-							 <View style={{ flex: 10}}>
-								<Text style={styles.textlabel}> هل تعاني من مرض السكري ؟  {br}</Text> 
+            <ScrollView style={{  backgroundColor:  "white"}}>
+            <View style={styles.row}>
+               <Text style={styles.textlabel1}>{Math.floor(pourcentage*100)} % </Text>
+               <ProgressBar progress={pourcentage} color={Colors.red800} />
+               <Text style={styles.textlabel}> </Text> 
+                        <View style={{ margin:10, paddingTop :10, paddingBottom: 10, paddingRight: 20, paddingLeft: 20, backgroundColor:  "#F0493E", borderRadius:20}}>
+                        <Text style={styles.textlabel}> هل تتابع من أجل أحد هذه الأمراض ؟ </Text> 
+                            </View>
+                            <Text style={styles.textlabel}> {br} </Text> 
+                        <TouchableWithoutFeedback onPress={() => this._onPressANTECEDENT("1")}>
+                        <Animatable.View ref="view1" style={{ margin:10, paddingTop :10, paddingBottom: 10, paddingRight: 20, paddingLeft: 20, backgroundColor: this.state.statusANTECEDENT ==="1" ? this.state.onColor : "#bdbdbd", borderRadius:20}}>
+                        <Text style={{color:  "white" , fontWeight: "bold"}}>ضيق تنفس مزمن : ربو</Text>
+                        </Animatable.View>
+                    </TouchableWithoutFeedback>
+                    <TouchableWithoutFeedback onPress={() => this._onPressANTECEDENT("2")}>
+                        <Animatable.View ref="view2" style={{ margin:10, paddingTop :10, paddingBottom: 10, paddingRight: 20, paddingLeft: 20, backgroundColor: this.state.statusANTECEDENT ==="2" ? this.state.onColor : "#bdbdbd", borderRadius:20}}>
+                        <Text style={{color: "white" , fontWeight: "bold"}}> مرض الإنسداد الرئوي المزمن </Text>
+                        </Animatable.View>
+                    </TouchableWithoutFeedback>
+
+                        <TouchableWithoutFeedback onPress={() => this._onPressANTECEDENT("3")}>
+                        <Animatable.View ref="view3" style={{ margin:10, paddingTop :10, paddingBottom: 10, paddingRight: 20, paddingLeft: 20, backgroundColor: this.state.statusANTECEDENT ==="3" ? this.state.onColor : "#bdbdbd", borderRadius:20}}>
+                        <Text style={{color: "white" , fontWeight: "bold"}}>أجريت عملية على الصدر أو القلب</Text>
+                        </Animatable.View>
+                        </TouchableWithoutFeedback>
+
+                       <TouchableWithoutFeedback onPress={() => this._onPressANTECEDENT("4")}>
+                        <Animatable.View ref="view4" style={{ margin:10, paddingTop :10, paddingBottom: 10, paddingRight: 20, paddingLeft: 20, backgroundColor: this.state.statusANTECEDENT ==="4" ? this.state.onColor : "#bdbdbd", borderRadius:20}}>
+                        <Text style={{color:"white" , fontWeight: "bold"}}>لا أشكو من هذه الأمراض </Text>
+                        </Animatable.View>
+                    </TouchableWithoutFeedback>
+
+                </View>
+                <Text style={styles.textlabel}> {br} {br} </Text> 
+            <View style={styles.innerContainer}> 
+            {this.state.current!= 0 ? 
+               <TouchableOpacity  style={styles.addButtonprev}  onPress={() => this._onPrev(1)}>
+               <Text style={styles.addButtonText}> السابق </Text> 
+                </TouchableOpacity>: null}
+
+                {!this.state.isLast ? 
+                <TouchableOpacity  style={(this.state.statusANTECEDENT=="empty")?styles.addButtonnextDisable:styles.addButtonnext}  disabled={(this.state.statusANTECEDENT=="empty") ? true : false}  onPress={() => this._onNext(1)}>
+                 <Text style={styles.addButtonText}> الموالي </Text> 
+                  </TouchableOpacity>    
+
+                  : <TouchableOpacity  style={styles.addButtonnext}  onPress={() => this._addpatient()}>
+                  <Text style={styles.addButtonText}> تسجيل </Text> 
+                  </TouchableOpacity>
+                }
+
+   
+        
+            </View>
+            </ScrollView > 
+        );
+    }
+
+
+
+    else if (this.state.current === 24) {
+        let pourcentage=(this.state.current)/(nbreecran);
+        return (
+            <ScrollView style={{  backgroundColor:  "white"}}>
+            <View style={styles.row}>
+               <Text style={styles.textlabel1}>{Math.floor(pourcentage*100)} % </Text>
+               <ProgressBar progress={pourcentage} color={Colors.red800} />
+               <Text style={styles.textlabel}> </Text> 
+                        <View style={{ margin:10, paddingTop :10, paddingBottom: 10, paddingRight: 20, paddingLeft: 20, backgroundColor:  "#F0493E", borderRadius:20}}>
+                        <Text style={styles.textlabel}> هل تعاني من مرض السكري ؟  {br}</Text> 
+                            </View>
+                            <Text style={styles.textlabel}> {br} </Text> 
+								
 								<TouchableWithoutFeedback onPress={() => this._onPressDIABETE("yes")}>
 								<Animatable.View ref="viewoui" style={{ margin:10, paddingTop :10, paddingBottom: 10, paddingRight: 20, paddingLeft: 20, backgroundColor: this.state.statusDIABETE ==="yes" ? this.state.onColor : "#bdbdbd", borderRadius:20}}>
 								<Text style={{color:  "white" , fontWeight: "bold"}}>نعم</Text>
@@ -1376,11 +2057,11 @@ export default class Editpatient extends Component {
 								</Animatable.View>
 							</TouchableWithoutFeedback>
 
-											{this.state.statusDIABETE==="yes" ? (
+                				{this.state.statusDIABETE==="yes" ? (
 											<View >
 													<Text style={styles.textlabel}></Text> 
-												<Text style={styles.textlabel}>عدد سنوات الإصابة بالمرض   {br}</Text> 
-												<TextInput
+												<Text style={styles.textlabel1}>عدد سنوات الإصابة بالمرض   {br}</Text> 
+												<TextInput keyboardType='numeric'
 														placeholder="عدد سنوات "
                                                         style={styles.textInput}
                                                         value={this.state.statusnbreanneediabitic} onChangeText={ (text) => this.setState({ statusnbreanneediabitic: text }) }
@@ -1390,33 +2071,48 @@ export default class Editpatient extends Component {
 										<View/>
                                     )}
                                     
-                                    <View style={styles.buttonContainer}>
-							{this.state.current!= 0 ? <Button title={'Précédent'} onPress={() => this._onPrev(1)} /> : null}
-							  
-								{!this.state.isLast ? <Button title={'Suivant'} onPress={() => this._onNext(this.state.statusDIABETE==="yes"?1:2)} /> : <Button title={'Terminer'} onPress={() => this._addpatient()} />} 
-							</View>
+     
 							</View>  
 
-					
-                           
-					</View>
-            </Animated.View>  
+                <Text style={styles.textlabel}> {br} </Text> 
+
+            <View style={styles.innerContainer}> 
+                     {this.state.current!= 0 ? 
+                <TouchableOpacity  style={styles.addButtonprev}  onPress={() => this._onPrev(1)}>
+                <Text style={styles.addButtonText}> السابق </Text> 
+                    </TouchableOpacity>: null}
+
+                    {!this.state.isLast ? 
+                    <TouchableOpacity  style={(this.state.statusDIABETE=="empty")?styles.addButtonnextDisable:styles.addButtonnext}  disabled={(this.state.statusDIABETE=="empty") ? true : false}  onPress={() => this._onNext(this.state.statusDIABETE==="yes"?1:2)}>
+                    <Text style={styles.addButtonText}> الموالي </Text> 
+                    </TouchableOpacity>    
+
+                    : <TouchableOpacity  style={styles.addButtonnext}  onPress={() => this._addpatient()}>
+                    <Text style={styles.addButtonText}> تسجيل </Text> 
+                    </TouchableOpacity>
+                    }
+
+   
+        
+            </View>
+            </ScrollView > 
         );
     }
 
-    else  if (this.state.current === 20) {
-        const { shift } = this.state;
+    else if (this.state.current === 25) {
+        let pourcentage=(this.state.current)/(nbreecran);
         return (
-            <Animated.View style={[styles.container, { transform: [{translateY: shift}] }]}>
-            <View style={styles.container}>
-            <View style={{ flex: 1}}>
-            <Text style={styles.pageText}> {this.state.current+1}/{nbreecran+1} </Text> 
-             </View>  
-             <View style={{ flex: 10}}>
-                <Text style={styles.textlabel}> ماهي مخلفات السكري لديك ؟   {br} {br}</Text> 
-
-                   <View>
-                    <RadioForm
+            <ScrollView style={{  backgroundColor:  "white"}}>
+            <View style={styles.row}>
+               <Text style={styles.textlabel1}>{Math.floor(pourcentage*100)} % </Text>
+               <ProgressBar progress={pourcentage} color={Colors.red800} />
+               <Text style={styles.textlabel}> </Text> 
+                        <View style={{ margin:10, paddingTop :10, paddingBottom: 10, paddingRight: 20, paddingLeft: 20, backgroundColor:  "#F0493E", borderRadius:20}}>
+                        <Text style={styles.textlabel}> ماهي مخلفات السكري لديك ؟  </Text> 
+                            </View>
+                            <Text style={styles.textlabel}> </Text> 
+								
+                            <RadioForm
                         formHorizontal={false}
                         animation={true}
                         >
@@ -1436,7 +2132,7 @@ export default class Editpatient extends Component {
                                 buttonSize={40}
                                 buttonOuterSize={60}
                                 buttonStyle={{}}
-                                buttonWrapStyle={{marginLeft: 120}}
+                                buttonWrapStyle={{marginLeft: 140}}
                                 />
                                 <RadioButtonLabel
                                 obj={obj}
@@ -1450,308 +2146,456 @@ export default class Editpatient extends Component {
                     ))
                 }  
                 </RadioForm>
-                </View>
-                <View style={styles.buttonContainer}>
-            {this.state.current!= 0 ? <Button title={'Précédent'} onPress={() => this._onPrev(1)} /> : null}
-              
-                {!this.state.isLast ? <Button title={'Suivant'} onPress={() => this._onNext(1)} /> : <Button title={'Terminer'} onPress={() => this._addpatient()} />} 
+                                    
+     
+							</View>  
+
+                <Text style={styles.textlabel}>  </Text> 
+
+            <View style={styles.innerContainer}> 
+            {this.state.current!= 0 ? 
+                <TouchableOpacity  style={styles.addButtonprev}  onPress={() => this._onPrev(1)}>
+                <Text style={styles.addButtonText}> السابق </Text> 
+                    </TouchableOpacity>: null}
+
+                    {!this.state.isLast ? 
+
+                    <TouchableOpacity  style={(this.state.statusetatdiabitic=="empty")?styles.addButtonnextDisable:styles.addButtonnext}  disabled={(this.state.statusetatdiabitic=="empty") ? true : false}  onPress={() => this._onNext(1)}>
+                    <Text style={styles.addButtonText}> الموالي </Text> 
+                    </TouchableOpacity>    
+
+                    : <TouchableOpacity  style={styles.addButtonnext}  onPress={() => this._addpatient()}>
+                    <Text style={styles.addButtonText}> تسجيل </Text> 
+                    </TouchableOpacity>
+                    }
+
+   
+        
             </View>
-   
-            </View>  
-   
-      
-            </View>   
-      
-            </Animated.View>
+            </ScrollView > 
         );
     }
-    else  if (this.state.current === 21) {
-        const { shift } = this.state;
+
+
+    else if (this.state.current === 26) {
+        let pourcentage=(this.state.current)/(nbreecran);
         return (
-            <Animated.View style={[styles.container, { transform: [{translateY: shift}] }]}>
-            <View style={styles.container}>
-            <View style={{ flex: 1}}>
-            <Text style={styles.pageText}> {this.state.current+1}/{nbreecran+1} </Text> 
-             </View>  
-             <View style={{ flex: 10}}>
-                <Text style={styles.textlabel}> هل تعاني من ضغط الدم ؟  {br}</Text> 
-                <TouchableWithoutFeedback onPress={() => this._onPresshypertension("yes")}>
-                <Animatable.View ref="viewoui" style={{ margin:10, paddingTop :10, paddingBottom: 10, paddingRight: 20, paddingLeft: 20, backgroundColor: this.state.statushypertension ==="yes" ? this.state.onColor : "#bdbdbd", borderRadius:20}}>
-                <Text style={{color:  "white" , fontWeight: "bold"}}>نعم</Text>
-                </Animatable.View>
-            </TouchableWithoutFeedback>
-            <TouchableWithoutFeedback onPress={() => this._onPresshypertension("no")}>
-                <Animatable.View ref="viewnon" style={{ margin:10, paddingTop :10, paddingBottom: 10, paddingRight: 20, paddingLeft: 20, backgroundColor: this.state.statushypertension ==="no" ? this.state.onColor : "#bdbdbd", borderRadius:20}}>
-                <Text style={{color: "white" , fontWeight: "bold"}}> لا </Text>
-                </Animatable.View>
-            </TouchableWithoutFeedback>
+            <ScrollView style={{  backgroundColor:  "white"}}>
+            <View style={styles.row}>
+               <Text style={styles.textlabel1}>{Math.floor(pourcentage*100)} % </Text>
+               <ProgressBar progress={pourcentage} color={Colors.red800} />
+               <Text style={styles.textlabel}> </Text> 
+                        <View style={{ margin:10, paddingTop :10, paddingBottom: 10, paddingRight: 20, paddingLeft: 20, backgroundColor:  "#F0493E", borderRadius:20}}>
+                        <Text style={styles.textlabel}> هل تعاني من ضغط الدم ؟  </Text> 
+                            </View>
+                            <Text style={styles.textlabel}> {br} </Text> 
+                            <TouchableWithoutFeedback onPress={() => this._onPresshypertension("yes")}>
+                            <Animatable.View ref="viewoui" style={{ margin:10, paddingTop :10, paddingBottom: 10, paddingRight: 20, paddingLeft: 20, backgroundColor: this.state.statushypertension ==="yes" ? this.state.onColor : "#bdbdbd", borderRadius:20}}>
+                            <Text style={{color:  "white" , fontWeight: "bold"}}>نعم</Text>
+                            </Animatable.View>
+                        </TouchableWithoutFeedback>
+                        <TouchableWithoutFeedback onPress={() => this._onPresshypertension("no")}>
+                            <Animatable.View ref="viewnon" style={{ margin:10, paddingTop :10, paddingBottom: 10, paddingRight: 20, paddingLeft: 20, backgroundColor: this.state.statushypertension ==="no" ? this.state.onColor : "#bdbdbd", borderRadius:20}}>
+                            <Text style={{color: "white" , fontWeight: "bold"}}> لا </Text>
+                            </Animatable.View>
+                        </TouchableWithoutFeedback>
+                			
+                            {this.state.statushypertension==="yes" ? (
+                            <View>
+                                <Text style={styles.textlabel}></Text> 
+                            <Text style={styles.textlabel1}>عدد سنوات الإصابة بالمرض   {br}</Text> 
+                            <TextInput keyboardType='numeric'
+                                    placeholder="عدد سنوات "
+                                    style={styles.textInput}
+                                    value={this.state.statusnbreanneehypertension} onChangeText={ (text) => this.setState({ statusnbreanneehypertension: text }) }
+                                    />
+                        </View>  
+                    ) : (
+                        <View/>
+                    )}
+                                    
+     
+							</View>  
 
-             {this.state.statushypertension==="yes" ? (
-              <View>
-                 <Text style={styles.textlabel}></Text> 
-               <Text style={styles.textlabel}>عدد سنوات الإصابة بالمرض   {br}</Text> 
-               <TextInput
-					placeholder="عدد سنوات "
-                    style={styles.textInput}
-                    value={this.state.statusnbreanneehypertension} onChangeText={ (text) => this.setState({ statusnbreanneehypertension: text }) }
-					/>
-          </View>  
-      ) : (
-        <View/>
-      )}
+                <Text style={styles.textlabel}> {br} </Text> 
 
-      
+            <View style={styles.innerContainer}> 
+            {this.state.current!= 0 ? 
+                <TouchableOpacity  style={styles.addButtonprev}  onPress={() => this._onPrev(this.state.statusDIABETE==="yes"?1:2)}>
+                <Text style={styles.addButtonText}> السابق </Text> 
+                    </TouchableOpacity>: null}
 
-                  <View style={styles.buttonContainer}>
-            {this.state.current!= 0 ? <Button title={'Précédent'} onPress={() => this._onPrev(this.state.statusDIABETE==="yes"?1:2)} /> : null}
-              
-                {!this.state.isLast ? <Button title={'Suivant'} onPress={() => this._onNext(1)} /> : <Button title={'Terminer'} onPress={() => this._addpatient()} />} 
+                    {!this.state.isLast ? 
+                    <TouchableOpacity  style={(this.state.statushypertension=="empty")?styles.addButtonnextDisable:styles.addButtonnext}  disabled={(this.state.statushypertension=="empty") ? true : false}  onPress={() => this._onNext(1)}>
+                    <Text style={styles.addButtonText}> الموالي </Text> 
+                    </TouchableOpacity>    
+
+                    : <TouchableOpacity  style={styles.addButtonnext}  onPress={() => this._addpatient()}>
+                    <Text style={styles.addButtonText}> تسجيل </Text> 
+                    </TouchableOpacity>
+                    }
+
+   
+        
             </View>
-            </View>  
+            </ScrollView > 
+        );
+    }
+
   
 
-            </View>   
-            </Animated.View>
-        );
-    }
-    else  if (this.state.current === 22) {
+    else if (this.state.current === 27) {
+        let pourcentage=(this.state.current)/(nbreecran);
         return (
-            <View style={styles.container}>
-            <View style={{ flex: 1}}>
-            <Text style={styles.pageText}> {this.state.current+1}/{nbreecran+1} </Text> 
-             </View>  
-             <View style={{ flex: 10}}>
-                <Text style={styles.textlabel}> هل تعاني من أمراض القلب: قصور في القلب/إنسداد أوعية القلب ؟   {br} {br}</Text> 
-                <TouchableWithoutFeedback onPress={() => this._onPresscoeur("yes")}>
-                <Animatable.View ref="viewoui" style={{ margin:10, paddingTop :10, paddingBottom: 10, paddingRight: 20, paddingLeft: 20, backgroundColor: this.state.statuscoeur ==="yes" ? this.state.onColor : "#bdbdbd", borderRadius:20}}>
-                <Text style={{color:  "white" , fontWeight: "bold"}}>نعم</Text>
-                </Animatable.View>
-            </TouchableWithoutFeedback>
-            <TouchableWithoutFeedback onPress={() => this._onPresscoeur("no")}>
-                <Animatable.View ref="viewnon" style={{ margin:10, paddingTop :10, paddingBottom: 10, paddingRight: 20, paddingLeft: 20, backgroundColor: this.state.statuscoeur ==="no" ? this.state.onColor : "#bdbdbd", borderRadius:20}}>
-                <Text style={{color: "white" , fontWeight: "bold"}}> لا </Text>
-                </Animatable.View>
-            </TouchableWithoutFeedback>
+            <ScrollView style={{  backgroundColor:  "white"}}>
+            <View style={styles.row}>
+               <Text style={styles.textlabel1}>{Math.floor(pourcentage*100)} % </Text>
+               <ProgressBar progress={pourcentage} color={Colors.red800} />
+               <Text style={styles.textlabel}> </Text> 
+                        <View style={{ margin:10, paddingTop :10, paddingBottom: 10, paddingRight: 20, paddingLeft: 20, backgroundColor:  "#F0493E", borderRadius:20}}>
+                        <Text style={styles.textlabel}> هل تعاني من أمراض القلب /انسداد اوعية القلب ؟ </Text> 
+                            </View>
+                            <Text style={styles.textlabel}> {br} </Text> 
+                            <TouchableWithoutFeedback onPress={() => this._onPresscoeur("yes")}>
+                            <Animatable.View ref="viewoui" style={{ margin:10, paddingTop :10, paddingBottom: 10, paddingRight: 20, paddingLeft: 20, backgroundColor: this.state.statuscoeur ==="yes" ? this.state.onColor : "#bdbdbd", borderRadius:20}}>
+                            <Text style={{color:  "white" , fontWeight: "bold"}}>نعم</Text>
+                            </Animatable.View>
+                        </TouchableWithoutFeedback>
+                        <TouchableWithoutFeedback onPress={() => this._onPresscoeur("no")}>
+                            <Animatable.View ref="viewnon" style={{ margin:10, paddingTop :10, paddingBottom: 10, paddingRight: 20, paddingLeft: 20, backgroundColor: this.state.statuscoeur ==="no" ? this.state.onColor : "#bdbdbd", borderRadius:20}}>
+                            <Text style={{color: "white" , fontWeight: "bold"}}> لا </Text>
+                            </Animatable.View>
+                        </TouchableWithoutFeedback>
 
-                   <View style={styles.buttonContainer}>
-            {this.state.current!= 0 ? <Button title={'Précédent'} onPress={() => this._onPrev(1)} /> : null}
-              
-                {!this.state.isLast ? <Button title={'Suivant'} onPress={() => this._onNext(1)} /> : <Button title={'Terminer'} onPress={() => this._addpatient()} />} 
-            </View>
+                </View>
+                <Text style={styles.textlabel}> {br} {br} </Text> 
+            <View style={styles.innerContainer}> 
+            {this.state.current!= 0 ? 
+                <TouchableOpacity  style={styles.addButtonprev}  onPress={() => this._onPrev(1)}>
+                <Text style={styles.addButtonText}> السابق </Text> 
+                    </TouchableOpacity>: null}
 
-            </View>  
+                    {!this.state.isLast ? 
+                    <TouchableOpacity  style={(this.state.statuscoeur=="empty")?styles.addButtonnextDisable:styles.addButtonnext}  disabled={(this.state.statuscoeur=="empty") ? true : false}  onPress={() => this._onNext(1)}>
+                    <Text style={styles.addButtonText}> الموالي </Text> 
+                    </TouchableOpacity>    
 
-     
-            </View> 
-          
-        );
-    }
-    else  if (this.state.current === 23) {
-        return (
-            <View style={styles.container}>
-            <View style={{ flex: 1}}>
-            <Text style={styles.pageText}> {this.state.current+1}/{nbreecran+1} </Text> 
-             </View>  
-             <View style={{ flex: 10}}>
-                <Text style={styles.textlabel}> هل تعاني من أمراض الكلى: قصور كلوي /تصفية الدم ؟   {br} {br}</Text> 
-                <TouchableWithoutFeedback onPress={() => this._onPressRenal("yes")}>
-                <Animatable.View ref="viewoui" style={{ margin:10, paddingTop :10, paddingBottom: 10, paddingRight: 20, paddingLeft: 20, backgroundColor: this.state.statusRenal ==="yes" ? this.state.onColor : "#bdbdbd", borderRadius:20}}>
-                <Text style={{color:  "white" , fontWeight: "bold"}}>نعم</Text>
-                </Animatable.View>
-            </TouchableWithoutFeedback>
-            <TouchableWithoutFeedback onPress={() => this._onPressRenal("no")}>
-                <Animatable.View ref="viewnon" style={{ margin:10, paddingTop :10, paddingBottom: 10, paddingRight: 20, paddingLeft: 20, backgroundColor: this.state.statusRenal ==="no" ? this.state.onColor : "#bdbdbd", borderRadius:20}}>
-                <Text style={{color: "white" , fontWeight: "bold"}}> لا </Text>
-                </Animatable.View>
-            </TouchableWithoutFeedback>
-
-                        <View style={styles.buttonContainer}>
-            {this.state.current!= 0 ? <Button title={'Précédent'} onPress={() => this._onPrev(1)} /> : null}
-              
-                {!this.state.isLast ? <Button title={'Suivant'} onPress={() => this._onNext(1)} /> : <Button title={'Terminer'} onPress={() => this._addpatient()} />} 
-            </View>
-
-            </View>  
-
-
-            </View>  
- 
-        );
-    }
-    else  if (this.state.current === 24) {
-        return (
-            <View style={styles.container}>
-            <View style={{ flex: 1}}>
-            <Text style={styles.pageText}> {this.state.current+1}/{nbreecran+1} </Text> 
-             </View>  
-             <View style={{ flex: 10}}>
-                <Text style={styles.textlabel}> هل تشكو من إعاقة ذهنية أو جسدية ؟   {br} {br}</Text>  
-                <TouchableWithoutFeedback onPress={() => this._onPresshindering("yes")}>
-                <Animatable.View ref="viewoui" style={{ margin:10, paddingTop :10, paddingBottom: 10, paddingRight: 20, paddingLeft: 20, backgroundColor: this.state.statushindering ==="yes" ? this.state.onColor : "#bdbdbd", borderRadius:20}}>
-                <Text style={{color:  "white" , fontWeight: "bold"}}>نعم</Text>
-                </Animatable.View>
-            </TouchableWithoutFeedback>
-            <TouchableWithoutFeedback onPress={() => this._onPresshindering("no")}>
-                <Animatable.View ref="viewnon" style={{ margin:10, paddingTop :10, paddingBottom: 10, paddingRight: 20, paddingLeft: 20, backgroundColor: this.state.statushindering ==="no" ? this.state.onColor : "#bdbdbd", borderRadius:20}}>
-                <Text style={{color: "white" , fontWeight: "bold"}}> لا </Text>
-                </Animatable.View>
-            </TouchableWithoutFeedback>
-
-
-            <View style={styles.buttonContainer}>
-            {this.state.current!= 0 ? <Button title={'Précédent'} onPress={() => this._onPrev(1)} /> : null}
-              
-                {!this.state.isLast ? <Button title={'Suivant'} onPress={() => this._onNext(1)} /> : <Button title={'Terminer'} onPress={() => this._addpatient()} />} 
-            </View>
-
-            </View>  
-
-
-            </View>  
-     
-        );
-    }
-    else  if (this.state.current === 25) {
-        return (
-            <View style={styles.container}>
-            <View style={{ flex: 1}}>
-            <Text style={styles.pageText}> {this.state.current+1}/{nbreecran+1} </Text> 
-             </View>  
-             <View style={{ flex: 10}}>
-                <Text style={styles.textlabel}> هل أصبت بمرض السرطان أو تتابع علاجا بشأنه ؟   {br} {br}</Text> 
-                <TouchableWithoutFeedback onPress={() => this._onPressconcer("yes")}>
-                <Animatable.View ref="viewoui" style={{ margin:10, paddingTop :10, paddingBottom: 10, paddingRight: 20, paddingLeft: 20, backgroundColor: this.state.statusconcer ==="yes" ? this.state.onColor : "#bdbdbd", borderRadius:20}}>
-                <Text style={{color:  "white" , fontWeight: "bold"}}>نعم</Text>
-                </Animatable.View>
-            </TouchableWithoutFeedback>
-            <TouchableWithoutFeedback onPress={() => this._onPressconcer("no")}>
-                <Animatable.View ref="viewnon" style={{ margin:10, paddingTop :10, paddingBottom: 10, paddingRight: 20, paddingLeft: 20, backgroundColor: this.state.statusconcer ==="no" ? this.state.onColor : "#bdbdbd", borderRadius:20}}>
-                <Text style={{color: "white" , fontWeight: "bold"}}> لا </Text>
-                </Animatable.View>
-            </TouchableWithoutFeedback>
-
-                        <View style={styles.buttonContainer}>
-            {this.state.current!= 0 ? <Button title={'Précédent'} onPress={() => this._onPrev(1)} /> : null}
-              
-                {!this.state.isLast ? <Button title={'Suivant'} onPress={() => this._onNext(this.state.statusconcer ==="yes"?1:3)} /> : <Button title={'Terminer'} onPress={() => this._addpatient()} />} 
-            </View>
-
-            </View>  
-
-
-            </View>  
-       
-        );
-    }
-
-    else  if (this.state.current === 26) {
-        return (
-            <View style={styles.container}>
-            <View style={{ flex: 1}}>
-            <Text style={styles.pageText}> {this.state.current+1}/{nbreecran+1} </Text> 
-             </View>  
-             <View style={{ flex: 10}}>
-                <Text style={styles.textlabel}> أين يقع مرض السرطان لديك  ؟   {br} {br}</Text> 
-                <TouchableWithoutFeedback onPress={() => this._onPressplaceconcer("1")}>
-                <Animatable.View ref="view1" style={{ margin:10, paddingTop :10, paddingBottom: 10, paddingRight: 20, paddingLeft: 20, backgroundColor: this.state.statusplaceconcer ==="1" ? this.state.onColor : "#bdbdbd", borderRadius:20}}>
-                <Text style={{color:  "white" , fontWeight: "bold"}}>الرئة</Text>
-                </Animatable.View>
-            </TouchableWithoutFeedback>
-            <TouchableWithoutFeedback onPress={() => this._onPressplaceconcer("2")}>
-                <Animatable.View ref="view2" style={{ margin:10, paddingTop :10, paddingBottom: 10, paddingRight: 20, paddingLeft: 20, backgroundColor: this.state.statusplaceconcer ==="2" ? this.state.onColor : "#bdbdbd", borderRadius:20}}>
-                <Text style={{color: "white" , fontWeight: "bold"}}> الكبد </Text>
-                </Animatable.View>
-            </TouchableWithoutFeedback>
-            <TouchableWithoutFeedback onPress={() => this._onPressplaceconcer("3")}>
-                <Animatable.View ref="view3" style={{ margin:10, paddingTop :10, paddingBottom: 10, paddingRight: 20, paddingLeft: 20, backgroundColor: this.state.statusplaceconcer ==="3" ? this.state.onColor : "#bdbdbd", borderRadius:20}}>
-                <Text style={{color:  "white" , fontWeight: "bold"}}> الحلق و الأنف و الأذنين </Text>
-                </Animatable.View>
-            </TouchableWithoutFeedback>
-
-
-            <View style={styles.buttonContainer}>
-            {this.state.current!= 0 ? <Button title={'Précédent'} onPress={() => this._onPrev(1)} /> : null}
-              
-                {!this.state.isLast ? <Button title={'Suivant'} onPress={() => this._onNext(1)} /> : <Button title={'Terminer'} onPress={() => this._addpatient()} />} 
-            </View>
-            </View>  
-
-
-            </View>   
-
-        );
-    }
-
-    else  if (this.state.current === 27) {
-        return (
-            <View style={styles.container}>
-            <View style={{ flex: 1}}>
-            <Text style={styles.pageText}> {this.state.current+1}/{nbreecran+1} </Text> 
-             </View>  
-             <View style={{ flex: 10}}>
-                <Text style={styles.textlabel}> ماهو العلاج المعتمد في مرض السرطان  ؟   {br} {br}</Text> 
-                <TouchableWithoutFeedback onPress={() => this._onPresstreatmentconcer("1")}>
-                <Animatable.View ref="view1" style={{ margin:10, paddingTop :10, paddingBottom: 10, paddingRight: 20, paddingLeft: 20, backgroundColor: this.state.statustreatmentconcer ==="1" ? this.state.onColor : "#bdbdbd", borderRadius:20}}>
-                <Text style={{color:  "white" , fontWeight: "bold"}}>كيميائي</Text>
-                </Animatable.View>
-            </TouchableWithoutFeedback>
-            <TouchableWithoutFeedback onPress={() => this._onPresstreatmentconcer("2")}>
-                <Animatable.View ref="view2" style={{ margin:10, paddingTop :10, paddingBottom: 10, paddingRight: 20, paddingLeft: 20, backgroundColor: this.state.statustreatmentconcer ==="2" ? this.state.onColor : "#bdbdbd", borderRadius:20}}>
-                <Text style={{color: "white" , fontWeight: "bold"}}> أشعة </Text>
-                </Animatable.View>
-            </TouchableWithoutFeedback>
-            <TouchableWithoutFeedback onPress={() => this._onPresstreatmentconcer("3")}>
-                <Animatable.View ref="view3" style={{ margin:10, paddingTop :10, paddingBottom: 10, paddingRight: 20, paddingLeft: 20, backgroundColor: this.state.statustreatmentconcer ==="3" ? this.state.onColor : "#bdbdbd", borderRadius:20}}>
-                <Text style={{color:  "white" , fontWeight: "bold"}}> جراحة </Text>
-                </Animatable.View>
-            </TouchableWithoutFeedback>
-
-            <View style={styles.buttonContainer}>
-            {this.state.current!= 0 ? <Button title={'Précédent'} onPress={() => this._onPrev(1)} /> : null}
-              
-                {!this.state.isLast ? <Button title={'Suivant'} onPress={() => this._onNext(1)} /> : <Button title={'Terminer'} onPress={() => this._addpatient()} />} 
-            </View>
-
-            </View>  
-
-
-            </View>   
-    
-        );
-    }
-    else  if (this.state.current === 28) {
-        return (
-            <View style={styles.container}>
-            <View style={{ flex: 1}}>
-            <Text style={styles.pageText}> {this.state.current+1}/{nbreecran+1} </Text> 
-             </View>  
-             <View style={{ flex: 10}}>
-                <Text style={styles.textlabel}> هل تعاني من أحد أمراض ضعف المناعة  ؟   {br} {br}</Text> 
-                <TouchableWithoutFeedback onPress={() => this._onPressImmunity("1")}>
-                <Animatable.View ref="view1" style={{ margin:10, paddingTop :10, paddingBottom: 10, paddingRight: 20, paddingLeft: 20, backgroundColor: this.state.statusImmunity ==="1" ? this.state.onColor : "#bdbdbd", borderRadius:20}}>
-                <Text style={{color:  "white" , fontWeight: "bold"}}>نعم</Text>
-                </Animatable.View>
-            </TouchableWithoutFeedback>
-            <TouchableWithoutFeedback onPress={() => this._onPressImmunity("2")}>
-                <Animatable.View ref="view2" style={{ margin:10, paddingTop :10, paddingBottom: 10, paddingRight: 20, paddingLeft: 20, backgroundColor: this.state.statusImmunity ==="2" ? this.state.onColor : "#bdbdbd", borderRadius:20}}>
-                <Text style={{color: "white" , fontWeight: "bold"}}> لا </Text>
-                </Animatable.View>
-            </TouchableWithoutFeedback>
-
-         <View style={styles.buttonContainer}>
-            {this.state.current!= 0 ? <Button title={'Précédent'} onPress={() => this._onPrev(this.state.statusconcer ==="yes"?1:3)} /> : null}
-              
-                {!this.state.isLast ? <Button title={'Suivant'} onPress={() => this._onNext(1)} /> : <Button title={'Terminer'} onPress={() => this._addpatient()} />} 
-            </View>
-
-
-            </View>  
+                    : <TouchableOpacity  style={styles.addButtonnext}  onPress={() => this._addpatient()}>
+                    <Text style={styles.addButtonText}> تسجيل </Text> 
+                    </TouchableOpacity>
+                    }
 
    
-            </View>   
-    
+        
+            </View>
+            </ScrollView > 
         );
     }
+
+    else if (this.state.current === 28) {
+        let pourcentage=(this.state.current)/(nbreecran);
+        return (
+            <ScrollView style={{  backgroundColor:  "white"}}>
+            <View style={styles.row}>
+               <Text style={styles.textlabel1}>{Math.floor(pourcentage*100)} % </Text>
+               <ProgressBar progress={pourcentage} color={Colors.red800} />
+               <Text style={styles.textlabel}> </Text> 
+                        <View style={{ margin:10, paddingTop :10, paddingBottom: 10, paddingRight: 20, paddingLeft: 20, backgroundColor:  "#F0493E", borderRadius:20}}>
+                        <Text style={styles.textlabel}> هل تعاني من أمراض الكلى: قصور كلوي /تصفية الدم ؟ </Text> 
+                            </View>
+                            <Text style={styles.textlabel}> {br} </Text> 
+                            <TouchableWithoutFeedback onPress={() => this._onPressRenal("yes")}>
+                            <Animatable.View ref="viewoui" style={{ margin:10, paddingTop :10, paddingBottom: 10, paddingRight: 20, paddingLeft: 20, backgroundColor: this.state.statusRenal ==="yes" ? this.state.onColor : "#bdbdbd", borderRadius:20}}>
+                            <Text style={{color:  "white" , fontWeight: "bold"}}>نعم</Text>
+                            </Animatable.View>
+                        </TouchableWithoutFeedback>
+                        <TouchableWithoutFeedback onPress={() => this._onPressRenal("no")}>
+                            <Animatable.View ref="viewnon" style={{ margin:10, paddingTop :10, paddingBottom: 10, paddingRight: 20, paddingLeft: 20, backgroundColor: this.state.statusRenal ==="no" ? this.state.onColor : "#bdbdbd", borderRadius:20}}>
+                            <Text style={{color: "white" , fontWeight: "bold"}}> لا </Text>
+                            </Animatable.View>
+                        </TouchableWithoutFeedback>
+
+                </View>
+                <Text style={styles.textlabel}> {br} {br} </Text> 
+            <View style={styles.innerContainer}> 
+            {this.state.current!= 0 ? 
+                <TouchableOpacity  style={styles.addButtonprev}  onPress={() => this._onPrev(1)}>
+                <Text style={styles.addButtonText}> السابق </Text> 
+                    </TouchableOpacity>: null}
+
+                    {!this.state.isLast ? 
+                     <TouchableOpacity  style={(this.state.statusRenal=="empty")?styles.addButtonnextDisable:styles.addButtonnext}  disabled={(this.state.statusRenal=="empty") ? true : false}  onPress={() => this._onNext(1)}>
+
+                    <Text style={styles.addButtonText}> الموالي </Text> 
+                    </TouchableOpacity>    
+
+                    : <TouchableOpacity  style={styles.addButtonnext}  onPress={() => this._addpatient()}>
+                    <Text style={styles.addButtonText}> تسجيل </Text> 
+                    </TouchableOpacity>
+                    }
+
+   
+        
+            </View>
+            </ScrollView > 
+        );
+    }
+
+    
+    else if (this.state.current === 29) {
+        let pourcentage=(this.state.current)/(nbreecran);
+        return (
+            <ScrollView style={{  backgroundColor:  "white"}}>
+            <View style={styles.row}>
+               <Text style={styles.textlabel1}>{Math.floor(pourcentage*100)} % </Text>
+               <ProgressBar progress={pourcentage} color={Colors.red800} />
+               <Text style={styles.textlabel}> </Text> 
+                        <View style={{ margin:10, paddingTop :10, paddingBottom: 10, paddingRight: 20, paddingLeft: 20, backgroundColor:  "#F0493E", borderRadius:20}}>
+                        <Text style={styles.textlabel}> هل تشكو من إعاقة ذهنية أو جسدية ؟ </Text>  
+                            </View>
+                            <Text style={styles.textlabel}> {br} </Text> 
+                        <TouchableWithoutFeedback onPress={() => this._onPresshindering("yes")}>
+                        <Animatable.View ref="viewoui" style={{ margin:10, paddingTop :10, paddingBottom: 10, paddingRight: 20, paddingLeft: 20, backgroundColor: this.state.statushindering ==="yes" ? this.state.onColor : "#bdbdbd", borderRadius:20}}>
+                        <Text style={{color:  "white" , fontWeight: "bold"}}>نعم</Text>
+                        </Animatable.View>
+                    </TouchableWithoutFeedback>
+                    <TouchableWithoutFeedback onPress={() => this._onPresshindering("no")}>
+                        <Animatable.View ref="viewnon" style={{ margin:10, paddingTop :10, paddingBottom: 10, paddingRight: 20, paddingLeft: 20, backgroundColor: this.state.statushindering ==="no" ? this.state.onColor : "#bdbdbd", borderRadius:20}}>
+                        <Text style={{color: "white" , fontWeight: "bold"}}> لا </Text>
+                        </Animatable.View>
+                    </TouchableWithoutFeedback>
+                </View>
+                <Text style={styles.textlabel}> {br} {br} </Text> 
+            <View style={styles.innerContainer}> 
+           
+            {this.state.current!= 0 ? 
+                <TouchableOpacity  style={styles.addButtonprev}  onPress={() => this._onPrev(1)}>
+                <Text style={styles.addButtonText}> السابق </Text> 
+                    </TouchableOpacity>: null}
+
+                    {!this.state.isLast ? 
+                    <TouchableOpacity  style={(this.state.statushindering=="empty")?styles.addButtonnextDisable:styles.addButtonnext}  disabled={(this.state.statushindering=="empty") ? true : false}  onPress={() => this._onNext(1)}>
+                    <Text style={styles.addButtonText}> الموالي </Text> 
+                    </TouchableOpacity>    
+
+                    : <TouchableOpacity  style={styles.addButtonnext}  onPress={() => this._addpatient()}>
+                    <Text style={styles.addButtonText}> تسجيل </Text> 
+                    </TouchableOpacity>
+                    }
+   
+        
+            </View>
+            </ScrollView > 
+        );
+    }
+
+
+    else if (this.state.current === 30) {
+        let pourcentage=(this.state.current)/(nbreecran);
+        return (
+            <ScrollView style={{  backgroundColor:  "white"}}>
+            <View style={styles.row}>
+               <Text style={styles.textlabel1}>{Math.floor(pourcentage*100)} % </Text>
+               <ProgressBar progress={pourcentage} color={Colors.red800} />
+               <Text style={styles.textlabel}> </Text> 
+                        <View style={{ margin:10, paddingTop :10, paddingBottom: 10, paddingRight: 20, paddingLeft: 20, backgroundColor:  "#F0493E", borderRadius:20}}>
+                        <Text style={styles.textlabel}> هل أصبت بمرض السرطان أو تتابع علاجا بشأنه ؟ </Text>   
+                            </View>
+                            <Text style={styles.textlabel}> {br} </Text> 
+                            <TouchableWithoutFeedback onPress={() => this._onPressconcer("yes")}>
+                            <Animatable.View ref="viewoui" style={{ margin:10, paddingTop :10, paddingBottom: 10, paddingRight: 20, paddingLeft: 20, backgroundColor: this.state.statusconcer ==="yes" ? this.state.onColor : "#bdbdbd", borderRadius:20}}>
+                            <Text style={{color:  "white" , fontWeight: "bold"}}>نعم</Text>
+                            </Animatable.View>
+                        </TouchableWithoutFeedback>
+                        <TouchableWithoutFeedback onPress={() => this._onPressconcer("no")}>
+                            <Animatable.View ref="viewnon" style={{ margin:10, paddingTop :10, paddingBottom: 10, paddingRight: 20, paddingLeft: 20, backgroundColor: this.state.statusconcer ==="no" ? this.state.onColor : "#bdbdbd", borderRadius:20}}>
+                            <Text style={{color: "white" , fontWeight: "bold"}}> لا </Text>
+                            </Animatable.View>
+                        </TouchableWithoutFeedback>
+                </View>
+                <Text style={styles.textlabel}> {br} {br} </Text> 
+            <View style={styles.innerContainer}> 
+           
+            {this.state.current!= 0 ? 
+                <TouchableOpacity  style={styles.addButtonprev}  onPress={() => this._onPrev(1)}>
+                <Text style={styles.addButtonText}> السابق </Text> 
+                    </TouchableOpacity>: null}
+
+                    {!this.state.isLast ? 
+                     <TouchableOpacity  style={(this.state.statusconcer=="empty")?styles.addButtonnextDisable:styles.addButtonnext}  disabled={(this.state.statusconcer=="empty") ? true : false}  onPress={() => this._onNext(this.state.statusconcer ==="yes"?1:3)}>
+                    <Text style={styles.addButtonText}> الموالي </Text> 
+                    </TouchableOpacity>    
+
+                    : <TouchableOpacity  style={styles.addButtonnext}  onPress={() => this._addpatient()}>
+                    <Text style={styles.addButtonText}> تسجيل </Text> 
+                    </TouchableOpacity>
+                    }
+   
+        
+            </View>
+            </ScrollView > 
+        );
+    }
+    
+
+    else if (this.state.current === 31) {
+        let pourcentage=(this.state.current)/(nbreecran);
+        return (
+            <ScrollView style={{  backgroundColor:  "white"}}>
+            <View style={styles.row}>
+               <Text style={styles.textlabel1}>{Math.floor(pourcentage*100)} % </Text>
+               <ProgressBar progress={pourcentage} color={Colors.red800} />
+               <Text style={styles.textlabel}> </Text> 
+                        <View style={{ margin:10, paddingTop :10, paddingBottom: 10, paddingRight: 20, paddingLeft: 20, backgroundColor:  "#F0493E", borderRadius:20}}>
+                        <Text style={styles.textlabel}> ماهو العضو المصاب لديك ؟  </Text>   
+                            </View>
+                            <Text style={styles.textlabel}> {br} </Text> 
+                            <TouchableWithoutFeedback onPress={() => this._onPressplaceconcer("1")}>
+                            <Animatable.View ref="view1" style={{ margin:10, paddingTop :10, paddingBottom: 10, paddingRight: 20, paddingLeft: 20, backgroundColor: this.state.statusplaceconcer ==="1" ? this.state.onColor : "#bdbdbd", borderRadius:20}}>
+                            <Text style={{color:  "white" , fontWeight: "bold"}}>الرئة</Text>
+                            </Animatable.View>
+                        </TouchableWithoutFeedback>
+                        <TouchableWithoutFeedback onPress={() => this._onPressplaceconcer("2")}>
+                            <Animatable.View ref="view2" style={{ margin:10, paddingTop :10, paddingBottom: 10, paddingRight: 20, paddingLeft: 20, backgroundColor: this.state.statusplaceconcer ==="2" ? this.state.onColor : "#bdbdbd", borderRadius:20}}>
+                            <Text style={{color: "white" , fontWeight: "bold"}}> الكبد </Text>
+                            </Animatable.View>
+                        </TouchableWithoutFeedback>
+                        <TouchableWithoutFeedback onPress={() => this._onPressplaceconcer("3")}>
+                            <Animatable.View ref="view3" style={{ margin:10, paddingTop :10, paddingBottom: 10, paddingRight: 20, paddingLeft: 20, backgroundColor: this.state.statusplaceconcer ==="3" ? this.state.onColor : "#bdbdbd", borderRadius:20}}>
+                            <Text style={{color:  "white" , fontWeight: "bold"}}> الحلق و الأنف و الأذنين </Text>
+                            </Animatable.View>
+                        </TouchableWithoutFeedback>
+                        <TouchableWithoutFeedback onPress={() => this._onPressplaceconcer("4")}>
+                            <Animatable.View ref="view4" style={{ margin:10, paddingTop :10, paddingBottom: 10, paddingRight: 20, paddingLeft: 20, backgroundColor: this.state.statusplaceconcer ==="4" ? this.state.onColor : "#bdbdbd", borderRadius:20}}>
+                            <Text style={{color:  "white" , fontWeight: "bold"}}>  آخر   </Text>
+                            </Animatable.View>
+                        </TouchableWithoutFeedback>
+                </View>
+                <Text style={styles.textlabel}> {br} </Text> 
+            <View style={styles.innerContainer}> 
+           
+            {this.state.current!= 0 ? 
+                <TouchableOpacity  style={styles.addButtonprev}  onPress={() => this._onPrev(1)}>
+                <Text style={styles.addButtonText}> السابق </Text> 
+                    </TouchableOpacity>: null}
+
+                    {!this.state.isLast ? 
+                    <TouchableOpacity  style={(this.state.statusplaceconcer=="empty")?styles.addButtonnextDisable:styles.addButtonnext}  disabled={(this.state.statusplaceconcer=="empty") ? true : false}  onPress={() => this._onNext(1)}>
+                    <Text style={styles.addButtonText}> الموالي </Text> 
+                    </TouchableOpacity>    
+
+                    : <TouchableOpacity  style={styles.addButtonnext}  onPress={() => this._addpatient()}>
+                    <Text style={styles.addButtonText}> تسجيل </Text> 
+                    </TouchableOpacity>
+                    }
+   
+        
+            </View>
+            </ScrollView > 
+        );
+    }
+
+    else if (this.state.current === 32) {
+        let pourcentage=(this.state.current)/(nbreecran);
+        return (
+            <ScrollView style={{  backgroundColor:  "white"}}>
+            <View style={styles.row}>
+               <Text style={styles.textlabel1}>{Math.floor(pourcentage*100)} % </Text>
+               <ProgressBar progress={pourcentage} color={Colors.red800} />
+               <Text style={styles.textlabel}> </Text> 
+                        <View style={{ margin:10, paddingTop :10, paddingBottom: 10, paddingRight: 20, paddingLeft: 20, backgroundColor:  "#F0493E", borderRadius:20}}>
+                        <Text style={styles.textlabel}> ماهو العلاج المعتمد في مرض السرطان  ؟  </Text>  
+                            </View>
+                            <Text style={styles.textlabel}> {br} </Text> 
+                            <TouchableWithoutFeedback onPress={() => this._onPresstreatmentconcer("1")}>
+                            <Animatable.View ref="view1" style={{ margin:10, paddingTop :10, paddingBottom: 10, paddingRight: 20, paddingLeft: 20, backgroundColor: this.state.statustreatmentconcer ==="1" ? this.state.onColor : "#bdbdbd", borderRadius:20}}>
+                            <Text style={{color:  "white" , fontWeight: "bold"}}>كيميائي</Text>
+                            </Animatable.View>
+                        </TouchableWithoutFeedback>
+                        <TouchableWithoutFeedback onPress={() => this._onPresstreatmentconcer("2")}>
+                            <Animatable.View ref="view2" style={{ margin:10, paddingTop :10, paddingBottom: 10, paddingRight: 20, paddingLeft: 20, backgroundColor: this.state.statustreatmentconcer ==="2" ? this.state.onColor : "#bdbdbd", borderRadius:20}}>
+                            <Text style={{color: "white" , fontWeight: "bold"}}> أشعة </Text>
+                            </Animatable.View>
+                        </TouchableWithoutFeedback>
+                        <TouchableWithoutFeedback onPress={() => this._onPresstreatmentconcer("3")}>
+                            <Animatable.View ref="view3" style={{ margin:10, paddingTop :10, paddingBottom: 10, paddingRight: 20, paddingLeft: 20, backgroundColor: this.state.statustreatmentconcer ==="3" ? this.state.onColor : "#bdbdbd", borderRadius:20}}>
+                            <Text style={{color:  "white" , fontWeight: "bold"}}> جراحة </Text>
+                            </Animatable.View>
+                        </TouchableWithoutFeedback>
+                </View>
+                <Text style={styles.textlabel}> {br} {br} </Text> 
+            <View style={styles.innerContainer}> 
+           
+            {this.state.current!= 0 ? 
+                <TouchableOpacity  style={styles.addButtonprev}  onPress={() => this._onPrev(1)}>
+                <Text style={styles.addButtonText}> السابق </Text> 
+                    </TouchableOpacity>: null}
+
+                    {!this.state.isLast ? 
+                     <TouchableOpacity  style={(this.state.statustreatmentconcer=="empty")?styles.addButtonnextDisable:styles.addButtonnext}  disabled={(this.state.statustreatmentconcer=="empty") ? true : false}  onPress={() => this._onNext(1)}>
+                    <Text style={styles.addButtonText}> الموالي </Text> 
+                    </TouchableOpacity>    
+
+                    : <TouchableOpacity  style={styles.addButtonnext}  onPress={() => this._addpatient()}>
+                    <Text style={styles.addButtonText}> تسجيل </Text> 
+                    </TouchableOpacity>
+                    }
+   
+        
+            </View>
+            </ScrollView > 
+        );
+    }
+
+    else if (this.state.current === 33) {
+        let pourcentage=(this.state.current)/(nbreecran);
+        return (
+            <ScrollView style={{  backgroundColor:  "white"}}>
+            <View style={styles.row}>
+               <Text style={styles.textlabel1}>{Math.floor(pourcentage*100)} % </Text>
+               <ProgressBar progress={pourcentage} color={Colors.red800} />
+               <Text style={styles.textlabel}> </Text> 
+                        <View style={{ margin:10, paddingTop :10, paddingBottom: 10, paddingRight: 20, paddingLeft: 20, backgroundColor:  "#F0493E", borderRadius:20}}>
+                        <Text style={styles.textlabel}> هل تعاني من أحد أمراض ضعف المناعة  ؟  </Text> 
+                            </View>
+                            <Text style={styles.textlabel}> {br} </Text> 
+                            <Text style={styles.textlabel}> {br} </Text> 
+                            <TouchableWithoutFeedback onPress={() => this._onPressImmunity("1")}>
+                            <Animatable.View ref="view1" style={{ margin:10, paddingTop :10, paddingBottom: 10, paddingRight: 20, paddingLeft: 20, backgroundColor: this.state.statusImmunity ==="1" ? this.state.onColor : "#bdbdbd", borderRadius:20}}>
+                            <Text style={{color:  "white" , fontWeight: "bold"}}>نعم</Text>
+                            </Animatable.View>
+                        </TouchableWithoutFeedback>
+                        <TouchableWithoutFeedback onPress={() => this._onPressImmunity("2")}>
+                            <Animatable.View ref="view2" style={{ margin:10, paddingTop :10, paddingBottom: 10, paddingRight: 20, paddingLeft: 20, backgroundColor: this.state.statusImmunity ==="2" ? this.state.onColor : "#bdbdbd", borderRadius:20}}>
+                            <Text style={{color: "white" , fontWeight: "bold"}}> لا </Text>
+                            </Animatable.View>
+                        </TouchableWithoutFeedback>
+                </View>
+                <Text style={styles.textlabel}> {br} {br} </Text> 
+            <View style={styles.innerContainer}> 
+           
+            {this.state.current!= 0 ? 
+            
+                <TouchableOpacity  style={styles.addButtonprev}  onPress={() => this._onPrev(this.state.statusconcer ==="yes"?1:3)}>
+                <Text style={styles.addButtonText}> السابق </Text> 
+                    </TouchableOpacity>: null}
+
+                    {!this.state.isLast ? 
+                    <TouchableOpacity  style={(this.state.statusImmunity=="empty")?styles.addButtonnextDisable:styles.addButtonnext}  disabled={(this.state.statusImmunity=="empty") ? true : false}  onPress={() => this._onNext(1)}>
+                    <Text style={styles.addButtonText}> الموالي </Text> 
+                    </TouchableOpacity>    
+
+                    :                     <TouchableOpacity  style={(this.state.statusImmunity=="empty")?styles.addButtonnextDisable:styles.addButtonnext}  disabled={(this.state.statusImmunity=="empty") ? true : false}  onPress={() => this._addpatient()}>
+                    <Text style={styles.addButtonText}> تسجيل </Text> 
+                    </TouchableOpacity>
+                    }
+   
+        
+            </View>
+            </ScrollView > 
+        );
+    }
+
 
   }
 }
@@ -1763,14 +2607,20 @@ const styles = StyleSheet.create({
       },
     buttonContainer: {
         flexDirection: 'row',
-        height: 80,
+        height: 0,
         alignItems: 'center',
         justifyContent: 'space-around',
     },
     textlabel: {
         fontSize: 24,
         paddingRight:30,
-        left:10
+        left:10,
+        color:'white'
+      },
+      textlabel1: {
+        fontSize: 24,
+        paddingRight:30,
+        left:10,
       },
       selectedText:
       {
@@ -1809,5 +2659,64 @@ const styles = StyleSheet.create({
         position: 'absolute',
         top: 0,
         width: '100%'
+      },
+      addButtonnext: {
+        height: 36,
+        backgroundColor: '#F0493E',
+        right:20,
+        borderColor: '#F0493E',
+        borderWidth: 1,
+        borderRadius: 8,
+        marginBottom: 10,
+        alignSelf: 'stretch',
+        justifyContent: 'center'
+    },
+
+    addButtonnextDisable: {
+        height: 36,
+        backgroundColor: '#bdbdbd',
+        right:20,
+        borderColor: '#bdbdbd',
+        borderWidth: 1,
+        borderRadius: 8,
+        marginBottom: 10,
+        alignSelf: 'stretch',
+        justifyContent: 'center',
+    },
+    addButtonprev: {
+        height: 36,
+        backgroundColor: '#F0493E',
+        borderColor: '#F0493E',
+        left:20,
+        borderWidth: 1,
+        borderRadius: 8,
+        marginBottom: 10,
+        alignSelf: 'stretch',
+        justifyContent: 'center'
+    },
+    addButtonprevdisabled: {
+        height: 36,
+        backgroundColor: '#F0493E',
+        borderColor: '#F0493E',
+        left:20,
+        borderWidth: 1,
+        borderRadius: 8,
+        marginBottom: 10,
+        alignSelf: 'stretch',
+        justifyContent: 'center',
+        opacity: 0.3
+    },
+    addButtonText: {
+      fontSize: 24,
+      paddingRight:30,
+      left:10,
+      color:'white'
+    },
+    innerContainer:{  
+        // flex: 1,  
+         width: "100%",  
+         flexDirection: "row",  
+         justifyContent: "space-between",  
+         alignItems: "center"  
       }
 });

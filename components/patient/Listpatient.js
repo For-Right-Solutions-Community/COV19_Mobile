@@ -112,7 +112,7 @@ render() {
 
  
  <TouchableOpacity  style={styles.addButton}  onPress={() => this._Editpatient()}>
-           <Text style={styles.addButtonText}>+</Text>
+           <Text style={styles.addButtonText}>إضافة مريض</Text>
            </TouchableOpacity>
 
       </View>
@@ -138,13 +138,19 @@ const styles = StyleSheet.create({
     zIndex: 11,
     right: 40,
     bottom: 15,
-    backgroundColor: '#2196F3',
-    width: 50,
-    height: 50,
-    borderRadius: 35,
+    backgroundColor: '#F0493E',
+    width: 100,
+    height: 100,
+    borderRadius: 75,
     alignItems: 'center',
     justifyContent: 'center',
     elevation: 8
 },
+addButtonText: {
+  fontSize: 24,
+  paddingRight:30,
+  left:10,
+  color:'white'
+}
 });
 export default ListPatient;
