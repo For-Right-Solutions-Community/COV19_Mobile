@@ -10,6 +10,7 @@ import Listpatient from './patient/Listpatient';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import { _getToken,_deconnection} from '../Store/actions';
+import datapatient from './patient/Helpers'
 const br = `\n`;
 var STORAGE_KEY = 'id_token'
 var valuetoken=""
@@ -79,8 +80,8 @@ _userSignup(login,password) {
 
 render() {
 
-/*
-   if (this.props.token==-1 ||this.props.token==undefined) {
+
+   if (this.props.token==-1 ||this.props.token==undefined || this.props.patientslist==null) {
     return (
   
       <View style={styles.container}>
@@ -130,32 +131,41 @@ render() {
   
 );
   }
-*/
-  //else{
-    return (
-      <Container>
-  
-        <Header style={{backgroundColor:'white'}} hasTabs >
-        <View style={styles.innerContainer}> 
-        <Text> </Text> 
-        <Text style={{color: 'black',fontSize: 26 ,textDecorationLine: 'underline'}}
-             onPress={() => this._deconnexion()}>
-            الخروج  
-            </Text>
-            </View>
-        </Header>
-        <Tabs  initialPage={0} tabBarPosition="top">
-          <Tab heading={ <TabHeading style={{backgroundColor: '#F0493E'}}><Text style={styles.textlabel} >قائمة المرضى</Text></TabHeading>}> 
-          <Grid>
-           <Listpatient navigation = {this.props.navigation}>
-                 </Listpatient>
-          </Grid>
-          </Tab>
 
-        </Tabs>
-   
-      </Container>
-  );
+  else if (this.props.patientslist.length==0) {
+      return (
+          <Editpatient navigation = {this.props.navigation}>
+          </Editpatient>
+                     );
+    }
+    else
+    {
+      return (
+        <Container>
+    
+          <Header style={{backgroundColor:'white'}} hasTabs >
+          <View style={styles.innerContainer}> 
+          <Text> </Text> 
+          <Text style={{color: 'black',fontSize: 26 ,textDecorationLine: 'underline'}}
+               onPress={() => this._deconnexion()}>
+              الخروج  
+              </Text>
+              </View>
+          </Header>
+          <Tabs  initialPage={0} tabBarPosition="top">
+            <Tab heading={ <TabHeading style={{backgroundColor: '#F0493E'}}><Text style={styles.textlabel} >قائمة المرضى</Text></TabHeading>}> 
+            <Grid>
+             <Listpatient navigation = {this.props.navigation}>
+                   </Listpatient>
+            </Grid>
+            </Tab>
+  
+          </Tabs>
+     
+        </Container>
+    );
+    }
+ 
   }
 
 
@@ -235,7 +245,8 @@ function mapDispatchToProps(dispatch) {
 }
 function mapStateToProps(state) {
   return {
-    token: state.token
+    token: state.token,
+    patientslist:state.patientslist
   }
 }
 export default connect(mapStateToProps,mapDispatchToProps)(IndexFollowScreen);

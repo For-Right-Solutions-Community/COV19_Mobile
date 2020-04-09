@@ -7,7 +7,7 @@ export default class UserRow extends Component {
   super(props)
 }
 _suivipatient= () => {
-  this.props.navigation.navigate("Suivipatient",{mode:'INSERT'})
+  this.props.navigation.navigate("Suivipatient",{mode:'INSERT',idpatient:this.props.idpatient})
 }
 
 render() {  
@@ -16,7 +16,7 @@ render() {
          
           <Text style={styles.primaryText}>
       
-           {`${this.props.firstName} ${this.props.lastName}`}
+           {`${this.props.firstname} ${this.props.lastname}`}
     </Text>
              <View>
  <View style={styles.innerContainer}>  
@@ -29,7 +29,7 @@ render() {
    
         
       </View>  
-      <Text style={styles.secondaryText}>الهاتف :{this.props.tel}</Text>
+      <Text style={styles.secondaryText}>الهاتف :{this.props.phone}</Text>
     </View>
       </View>  
   );  

@@ -13,7 +13,10 @@ import {
 } from "react-native";
 
 import PatientRow from "./PatientRow";
-import datapatient from './Helpers'
+import { connect } from 'react-redux';
+import { bindActionCreators } from 'redux';
+import { _getToken,_deconnection} from '../../Store/actions';
+//import datapatient from './Helpers'
 
 class ListPatient extends Component {
   constructor(props)
@@ -29,10 +32,11 @@ class ListPatient extends Component {
 
 
 <PatientRow
-firstName={item.firstName}
- lastName={item.lastName}
+idpatient={item.id}
+firstname={item.firstname}
+lastname={item.lastname}
  age={item.age}
- tel={item.tel}
+ phone={item.phone}
  list={item}
  navigation={ this.props.navigation}
 />
@@ -88,7 +92,7 @@ _onRefresh()
   
 }
 componentDidMount() {
-  console.log(datapatient[0].firstName);
+  console.log(this.props.patientslist[0].firstname);
 }
 
 _Editpatient= () => {
@@ -96,7 +100,7 @@ _Editpatient= () => {
 }
 
 render() {
-  if (! datapatient) {
+  if (! this.props.patientslist) {
     return (
       <ActivityIndicator style={styles.container} animating={true} />
     );
@@ -106,8 +110,8 @@ render() {
     return (
       <View>
     <FlatList
-  data={datapatient}
-  keyExtractor={(item) => item.firstName}
+  data={this.props.patientslist}
+  keyExtractor={(item) => item.id}
   renderItem={( item ) => this._renderItem(item)}/>
 
  
@@ -153,4 +157,16 @@ addButtonText: {
   color:'white'
 }
 });
-export default ListPatient;
+function mapDispatchToProps(dispatch) {
+  return bindActionCreators({
+    _getToken: _getToken,
+    _deconnection:_deconnection
+  }, dispatch);
+}
+function mapStateToProps(state) {
+  return {
+    token: state.token,
+    patientslist:state.patientslist
+  }
+}
+export default connect(mapStateToProps,mapDispatchToProps)(ListPatient);

@@ -1,4 +1,5 @@
 export default data = [
+     /*
       {
         firstName:"علي",
         lastName:"دمق",
@@ -18,5 +19,5 @@ export default data = [
         tel:"52020200"
       }
      
-  
+  */
  ]

@@ -1,10 +1,28 @@
 import { AsyncStorage,Alert } from "react-native"
+import axios from 'axios'; 
 export const GET_TOKEN = 'GET_TOKEN';
 export const DECONNECTION = 'DECONNECTION';
 export const SIGNUP = 'SIGNUP';
+export const CREATEPATIENT_SYMTOME_ANTECEDENT = 'CREATEPATIENT_SYMTOME_ANTECEDENT';
+export const FETCH_PATIENT = 'FETCH_PATIENT';
+export const ADD_PATIENT = 'ADD_PATIENT';
  var login = 'login'
 var  password = 'password';
 var STORAGE_KEY = 'id_token';
+var pathglobale="https://api.amu190.maodao.xyz";
+const LOGIN_URL = "/v2/register";
+const SIGNUP_URL = "/m/user/create";
+const ADD_PATIEN_URL = "/m/patient/create";
+const UPDATE_PATIEN_URL = "/m/patient/";
+const FETCH_PATIENT_URL = "/m/patient/";
+const ADD_SYMPTOM_URL = "/m/symptom/create";
+const UPDATE_ANTECEDENT_URL = "/m/antecedent/create";
+const axiosapi = axios.create({
+  baseURL: pathglobale,
+  timeout: 50000,
+  headers: {'Authorization': 'Bearer '}
+});
+
 /*
 export function _getToken(login1,password1) {
     return dispatch => {
@@ -52,7 +70,7 @@ export function _getToken(login1,password1) {
 */
 export function _getToken(login1,password1) {
   return dispatch => {
-      fetch("http://coronna.frsdev.ovh:8081/v2/register", {
+      fetch(pathglobale+LOGIN_URL, {
           method: "POST",
           headers: {
             'Content-Type': 'application/json'
@@ -87,7 +105,7 @@ export function _getToken(login1,password1) {
 
 export function _Signup(login1,password1) {
   return dispatch => {
-    fetch("http://coronna.frsdev.ovh:8081/m/user/create", {
+    fetch(LOGIN_URL+SIGNUP_URL, {
       method: "POST",
       headers: {
         'Content-Type': 'application/json'
@@ -144,4 +162,151 @@ _onValueChange = async (item, selectedValue) => {
   } catch (error) {
     console.log('AsyncStorage error: ' + error.message);
   }
+}
+
+
+export function _fetchPatient() {
+
+  return dispatch => {
+
+    _storgetocken().then((resultat)=>{
+  
+      axiosapi.get(FETCH_PATIENT_URL,
+        {headers:{'Authorization': "Bearer "+resultat}}).then((reponse) => {
+          userid=3;
+          console.log("patients   : "+JSON.stringify(reponse.data[1].user.id));
+          let patientslist  =  reponse.data.filter(function (e) {
+            if(e.user==null)
+            {
+                return false;
+            }
+            return e.user == userid || e.user.id == userid;
+        });
+        dispatch({
+          type: FETCH_PATIENT,
+          payload: patientslist
+        });
+    })
+    .catch ( (error) =>  {
+        console.error(error.response);
+        console.error(error)
+    })
+   });
+       
+  }
+}
+
+
+ function _createpatient(patient) {
+
+  return new Promise(resolve => {
+
+
+      _storgetocken().then((resultat)=>{
+    
+        axiosapi.post(ADD_PATIEN_URL,patient,
+          {headers:{'Authorization': "Bearer "+resultat}}).then((reponse) => {
+          resolve(reponse);
+      })
+      .catch ( (error) =>  {
+          console.error(error.response);
+          console.error(error)
+      })
+     });
+         
+    
+  });
+}
+
+ function _createsymtome(symtome) {
+  return new Promise(resolve => {
+
+
+      _storgetocken().then((resultat)=>{
+    
+        axiosapi.post(ADD_SYMPTOM_URL,symtome,
+          {headers:{'Authorization': "Bearer "+resultat}}).then((reponse) => {
+    
+          resolve(reponse);
+    
+      })
+      .catch ( (error) =>  {
+          console.error(error.response);
+          console.error(error)
+      })
+     });
+         
+
+  });
+}
+
+
+function _createantecedent(antecedent) {
+  return new Promise(resolve => {
+
+
+      _storgetocken().then((resultat)=>{
+    
+        axiosapi.post(UPDATE_ANTECEDENT_URL,antecedent,
+          {headers:{'Authorization': "Bearer "+resultat}}).then((reponse) => {
+      
+          resolve(reponse);
+    
+      })
+      .catch ( (error) =>  {
+          console.error(error.response);
+          console.error(error)
+      })
+     });
+         
+ 
+  });
+}
+
+
+_storgetocken = async () => {
+  
+  try {
+    const valuetocken = await AsyncStorage.getItem(STORAGE_KEY);
+
+      return valuetocken
+    //}
+   } catch (error) {
+    console.log(error);
+   }
+}
+
+export  function _createPatientSymtomeAntecedent(patient,symtome,antecedent) {
+
+  return dispatch => {
+
+  
+    _callcreatePatientSymtomeAntecedent(patient,symtome,antecedent).then((reponse) => {
+      dispatch({
+        type: ADD_PATIENT,
+        payload: reponse
+      });
+    });
+
+ 
+
+       
+  }
+}
+
+
+async function _callcreatePatientSymtomeAntecedent(ipatient,isymtome,iantecedent) {
+
+    let patientadded = await _createpatient(ipatient);
+   let patient = {"id":patientadded.data.id};
+   isymtome.patient=patient;
+  
+   iantecedent.patient=patient;
+
+   let symtome = await _createsymtome(isymtome);
+   
+   antecedent = await _createantecedent(iantecedent);
+   
+  console.log(patientadded.data.id);
+  return patientadded;
 }

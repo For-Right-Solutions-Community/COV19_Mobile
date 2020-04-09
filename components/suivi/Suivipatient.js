@@ -1,6 +1,6 @@
 import React, { Component } from "react";
 
-import { Alert,Animated, Dimensions, Keyboard, StyleSheet, Button,TouchableWithoutFeedback, UIManager,TextInput ,TouchableOpacity,ScrollView,TouchableHighlight} from 'react-native';
+import { KeyboardAvoidingView,Animated, Dimensions, Keyboard, StyleSheet, Button,TouchableWithoutFeedback, UIManager,TextInput ,TouchableOpacity,ScrollView,TouchableHighlight} from 'react-native';
 import {Text,View,Input,Item,Icon,Textarea,DatePicker,Picker} from 'native-base';
 import * as Animatable from 'react-native-animatable';
 import RadioForm, {RadioButton, RadioButtonInput, RadioButtonLabel} from 'react-native-simple-radio-button';
@@ -512,6 +512,7 @@ export default class Suivipatient extends Component {
     _addpatient()
     {
         console.log('end');
+        this._fillSymtome()
 
     }
     _onPrev(value)
@@ -559,6 +560,30 @@ export default class Suivipatient extends Component {
         
     }
 
+    _fillSymtome()
+    {
+        let symtome={
+            patient:{"id":this.props.navigation.state.params.idpatient},
+            traveler:this.state.statusvoyage=="yes"?true:false,
+            contactWithTraveler:this.state.statuscontact=="yes"?true:false,
+            sameHomePersonReturningFromTrip: this.state.statusLiving=="1"?true:false,
+            contactedTravellerTestResult :this.state.statusresultatanalysvoyag=="yes"?true:false,
+            sameHomePersonReturningFromTrip: this.state.statusLiving=="1"?true:false,
+            withSuspiciousGroup:this.state.statuszonecritique=="yes"?true:false,
+            fever:this.state.statusfievre=="yes"?true:false,
+            temperature:this.state.statusdugreefievre,
+            cough:this.state.statustoux=="yes"?true:false,
+            dyspnea:this.state.statusASPHYXIE=="yes"?true:false,
+            unableToSpeak:this.state.statusPARLE=="yes"?true:false,
+            severeDyspnea:this.state.WhyABILYTY=="1"?true:false ,
+            mauxtete:this.state.WhyABILYTY=="2"?true:false ,
+            chestPain:this.state.WhyABILYTY=="3"?true:false ,
+            missingability:this.state.statusABILYTY=="yes"?true:false ,
+            abilitytime:this.state.statusABILYTY_DURATION=="1"?"DAYS":this.state.statusABILYTY_DURATION=="2"?"WEEK":this.state.statusABILYTY_DURATION=="3"?"MONTHS":"YEAR"
+
+        }
+        return symtome;
+    }
 
   render() {
     if(this.state.statususerfillform==="no")
@@ -570,7 +595,8 @@ export default class Suivipatient extends Component {
      if (this.state.current === 0) {
         let pourcentage=(this.state.current)/(nbreecran);
         return (
-            <ScrollView style={{  backgroundColor:  "white"}}>
+            <ScrollView style={{  backgroundColor:  "white"}} keyboardShouldPersistTaps="handled">
+            <KeyboardAvoidingView enabled>
             <View style={styles.row}>
                <Text style={styles.textlabel1}>{Math.floor(pourcentage*100)} % </Text>
                <ProgressBar progress={pourcentage} color={Colors.red800} />
@@ -633,13 +659,15 @@ export default class Suivipatient extends Component {
    
         
             </View>
+            </KeyboardAvoidingView>
             </ScrollView > 
         );
     }
     else if (this.state.current === 1) {
         let pourcentage=(this.state.current)/(nbreecran);
         return (
-            <ScrollView style={{  backgroundColor:  "white"}}>
+            <ScrollView style={{  backgroundColor:  "white"}} keyboardShouldPersistTaps="handled">
+            <KeyboardAvoidingView enabled>
             <View style={styles.row}>
                <Text style={styles.textlabel1}>{Math.floor(pourcentage*100)} % </Text>
                <ProgressBar progress={pourcentage} color={Colors.red800} />
@@ -683,13 +711,15 @@ export default class Suivipatient extends Component {
    
         
             </View>
+            </KeyboardAvoidingView>
             </ScrollView > 
         );
     }
     else if (this.state.current === 2) {
         let pourcentage=(this.state.current)/(nbreecran);
         return (
-            <ScrollView style={{  backgroundColor:  "white"}}>
+            <ScrollView style={{  backgroundColor:  "white"}} keyboardShouldPersistTaps="handled">
+            <KeyboardAvoidingView enabled>
             <View style={styles.row}>
                <Text style={styles.textlabel1}>{Math.floor(pourcentage*100)} % </Text>
                <ProgressBar progress={pourcentage} color={Colors.red800} />
@@ -733,6 +763,7 @@ export default class Suivipatient extends Component {
    
         
             </View>
+            </KeyboardAvoidingView>
             </ScrollView > 
         );
     }
@@ -741,7 +772,8 @@ export default class Suivipatient extends Component {
     else if (this.state.current === 3) {
         let pourcentage=(this.state.current)/(nbreecran);
         return (
-            <ScrollView style={{  backgroundColor:  "white"}}>
+            <ScrollView style={{  backgroundColor:  "white"}} keyboardShouldPersistTaps="handled">
+            <KeyboardAvoidingView enabled>
             <View style={styles.row}>
                <Text style={styles.textlabel1}>{Math.floor(pourcentage*100)} % </Text>
                <ProgressBar progress={pourcentage} color={Colors.red800} />
@@ -785,6 +817,7 @@ export default class Suivipatient extends Component {
    
         
             </View>
+            </KeyboardAvoidingView>
             </ScrollView > 
         );
     }
@@ -793,7 +826,8 @@ export default class Suivipatient extends Component {
     else if (this.state.current === 4) {
         let pourcentage=(this.state.current)/(nbreecran);
         return (
-            <ScrollView style={{  backgroundColor:  "white"}}>
+            <ScrollView style={{  backgroundColor:  "white"}} keyboardShouldPersistTaps="handled">
+            <KeyboardAvoidingView enabled>
             <View style={styles.row}>
                <Text style={styles.textlabel1}>{Math.floor(pourcentage*100)} % </Text>
                <ProgressBar progress={pourcentage} color={Colors.red800} />
@@ -843,6 +877,7 @@ export default class Suivipatient extends Component {
    
         
             </View>
+            </KeyboardAvoidingView>
             </ScrollView > 
         );
     }
@@ -850,7 +885,8 @@ export default class Suivipatient extends Component {
     else if (this.state.current === 5) {
         let pourcentage=(this.state.current)/(nbreecran);
         return (
-            <ScrollView style={{  backgroundColor:  "white"}}>
+            <ScrollView style={{  backgroundColor:  "white"}} keyboardShouldPersistTaps="handled">
+            <KeyboardAvoidingView enabled>
             <View style={styles.row}>
                <Text style={styles.textlabel1}>{Math.floor(pourcentage*100)} % </Text>
                <ProgressBar progress={pourcentage} color={Colors.red800} />
@@ -895,6 +931,7 @@ export default class Suivipatient extends Component {
    
         
             </View>
+            </KeyboardAvoidingView>
             </ScrollView > 
         );
     }
@@ -902,7 +939,8 @@ export default class Suivipatient extends Component {
     else if (this.state.current === 6) {
         let pourcentage=(this.state.current)/(nbreecran);
         return (
-            <ScrollView style={{  backgroundColor:  "white"}}>
+            <ScrollView style={{  backgroundColor:  "white"}} keyboardShouldPersistTaps="handled">
+            <KeyboardAvoidingView enabled>
             <View style={styles.row}>
                <Text style={styles.textlabel1}>{Math.floor(pourcentage*100)} % </Text>
                <ProgressBar progress={pourcentage} color={Colors.red800} />
@@ -946,6 +984,7 @@ export default class Suivipatient extends Component {
    
         
             </View>
+            </KeyboardAvoidingView>
             </ScrollView > 
         );
     }
@@ -953,7 +992,8 @@ export default class Suivipatient extends Component {
     else if (this.state.current === 7) {
         let pourcentage=(this.state.current)/(nbreecran);
         return (
-            <ScrollView style={{  backgroundColor:  "white"}}>
+            <ScrollView style={{  backgroundColor:  "white"}} keyboardShouldPersistTaps="handled">
+            <KeyboardAvoidingView enabled>
             <View style={styles.row}>
                <Text style={styles.textlabel1}>{Math.floor(pourcentage*100)} % </Text>
                <ProgressBar progress={pourcentage} color={Colors.red800} />
@@ -1011,6 +1051,7 @@ export default class Suivipatient extends Component {
    
         
             </View>
+            </KeyboardAvoidingView>
             </ScrollView > 
         );
     }
@@ -1019,7 +1060,8 @@ export default class Suivipatient extends Component {
     else if (this.state.current === 8) {
         let pourcentage=(this.state.current)/(nbreecran);
         return (
-            <ScrollView style={{  backgroundColor:  "white"}}>
+            <ScrollView style={{  backgroundColor:  "white"}} keyboardShouldPersistTaps="handled">
+            <KeyboardAvoidingView enabled>
             <View style={styles.row}>
                <Text style={styles.textlabel1}>{Math.floor(pourcentage*100)} % </Text>
                <ProgressBar progress={pourcentage} color={Colors.red800} />
@@ -1075,6 +1117,7 @@ export default class Suivipatient extends Component {
    
         
             </View>
+            </KeyboardAvoidingView>
             </ScrollView > 
         );
     }
@@ -1083,7 +1126,8 @@ export default class Suivipatient extends Component {
     else if (this.state.current === 9) {
         let pourcentage=(this.state.current)/(nbreecran);
         return (
-            <ScrollView style={{  backgroundColor:  "white"}}>
+            <ScrollView style={{  backgroundColor:  "white"}} keyboardShouldPersistTaps="handled">
+            <KeyboardAvoidingView enabled>
             <View style={styles.row}>
                <Text style={styles.textlabel1}>{Math.floor(pourcentage*100)} % </Text>
                <ProgressBar progress={pourcentage} color={Colors.red800} />
@@ -1124,6 +1168,7 @@ export default class Suivipatient extends Component {
    
         
             </View>
+            </KeyboardAvoidingView>
             </ScrollView > 
         );
     }
@@ -1131,7 +1176,8 @@ export default class Suivipatient extends Component {
     else if (this.state.current === 10) {
         let pourcentage=(this.state.current)/(nbreecran);
         return (
-            <ScrollView style={{  backgroundColor:  "white"}}>
+            <ScrollView style={{  backgroundColor:  "white"}} keyboardShouldPersistTaps="handled">
+            <KeyboardAvoidingView enabled>
             <View style={styles.row}>
                <Text style={styles.textlabel1}>{Math.floor(pourcentage*100)} % </Text>
                <ProgressBar progress={pourcentage} color={Colors.red800} />
@@ -1172,6 +1218,7 @@ export default class Suivipatient extends Component {
    
         
             </View>
+            </KeyboardAvoidingView>
             </ScrollView > 
         );
     }
@@ -1179,7 +1226,8 @@ export default class Suivipatient extends Component {
     else if (this.state.current === 11) {
         let pourcentage=(this.state.current)/(nbreecran);
         return (
-            <ScrollView style={{  backgroundColor:  "white"}}>
+            <ScrollView style={{  backgroundColor:  "white"}} keyboardShouldPersistTaps="handled">
+            <KeyboardAvoidingView enabled>
             <View style={styles.row}>
                <Text style={styles.textlabel1}>{Math.floor(pourcentage*100)} % </Text>
                <ProgressBar progress={pourcentage} color={Colors.red800} />
@@ -1220,6 +1268,7 @@ export default class Suivipatient extends Component {
    
         
             </View>
+            </KeyboardAvoidingView>
             </ScrollView > 
         );
     }
@@ -1227,7 +1276,8 @@ export default class Suivipatient extends Component {
     else if (this.state.current === 12) {
         let pourcentage=(this.state.current)/(nbreecran);
         return (
-            <ScrollView style={{  backgroundColor:  "white"}}>
+            <ScrollView style={{  backgroundColor:  "white"}} keyboardShouldPersistTaps="handled">
+            <KeyboardAvoidingView enabled>
             <View style={styles.row}>
                <Text style={styles.textlabel1}>{Math.floor(pourcentage*100)} % </Text>
                <ProgressBar progress={pourcentage} color={Colors.red800} />
@@ -1280,6 +1330,7 @@ export default class Suivipatient extends Component {
    
         
             </View>
+            </KeyboardAvoidingView>
             </ScrollView > 
         );
     }
@@ -1287,7 +1338,8 @@ export default class Suivipatient extends Component {
     else if (this.state.current === 13) {
         let pourcentage=(this.state.current)/(nbreecran);
         return (
-            <ScrollView style={{  backgroundColor:  "white"}}>
+            <ScrollView style={{  backgroundColor:  "white"}} keyboardShouldPersistTaps="handled">
+            <KeyboardAvoidingView enabled>
             <View style={styles.row}>
                <Text style={styles.textlabel1}>{Math.floor(pourcentage*100)} % </Text>
                <ProgressBar progress={pourcentage} color={Colors.red800} />
@@ -1329,6 +1381,7 @@ export default class Suivipatient extends Component {
    
         
             </View>
+            </KeyboardAvoidingView>
             </ScrollView > 
         );
     }
@@ -1337,7 +1390,8 @@ export default class Suivipatient extends Component {
     else if (this.state.current === 14) {
         let pourcentage=(this.state.current)/(nbreecran);
         return (
-            <ScrollView style={{  backgroundColor:  "white"}}>
+            <ScrollView style={{  backgroundColor:  "white"}} keyboardShouldPersistTaps="handled">
+            <KeyboardAvoidingView enabled>
             <View style={styles.row}>
                <Text style={styles.textlabel1}>{Math.floor(pourcentage*100)} % </Text>
                <ProgressBar progress={pourcentage} color={Colors.red800} />
@@ -1389,6 +1443,7 @@ export default class Suivipatient extends Component {
    
         
             </View>
+            </KeyboardAvoidingView>
             </ScrollView > 
         );
     }
@@ -1398,7 +1453,8 @@ export default class Suivipatient extends Component {
     else if (this.state.current === 15) {
         let pourcentage=(this.state.current)/(nbreecran);
         return (
-            <ScrollView style={{  backgroundColor:  "white"}}>
+            <ScrollView style={{  backgroundColor:  "white"}} keyboardShouldPersistTaps="handled">
+            <KeyboardAvoidingView enabled>
             <View style={styles.row}>
                <Text style={styles.textlabel1}>{Math.floor(pourcentage*100)} % </Text>
                <ProgressBar progress={pourcentage} color={Colors.red800} />
@@ -1466,6 +1522,7 @@ export default class Suivipatient extends Component {
    
         
             </View>
+            </KeyboardAvoidingView>
             </ScrollView > 
         );
     }
@@ -1474,7 +1531,8 @@ export default class Suivipatient extends Component {
     else if (this.state.current === 16) {
         let pourcentage=(this.state.current)/(nbreecran);
         return (
-            <ScrollView style={{  backgroundColor:  "white"}}>
+            <ScrollView style={{  backgroundColor:  "white"}} keyboardShouldPersistTaps="handled">
+            <KeyboardAvoidingView enabled>
             <View style={styles.row}>
                <Text style={styles.textlabel1}>{Math.floor(pourcentage*100)} % </Text>
                <ProgressBar progress={pourcentage} color={Colors.red800} />
@@ -1516,6 +1574,7 @@ export default class Suivipatient extends Component {
    
         
             </View>
+            </KeyboardAvoidingView>
             </ScrollView > 
         );
     }
