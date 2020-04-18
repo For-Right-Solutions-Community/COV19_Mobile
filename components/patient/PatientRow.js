@@ -7,10 +7,11 @@ export default class UserRow extends Component {
   super(props)
 }
 _suivipatient= () => {
-  this.props.navigation.navigate("Suivipatient",{mode:'INSERT',idpatient:this.props.idpatient})
+  this.props.navigation.navigate("Suivipatient",{mode:'INSERT',patient:this.props.patient})
 }
 
 render() {  
+  //console.log("list   "+JSON.stringify(this.props.list));
   return (  
       <View style={styles.container}>  
          

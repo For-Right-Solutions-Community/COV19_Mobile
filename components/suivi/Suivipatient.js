@@ -5,6 +5,7 @@ import {Text,View,Input,Item,Icon,Textarea,DatePicker,Picker} from 'native-base'
 import * as Animatable from 'react-native-animatable';
 import RadioForm, {RadioButton, RadioButtonInput, RadioButtonLabel} from 'react-native-simple-radio-button';
 import { ProgressBar, Colors } from 'react-native-paper';
+import { _createsymtome,_updatepatient } from "../../Store/actions";
 const llll=' من يقوم بتعمير هذه الاستمارة ؟'
 const br = `\n`;
 var malade="";
@@ -509,11 +510,29 @@ export default class Suivipatient extends Component {
 
           
         }
-    _addpatient()
+    _addsymtome()
     {
         console.log('end');
-        this._fillSymtome()
+        let exposure=this._fillexposure();
+        let patient=this.props.navigation.state.params.patient;
+        console.log("patient "+patient);
+        patient.exposure=exposure;
+        let symtome=this._fillSymtome();
+        console.log("symtome   "+JSON.stringify(symtome));
+        _updatepatient(patient).then((resultat)=>{
+           _createsymtome(symtome).then((resultat)=>{
+            console.log("fffffffffffff   "+resultat);
+            this.props.navigation.navigate("IndexFollowScreen")
+        });
 
+        });
+        /*
+        _createsymtome(symtome).then((resultat)=>{
+            console.log("fffffffffffff   "+resultat);
+            this.props.navigation.navigate("IndexFollowScreen")
+        });
+        */
+        this.props.navigation.goBack();
     }
     _onPrev(value)
     {
@@ -536,7 +555,7 @@ export default class Suivipatient extends Component {
     }
     _onNext(value)
     {
-  
+   
             let index=this.state.current+value;
             if(index==nbreecran)
             {
@@ -560,31 +579,59 @@ export default class Suivipatient extends Component {
         
     }
 
+   _fillexposure()
+    {
+        exposure={
+         //exposure
+             traveler:this.state.statusvoyage=="yes"?true:false,
+             contactWithTraveler:this.state.statuscontact=="yes"?true:false,
+            sameHomePersonReturningFromTrip: this.state.statusLiving=="1"?true:false,
+             travellerhasmakingtest:this.state.statustestanalysvoyag=="yes"?true:false,
+            contactedTravellerTestResult :this.statetatusresultatanalysvoyag=="yes"?true:false,
+            hasmakingtest:this.state.statustestanalys=="yes"?true:false,
+            testResult:this.state.statusresultatanalys=="yes"?true:false,
+            visitRegion:this.state.statuszonecritique=="yes"?true:false,
+            contactWithInfectedPerson:this.state.statuscontactmalade=="yes"?true:false,
+            withSuspiciousGroup:this.state.statuszonecritique=="yes"?true:false,
+        }
+        return exposure;
+    }
     _fillSymtome()
     {
         let symtome={
-            patient:{"id":this.props.navigation.state.params.idpatient},
-            traveler:this.state.statusvoyage=="yes"?true:false,
-            contactWithTraveler:this.state.statuscontact=="yes"?true:false,
-            sameHomePersonReturningFromTrip: this.state.statusLiving=="1"?true:false,
-            contactedTravellerTestResult :this.state.statusresultatanalysvoyag=="yes"?true:false,
-            sameHomePersonReturningFromTrip: this.state.statusLiving=="1"?true:false,
-            withSuspiciousGroup:this.state.statuszonecritique=="yes"?true:false,
+            patient:{"id":this.props.navigation.state.params.patient.id},
+          
+
+            severeDyspnea:this.state.statusWhyuserfillform=="yes"?true:false,
+
+         
+            date:new Date(),
+            
             fever:this.state.statusfievre=="yes"?true:false,
             temperature:this.state.statusdugreefievre,
             cough:this.state.statustoux=="yes"?true:false,
             dyspnea:this.state.statusASPHYXIE=="yes"?true:false,
             unableToSpeak:this.state.statusPARLE=="yes"?true:false,
+
             severeDyspnea:this.state.WhyABILYTY=="1"?true:false ,
             mauxtete:this.state.WhyABILYTY=="2"?true:false ,
-            chestPain:this.state.WhyABILYTY=="3"?true:false ,
-            missingability:this.state.statusABILYTY=="yes"?true:false ,
-            abilitytime:this.state.statusABILYTY_DURATION=="1"?"DAYS":this.state.statusABILYTY_DURATION=="2"?"WEEK":this.state.statusABILYTY_DURATION=="3"?"MONTHS":"YEAR"
+            deteriorationOfGC:this.state.WhyABILYTY=="3"?true:false ,
+            
+            deteriorationOfGC:this.state.statusABILYTY=="yes"?true:false ,
+            //missingability:this.state.statusABILYTY=="yes"?true:false ,
+            abilitytime:this.state.statusABILYTY_DURATION=="1"?"DAYS":this.state.statusABILYTY_DURATION=="2"?"WEEK":this.state.statusABILYTY_DURATION=="3"?"MONTHS":"YEAR",
+
+            diarrhea:this.state.statusSYMTOME.findIndex(item => item === "1") !="-1"?true:false,
+            nauseaOrVomiting:this.state.statusSYMTOME.findIndex(item => item === "2") !="-1"?true:false,
+            chestPain:this.state.statusSYMTOME.findIndex(item => item === "3") !="-1"?true:false,
+            epigastralgia:this.state.statusSYMTOME.findIndex(item => item === "4") !="-1"?true:false,
+            soreThroat:this.state.statusSYMTOME.findIndex(item => item === "5") !="-1"?true:false,
+            arthalgia:this.state.statusSYMTOME.findIndex(item => item === "6") !="-1"?true:false,
+
 
         }
         return symtome;
     }
-
   render() {
     if(this.state.statususerfillform==="no")
     {
@@ -651,7 +698,7 @@ export default class Suivipatient extends Component {
                  <Text style={styles.addButtonText}> الموالي </Text> 
                   </TouchableOpacity>    
 
-                  : <TouchableOpacity  style={styles.addButtonnext}  onPress={() => this._addpatient()}>
+                  : <TouchableOpacity  style={styles.addButtonnext}  onPress={() => this._addsymtome()}>
                   <Text style={styles.addButtonText}> تسجيل </Text> 
                   </TouchableOpacity>
                 }
@@ -703,7 +750,7 @@ export default class Suivipatient extends Component {
                  <Text style={styles.addButtonText}> الموالي </Text> 
                   </TouchableOpacity>    
 
-                  : <TouchableOpacity  style={styles.addButtonnext}  onPress={() => this._addpatient()}>
+                  : <TouchableOpacity  style={styles.addButtonnext}  onPress={() => this._addsymtome()}>
                   <Text style={styles.addButtonText}> تسجيل </Text> 
                   </TouchableOpacity>
                 }
@@ -755,7 +802,7 @@ export default class Suivipatient extends Component {
                  <Text style={styles.addButtonText}> الموالي </Text> 
                   </TouchableOpacity>    
 
-                  : <TouchableOpacity  style={styles.addButtonnext}  onPress={() => this._addpatient()}>
+                  : <TouchableOpacity  style={styles.addButtonnext}  onPress={() => this._addsymtome()}>
                   <Text style={styles.addButtonText}> تسجيل </Text> 
                   </TouchableOpacity>
                 }
@@ -809,7 +856,7 @@ export default class Suivipatient extends Component {
                  <Text style={styles.addButtonText}> الموالي </Text> 
                   </TouchableOpacity>    
 
-                  : <TouchableOpacity  style={styles.addButtonnext}  onPress={() => this._addpatient()}>
+                  : <TouchableOpacity  style={styles.addButtonnext}  onPress={() => this._addsymtome()}>
                   <Text style={styles.addButtonText}> تسجيل </Text> 
                   </TouchableOpacity>
                 }
@@ -869,7 +916,7 @@ export default class Suivipatient extends Component {
                  <Text style={styles.addButtonText}> الموالي </Text> 
                   </TouchableOpacity>    
 
-                  : <TouchableOpacity  style={styles.addButtonnext}  onPress={() => this._addpatient()}>
+                  : <TouchableOpacity  style={styles.addButtonnext}  onPress={() => this._addsymtome()}>
                   <Text style={styles.addButtonText}> تسجيل </Text> 
                   </TouchableOpacity>
                 }
@@ -923,7 +970,7 @@ export default class Suivipatient extends Component {
                  <Text style={styles.addButtonText}> الموالي </Text> 
                   </TouchableOpacity>    
 
-                  : <TouchableOpacity  style={styles.addButtonnext}  onPress={() => this._addpatient()}>
+                  : <TouchableOpacity  style={styles.addButtonnext}  onPress={() => this._addsymtome()}>
                   <Text style={styles.addButtonText}> تسجيل </Text> 
                   </TouchableOpacity>
                 }
@@ -976,7 +1023,7 @@ export default class Suivipatient extends Component {
                  <Text style={styles.addButtonText}> الموالي </Text> 
                   </TouchableOpacity>    
 
-                  : <TouchableOpacity  style={styles.addButtonnext}  onPress={() => this._addpatient()}>
+                  : <TouchableOpacity  style={styles.addButtonnext}  onPress={() => this._addsymtome()}>
                   <Text style={styles.addButtonText}> تسجيل </Text> 
                   </TouchableOpacity>
                 }
@@ -1043,7 +1090,7 @@ export default class Suivipatient extends Component {
                  <Text style={styles.addButtonText}> الموالي </Text> 
                   </TouchableOpacity>    
 
-                  : <TouchableOpacity  style={styles.addButtonnext}  onPress={() => this._addpatient()}>
+                  : <TouchableOpacity  style={styles.addButtonnext}  onPress={() => this._addsymtome()}>
                   <Text style={styles.addButtonText}> تسجيل </Text> 
                   </TouchableOpacity>
                 }
@@ -1109,7 +1156,7 @@ export default class Suivipatient extends Component {
                  <Text style={styles.addButtonText}> الموالي </Text> 
                   </TouchableOpacity>    
 
-                  : <TouchableOpacity  style={styles.addButtonnext}  onPress={() => this._addpatient()}>
+                  : <TouchableOpacity  style={styles.addButtonnext}  onPress={() => this._addsymtome()}>
                   <Text style={styles.addButtonText}> تسجيل </Text> 
                   </TouchableOpacity>
                 }
@@ -1160,7 +1207,7 @@ export default class Suivipatient extends Component {
                  <Text style={styles.addButtonText}> الموالي </Text> 
                   </TouchableOpacity>    
 
-                  : <TouchableOpacity  style={styles.addButtonnext}  onPress={() => this._addpatient()}>
+                  : <TouchableOpacity  style={styles.addButtonnext}  onPress={() => this._addsymtome()}>
                   <Text style={styles.addButtonText}> تسجيل </Text> 
                   </TouchableOpacity>
                 }
@@ -1210,7 +1257,7 @@ export default class Suivipatient extends Component {
                  <Text style={styles.addButtonText}> الموالي </Text> 
                   </TouchableOpacity>    
 
-                  : <TouchableOpacity  style={styles.addButtonnext}  onPress={() => this._addpatient()}>
+                  : <TouchableOpacity  style={styles.addButtonnext}  onPress={() => this._addsymtome()}>
                   <Text style={styles.addButtonText}> تسجيل </Text> 
                   </TouchableOpacity>
                 }
@@ -1260,7 +1307,7 @@ export default class Suivipatient extends Component {
                  <Text style={styles.addButtonText}> الموالي </Text> 
                   </TouchableOpacity>    
 
-                  : <TouchableOpacity  style={styles.addButtonnext}  onPress={() => this._addpatient()}>
+                  : <TouchableOpacity  style={styles.addButtonnext}  onPress={() => this._addsymtome()}>
                   <Text style={styles.addButtonText}> تسجيل </Text> 
                   </TouchableOpacity>
                 }
@@ -1322,7 +1369,7 @@ export default class Suivipatient extends Component {
                  <Text style={styles.addButtonText}> الموالي </Text> 
                   </TouchableOpacity>    
 
-                  : <TouchableOpacity  style={styles.addButtonnext}  onPress={() => this._addpatient()}>
+                  : <TouchableOpacity  style={styles.addButtonnext}  onPress={() => this._addsymtome()}>
                   <Text style={styles.addButtonText}> تسجيل </Text> 
                   </TouchableOpacity>
                 }
@@ -1373,7 +1420,7 @@ export default class Suivipatient extends Component {
                  <Text style={styles.addButtonText}> الموالي </Text> 
                   </TouchableOpacity>    
 
-                  : <TouchableOpacity  style={styles.addButtonnext}  onPress={() => this._addpatient()}>
+                  : <TouchableOpacity  style={styles.addButtonnext}  onPress={() => this._addsymtome()}>
                   <Text style={styles.addButtonText}> تسجيل </Text> 
                   </TouchableOpacity>
                 }
@@ -1435,7 +1482,7 @@ export default class Suivipatient extends Component {
                  <Text style={styles.addButtonText}> الموالي </Text> 
                   </TouchableOpacity>    
 
-                  : <TouchableOpacity  style={styles.addButtonnext}  onPress={() => this._addpatient()}>
+                  : <TouchableOpacity  style={styles.addButtonnext}  onPress={() => this._addsymtome()}>
                   <Text style={styles.addButtonText}> تسجيل </Text> 
                   </TouchableOpacity>
                 }
@@ -1514,7 +1561,7 @@ export default class Suivipatient extends Component {
                  <Text style={styles.addButtonText}> الموالي </Text> 
                   </TouchableOpacity>    
 
-                  : <TouchableOpacity  style={styles.addButtonnext}  onPress={() => this._addpatient()}>
+                  : <TouchableOpacity  style={styles.addButtonnext}  onPress={() => this._addsymtome()}>
                   <Text style={styles.addButtonText}> تسجيل </Text> 
                   </TouchableOpacity>
                 }
@@ -1566,7 +1613,7 @@ export default class Suivipatient extends Component {
                  <Text style={styles.addButtonText}> الموالي </Text> 
                   </TouchableOpacity>    
 
-                  : <TouchableOpacity  style={styles.addButtonnext}  onPress={() => this._addpatient()}>
+                  : <TouchableOpacity  style={styles.addButtonnext}  onPress={() => this._addsymtome()}>
                   <Text style={styles.addButtonText}> تسجيل </Text> 
                   </TouchableOpacity>
                 }

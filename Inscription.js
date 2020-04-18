@@ -1,7 +1,7 @@
 import React from "react";
 import { AsyncStorage,Animated, Dimensions, Keyboard,UIManager,StyleSheet,TouchableHighlight,TextInput,CheckBox,Alert} from "react-native";
 import {Text,View,Input,Item,Icon,Textarea,DatePicker,Picker} from 'native-base';
-import { _Signup} from './Store/actions';
+import { _Signup,_subscribeuser,_createUser} from './Store/actions';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 const br = `\n`;
@@ -16,6 +16,7 @@ const { State: TextInputState } = TextInput;
         password:'',
         password1:'',
         hidepassword:false,
+        codevalidation:''
         
     })
   }
@@ -64,7 +65,20 @@ const { State: TextInputState } = TextInput;
     this.setState({hidepassword: !this.state.hidepassword})
 }
 
+_subscribeuser()
+{
+  this.props._subscribeuser(this.state.email,this.state.password);
 
+  
+}
+_createUser()
+{
+  this.props._createUser(this.state.email,this.state.password,this.state.codevalidation);
+  AsyncStorage.getItem('userToken')
+  .then((data) => {
+    this.props.navigation.navigate("IndexFollowScreen");
+  });
+}
 _enregistrer() {
 
   if(this.state.password===this.state.password1)
@@ -134,57 +148,85 @@ try {
 */
   render() {
     const { shift } = this.state;
-    return (
-      <Animated.View style={[styles.container, { transform: [{translateY: shift}] }]}>
-       <View style={styles.row}>
-            <Text style={styles.title}>{this.props.navigation.state.params.title}</Text>
-          </View>
-        <View style={styles.row}>
-        <Text style={styles.textlabel}> البريد الإلكتروني : </Text> 
-                  
-                  <TextInput
-                     placeholder="البريد الإلكتروني"
-                    style={styles.textInput}
-                    autoCapitalize = 'none'
-                    value={this.state.email} onChangeText={ (text) => this.setState({ email: text }) }
-                  />
-                    <Text style={styles.textlabel}> </Text> 
-                    <Text style={styles.textlabel}> كلمة المرور :  </Text> 
-                  <TextInput
-                    placeholder="كلمة المرور" secureTextEntry={!this.state.hidepassword}
-                    style={styles.textInput}
-                    autoCapitalize = 'none'
-                    value={this.state.password} onChangeText={ (text) => this.setState({ password: text }) }
-                  />
-                       <Text style={styles.textlabel}> </Text> 
-                       <Text style={styles.textlabel}> تأكيد كلمة المرور :  </Text> 
+    console.log(this.props.subscribe)
+   if(this.props.subscribe=="default"|| this.props.subscribe==undefined||this.props.subscribe==null ||this.props.subscribe==false)
+   {
+      return (
+        <Animated.View style={[styles.container, { transform: [{translateY: shift}] }]}>
+         <View style={styles.row}>
+              <Text style={styles.title}>{this.props.navigation.state.params.title}</Text>
+            </View>
+          <View style={styles.row}>
+          <Text style={styles.textlabel}> البريد الإلكتروني : </Text> 
+                    
                     <TextInput
-                    placeholder="تأكيد كلمة المرور" secureTextEntry={!this.state.hidepassword}
-                    style={styles.textInput}
-                    autoCapitalize = 'none'
-                    value={this.state.password1} onChangeText={ (text) => this.setState({ password1: text }) }
+                       placeholder="البريد الإلكتروني"
+                      style={styles.textInput}
+                      autoCapitalize = 'none'
+                      value={this.state.email} onChangeText={ (text) => this.setState({ email: text }) }
+                    />
+                      <Text style={styles.textlabel}> </Text> 
+                      <Text style={styles.textlabel}> كلمة المرور :  </Text> 
+                    <TextInput
+                      placeholder="كلمة المرور" secureTextEntry={!this.state.hidepassword}
+                      style={styles.textInput}
+                      autoCapitalize = 'none'
+                      value={this.state.password} onChangeText={ (text) => this.setState({ password: text }) }
+                    />
+                         <Text style={styles.textlabel}> </Text> 
+                         <Text style={styles.textlabel}> تأكيد كلمة المرور :  </Text> 
+                      <TextInput
+                      placeholder="تأكيد كلمة المرور" secureTextEntry={!this.state.hidepassword}
+                      style={styles.textInput}
+                      autoCapitalize = 'none'
+                      value={this.state.password1} onChangeText={ (text) => this.setState({ password1: text }) }
+                    />
+                  <Text style={styles.textlabel}> </Text> 
+                  
+                  <View style={{ flexDirection: 'row' }}>
+                  <CheckBox
+                    value={this.state.hidepassword}
+                    onValueChange={() => this._affichePassWord()}
                   />
-                <Text style={styles.textlabel}> </Text> 
-                
-                <View style={{ flexDirection: 'row' }}>
-                <CheckBox
-                  value={this.state.hidepassword}
-                  onValueChange={() => this._affichePassWord()}
-                />
-                <Text style={{marginTop: 5}}> إظهار كلمة المرور </Text>
-              </View>
-       <Text style={styles.textlabel}> </Text> 
-        </View>
-        <View style={styles.row}>
-        <TouchableHighlight style={styles.button} onPress={() => this._enregistrer()} underlayColor='#99d9f4'>
-            <Text style={styles.buttonText}>تسجيل </Text>
-          </TouchableHighlight>
-   
-        </View>
+                  <Text style={{marginTop: 5}}> إظهار كلمة المرور </Text>
+                </View>
+         <Text style={styles.textlabel}> </Text> 
+          </View>
+          <View style={styles.row}>
+          <TouchableHighlight style={styles.button} onPress={() => this._subscribeuser()} underlayColor='#99d9f4'>
+              <Text style={styles.buttonText}>تسجيل </Text>
+            </TouchableHighlight>
+     
+          </View>
+  
+     
+        </Animated.View>
+      );
+     
+    }
+    else
+    {
+      return (
+      <View style={styles.row}>
+      <Text style={styles.title}>تم إرسال رسالة على البريدك الالكتروني تحتوي على رقم الدخول</Text>
+      <Text style={styles.textlabel}> </Text> 
+                         <Text style={styles.textlabel}> رقم الدخول :  </Text> 
+                      <TextInput
+                      placeholder="رقم الدخول"
+                      style={styles.textInput}
+                      value={this.state.codevalidation} onChangeText={ (text) => this.setState({ codevalidation: text }) }
+                    />
 
-   
-      </Animated.View>
-    );
+                             <View style={styles.row}>
+          <TouchableHighlight style={styles.button} onPress={() => this._createUser()} underlayColor='#99d9f4'>
+              <Text style={styles.buttonText}>دخول </Text>
+            </TouchableHighlight>
+     
+          </View>
+      </View>
+      );
+    }
+ 
   }
   
   
@@ -239,11 +281,14 @@ const styles = StyleSheet.create({
 function mapDispatchToProps(dispatch) {
   return bindActionCreators({
     _Signup: _Signup,
+    _subscribeuser:_subscribeuser,
+    _createUser:_createUser
   }, dispatch);
 }
 function mapStateToProps(state) {
   return {
-    token: state.token
+    token: state.token,
+    subscribe: state.token.subscribe,
   }
 }
 export default connect(mapStateToProps,mapDispatchToProps)(Inscription);

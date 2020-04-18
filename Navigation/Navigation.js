@@ -5,6 +5,8 @@ import Suivipatient from '../components/suivi/Suivipatient';
 import Authentification from '../Authentification';
 import Inscription from '../Inscription';
 import IndexFollowScreen from '../components/IndexFollowScreen';
+import QuiNous from '../components/QuiNous';
+import Partenaires from '../components/Partenaires';
 const IndexFollowScreenStackNavigator = createStackNavigator({
     IndexFollowScreen: { 
         screen: IndexFollowScreen,
@@ -17,6 +19,18 @@ const IndexFollowScreenStackNavigator = createStackNavigator({
           }
         }
      
+      },
+      QuiNous: {
+        screen: QuiNous,
+        navigationOptions: {
+          title: 'من نحن ؟ '
+        }
+      },
+      Partenaires: {
+        screen: Partenaires,
+        navigationOptions: {
+          title: '  المساهمون'
+        }
       },
     Listpatient: {
         screen: Listpatient,

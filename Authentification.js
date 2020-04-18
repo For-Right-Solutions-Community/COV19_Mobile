@@ -18,7 +18,6 @@ export default class Authentification extends React.Component {
   }
   _Inscription()
   {
-    console.log("xxxxxxx");
     this.props.navigation.navigate("Inscription")
   }
   _Connexion()

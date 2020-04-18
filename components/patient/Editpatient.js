@@ -1,6 +1,6 @@
 import React, { Component } from "react";
 
-import { KeyboardAvoidingView,Animated, Dimensions, Keyboard, StyleSheet, Button,TouchableWithoutFeedback, UIManager,TextInput ,TouchableOpacity,ScrollView,TouchableHighlight} from 'react-native';
+import { KeyboardAvoidingView, Dimensions, Keyboard, StyleSheet, Button,TouchableWithoutFeedback, UIManager,TextInput ,TouchableOpacity,ScrollView,TouchableHighlight} from 'react-native';
 import {Text,View,Input,Item,Icon,Textarea,DatePicker,Picker} from 'native-base';
 import * as Animatable from 'react-native-animatable';
 import RadioForm, {RadioButton, RadioButtonInput, RadioButtonLabel} from 'react-native-simple-radio-button';
@@ -8,19 +8,22 @@ import { ProgressBar, Colors } from 'react-native-paper';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import { _createpatient,_createPatientSymtomeAntecedent} from '../../Store/actions';
+import {getInitialDataPatient} from './initObjectPatient'
+import RNPicker from "rn-modal-picker";
 const llll=' من يقوم بتعمير هذه الاستمارة ؟'
 const br = `\n`;
 var malade="";
 var masculin="";
-const nbreecran=33;
+const nbreecran=34;
 var radio_props = [
     {label: '   ذكر     ', value: 0 },
     {label: '  أنثى     ', value: 1 }
   ];
   var radio_propsetatcivil = [
     {label: ' أعزب/عزباء ', value: 0 },
-    {label: ' متزوج ', value: 1 },
-    {label: ' أرمل ', value: 2 }
+    {label: ' متزوج / متزوجة ', value: 1 },
+    {label: ' أرمل / أرملة ', value: 2 },
+    {label: ' مطلق / مطلقة ', value: 3 }
   ];
   var radio_propsdiabitic = [
     {label: ' العينين', value: 0 },
@@ -35,12 +38,142 @@ var radio_props = [
     {label: '    نعم    ', value: 1 }
   ];
   const { State: TextInputState } = TextInput;
-
+var patient;
  class Editpatient extends Component {
     constructor(props) {
         super(props);
+        patient=getInitialDataPatient();
         this.state = ({
-            shift: new Animated.Value(0),
+            dataSource: [
+                {
+                  id: 1,
+                  name: "نعم أريانة",
+                  value:"ARIANA"
+                },
+                {
+                  id: 2,
+                  name: "ولاية باجة",
+                  value:"BEJA"
+                },
+                {
+                  id: 3,
+                  name: "ولاية بن عروس",
+                  value:"BENAROURS"
+                },
+                {
+                  id: 4,
+                  name: "ولاية بنزرت",
+                  value:"BIZERTE"
+                },
+                {
+                  id: 5,
+                  name: "ولاية تطاوين",
+                  value:"TATOUINE"
+                },
+                {
+                  id: 6,
+                  name: "ولاية توزر",
+                  value:"TOUZUER"
+                },
+                {
+                  id: 7,
+                  name: "ولاية تونس",
+                  value:"TUNIS"
+                },
+                {
+                  id: 8,
+                  name: "ولاية جندوبة",
+                  value:"JANDOUBA"
+                },
+                {
+                  id: 9,
+                  name: "ولاية زغوان",
+                  value:"ZAGHOUIN"
+                },
+                {
+                  id: 10,
+                  name: "ولاية سليانة",
+                  value:"SILIANA"
+                },
+                {
+                  id: 11,
+                  name: "ولاية سوسة",
+                  value:"SOUSSE"
+                },
+                {
+                  id: 12,
+                  name: "ولاية سيدي بوزيد",
+                  value:"SIDIBOUZID"
+                },
+                {
+                    id: 13,
+                    name: "ولاية صفاقس",
+                    value:"SFAX"
+                  },
+                  {
+                    id: 14,
+                    name: "ولاية قابس",
+                    value:"GABES"
+        
+                  },
+                  {
+                    id: 15,
+                    name: "ولاية قبلي",
+                    value:"KBELLI"
+                  },
+                  {
+                    id: 16,
+                    name: "ولاية القصرين",
+                    value:"GASSERINE"
+                  },
+                  {
+                    id: 17,
+                    name: "ولاية قفصة",
+                    value:"GAFSA"
+                  },
+                  {
+                    id: 18,
+                    name: "ولاية القيروان",
+                    value:"KAIROIN"
+                  },
+                  {
+                    id: 19,
+                    name: "ولاية الكاف",
+                    value:"ELKEF"
+                  },
+                  {
+                    id: 20,
+                    name: "ولاية مدنين",
+                    value:"MEDINE"
+                  },
+                  {
+                    id: 21,
+                    name: "ولاية المنستير",
+                    value:"MONASTIR"
+                  },
+                  {
+                    id: 22,
+                    name: "ولاية منوبة",
+                    value:"MANNOUBA"
+                  },
+                  {
+                    id: 23,
+                    name: "ولاية المهدية",
+                    value:"MAHDIA"
+                  },
+                  {
+                    id: 24,
+                    name: "ولاية نابل",
+                    value:"NABEUL"
+                  }
+              ],
+              placeHolderText: "قم بإختيارالولاية",
+              selectedTextville:"",
+              selectedValueville:"",
+              adresse:"",
+              longitude: 'unknown',
+              latitude: 'unknown',
+
             validitynext:false,
             firstname:"",
             lastname:"",
@@ -100,7 +233,8 @@ var radio_props = [
               statusnbreanneediabitic:-1,
               statusnbreanneehypertension:-1,
               statustreatmentconcer:-1,
-              statusImmunity:-1
+              statusImmunity:-1,
+              selectedville:undefined,
               
 
               
@@ -110,47 +244,24 @@ var radio_props = [
         });
       
     }
-    componentWillMount() {
-        this.keyboardDidShowSub = Keyboard.addListener('keyboardDidShow', this.handleKeyboardDidShow);
-        this.keyboardDidHideSub = Keyboard.addListener('keyboardDidHide', this.handleKeyboardDidHide);
-      }
+    watchID = null;
+   componentDidMount = () => {
+      navigator.geolocation.watchPosition(
+         (position) => {
+            const initiallongitude = JSON.stringify(position.coords.longitude);
+            const initiallatitude = JSON.stringify(position.coords.latitude);
+            this.setState({ longitude:initiallongitude, latitude:initiallatitude});
+         },
+         (error) => alert(error.message),
+         { enableHighAccuracy: true, timeout: 20000, maximumAge: 1000 }
+      );
     
-      componentWillUnmount() {
-        this.keyboardDidShowSub.remove();
-        this.keyboardDidHideSub.remove();
-      }
-      handleKeyboardDidShow = (event) => {
-        const { height: windowHeight } = Dimensions.get('window');
-        const keyboardHeight = event.endCoordinates.height;
-        const currentlyFocusedField = TextInputState.currentlyFocusedField();
-        UIManager.measure(currentlyFocusedField, (originX, originY, width, height, pageX, pageY) => {
-          const fieldHeight = height+20;
-          const fieldTop = pageY;
-          const gap = (windowHeight - keyboardHeight) - (fieldTop + fieldHeight);
-          if (gap >= 0) {
-            return;
-          }
-          Animated.timing(
-            this.state.shift,
-            {
-              toValue: gap,
-              duration: 1000,
-              useNativeDriver: true,
-            }
-          ).start();
-        });
-      }
-    
-      handleKeyboardDidHide = () => {
-        Animated.timing(
-          this.state.shift,
-          {
-            toValue: 0,
-            duration: 1000,
-            useNativeDriver: true,
-          }
-        ).start();
-      }
+   }
+   componentWillUnmount = () => {
+      navigator.geolocation.clearWatch(this.watchID);
+   }
+
+
     _onPressuserfillform(statususerfillform){
         const currentStatus = statususerfillform;
         this.setState({ statususerfillform: currentStatus});
@@ -515,12 +626,14 @@ var radio_props = [
     _addpatient()
     {
         console.log('end');
-        let patient=this._fillPatient();
-        let symtome=this._fillSymtome();
         let antecedent=this._fillAntecedent();
+        let exposure=this._fillexposure()
+        let patient=this._fillPatient(exposure,antecedent);
+        let symtome=this._fillSymtome();
+        
         this.props._createPatientSymtomeAntecedent(patient,symtome,antecedent);
   
-        //this.props.navigation.goBack();
+        this.props.navigation.goBack();
     }
     _onPrev(value)
     {
@@ -563,49 +676,81 @@ var radio_props = [
 
     }
 
-    _fillPatient()
-    {
-        let patient={
-            firstname:this.state.firstname,
-            lastname:this.state.lastname,
-            age:this.state.age,
-            phone:this.state.phone,
-            forumlaother:this.state.statususerfillform=="yes"?true:false,
-            gravestatuation:this.state.statusWhyuserfillform=="yes"?true:false,
+    _fillPatient(iexposure,antecedent)
+    { 
+             
 
-        }
+            patient.firstname=this.state.firstname;
+            patient.lastname=this.state.lastname;
+            patient.age=this.state.age;
+            patient.phone=this.state.tel;
+            patient.backupPhone=this.state.telfamille;
+            patient.gender=this.state.statusgender==0?"MALE":"FEMALE";
+            patient.civilStatus=this.state.statusetatcivil==0?"SINGLE":this.state.statusetatcivil==1?"MARRIED":this.state.statusetatcivil==2?"WIDOWED":"DIVORDECED";
+            patient.address={
+                state: this.state.selectedValueville,
+                avenue: this.state.adresse
+              };
+              patient.location= {
+                lat: this.state.latitude,
+                lng: this.state.longitude
+              };
+              patient.antecedentRecord=antecedent;
+              patient.exposure=iexposure;
+              patient.forumlaother=this.state.statususerfillform=="yes"?true:false;
+
+        
         return patient;
     }
     _fillexposure()
     {
         exposure={
-            traveler:this.state.statusvoyage=="yes"?true:false,
-            contactWithTraveler:this.state.statuscontact=="yes"?true:false,
+         //exposure
+             traveler:this.state.statusvoyage=="yes"?true:false,
+             contactWithTraveler:this.state.statuscontact=="yes"?true:false,
             sameHomePersonReturningFromTrip: this.state.statusLiving=="1"?true:false,
+             travellerhasmakingtest:this.state.statustestanalysvoyag=="yes"?true:false,
             contactedTravellerTestResult :this.statetatusresultatanalysvoyag=="yes"?true:false,
-            
+            hasmakingtest:this.state.statustestanalys=="yes"?true:false,
+            testResult:this.state.statusresultatanalys=="yes"?true:false,
+            visitRegion:this.state.statuszonecritique=="yes"?true:false,
+            contactWithInfectedPerson:this.state.statuscontactmalade=="yes"?true:false,
+            withSuspiciousGroup:this.state.statuszonecritique=="yes"?true:false,
         }
+        return exposure;
     }
     _fillSymtome()
     {
         let symtome={
             patient:null,
-            traveler:this.state.statusvoyage=="yes"?true:false,
-            contactWithTraveler:this.state.statuscontact=="yes"?true:false,
-            sameHomePersonReturningFromTrip: this.state.statusLiving=="1"?true:false,
-            contactedTravellerTestResult :this.state.statusresultatanalysvoyag=="yes"?true:false,
-            sameHomePersonReturningFromTrip: this.state.statusLiving=="1"?true:false,
-            withSuspiciousGroup:this.state.statuszonecritique=="yes"?true:false,
+          
+
+            severeDyspnea:this.state.statusWhyuserfillform=="yes"?true:false,
+
+         
+            date:new Date(),
+            
             fever:this.state.statusfievre=="yes"?true:false,
             temperature:this.state.statusdugreefievre,
             cough:this.state.statustoux=="yes"?true:false,
             dyspnea:this.state.statusASPHYXIE=="yes"?true:false,
             unableToSpeak:this.state.statusPARLE=="yes"?true:false,
+
             severeDyspnea:this.state.WhyABILYTY=="1"?true:false ,
             mauxtete:this.state.WhyABILYTY=="2"?true:false ,
-            chestPain:this.state.WhyABILYTY=="3"?true:false ,
-            missingability:this.state.statusABILYTY=="yes"?true:false ,
-            abilitytime:this.state.statusABILYTY_DURATION=="1"?"DAYS":this.state.statusABILYTY_DURATION=="2"?"WEEK":this.state.statusABILYTY_DURATION=="3"?"MONTHS":"YEAR"
+            deteriorationOfGC:this.state.WhyABILYTY=="3"?true:false ,
+            
+            deteriorationOfGC:this.state.statusABILYTY=="yes"?true:false ,
+            //missingability:this.state.statusABILYTY=="yes"?true:false ,
+            abilitytime:this.state.statusABILYTY_DURATION=="1"?"DAYS":this.state.statusABILYTY_DURATION=="2"?"WEEK":this.state.statusABILYTY_DURATION=="3"?"MONTHS":"YEAR",
+
+            diarrhea:this.state.statusSYMTOME.findIndex(item => item === "1") !="-1"?true:false,
+            nauseaOrVomiting:this.state.statusSYMTOME.findIndex(item => item === "2") !="-1"?true:false,
+            chestPain:this.state.statusSYMTOME.findIndex(item => item === "3") !="-1"?true:false,
+            epigastralgia:this.state.statusSYMTOME.findIndex(item => item === "4") !="-1"?true:false,
+            soreThroat:this.state.statusSYMTOME.findIndex(item => item === "5") !="-1"?true:false,
+            arthalgia:this.state.statusSYMTOME.findIndex(item => item === "6") !="-1"?true:false,
+
 
         }
         return symtome;
@@ -633,13 +778,14 @@ var radio_props = [
 
 
             //respiratory:
+            respiratory:this.state.statusrespiratory=="1"?true:false,
             respiratoryAsthma:this.state.statusrespiratory=="1"?true:false,
             respiratoryBPCO:this.state.statusrespiratory=="2"?true:false,
             respiratoryThorax:this.state.statusrespiratory=="3"?true:false,
             respiratoryOther:this.state.statusrespiratory=="4"?true:false,
 
             heartDisease:this.state.statuscoeur=="yes"?true:false,
-   
+            renalFailure:this.state.statusRenal=="yes"?true:false,
 
             cancer:this.state.statusconcer=="yes"?true:false,
 
@@ -648,12 +794,13 @@ var radio_props = [
             cancerTypeORL:this.state.statusplaceconcer=="3"?true:false,
             cancerTypeOther:this.state.statusplaceconcer=="4"?true:false,
             
-
+            
 
             cancerTreatmentChemotherapy:this.state.statustreatmentconcer=="1"?true:false,
             cancerTreatmentRadiotherapy:this.state.statustreatmentconcer=="2"?true:false,
             cancerTreatmentSurgery:this.state.statustreatmentconcer=="3"?true:false,
             
+            immuneDisease:this.state.statusImmunity=="1"?true:false,
 
 
 
@@ -662,7 +809,18 @@ var radio_props = [
         return Antecedent;
     }
 
+    onValueChangeville(value) {
+        this.setState({
+          selectedville: value
+        });
+      }
 
+      _selectedValue(index, item) {
+
+          console.log(this.state.dataSource[index].name);
+          console.log("item.name   "+item.value);
+        this.setState({ selectedTextville: item.name ,selectedValueville:item.value});
+      }
   render() {
     if(this.state.statususerfillform==="no")
     {
@@ -670,7 +828,7 @@ var radio_props = [
     }
 
       if (this.state.current === 0) {
-        const { shift } = this.state;
+
         let pourcentage=(this.state.current)/(nbreecran);
 
         return (
@@ -767,7 +925,8 @@ var radio_props = [
         );
     }
     if (this.state.current === 1) {
-        const { shift } = this.state;
+
+        
         let pourcentage=(this.state.current)/(nbreecran);
         return (
             
@@ -795,9 +954,83 @@ var radio_props = [
                             />
 
                         <Text style={styles.textlabel}> </Text> 
-              
+                    
+           
                     </View>
-                    <View style={styles.row}>
+                   
+      
+                  <Text style={styles.textlabel}>  </Text> 
+                     <View style={styles.innerContainer}> 
+                        {this.state.current!= 0 ? 
+                    <TouchableOpacity  style={styles.addButtonprev}  onPress={() => this._onPrev(1)}>
+                    <Text style={styles.addButtonText}> السابق </Text> 
+                        </TouchableOpacity>: null}
+
+                        {!this.state.isLast ? 
+                        <TouchableOpacity  style={(this.state.tel==""||this.state.telfamille=="")?styles.addButtonnextDisable:styles.addButtonnext}  disabled={(this.state.tel==""||this.state.telfamille=="") ? true : false}  onPress={() => this._onNext(1)}>
+                        <Text style={styles.addButtonText}> الموالي </Text> 
+                        </TouchableOpacity>    
+
+                        : <TouchableOpacity  style={styles.addButtonnext}  onPress={() => this._addpatient()}>
+                        <Text style={styles.addButtonText}> تسجيل </Text> 
+                        </TouchableOpacity>
+                        }
+   
+                  </View>
+                  </KeyboardAvoidingView>
+                  </ScrollView > 
+ 
+        
+        );
+    }
+
+
+
+    else if (this.state.current === 2) {
+        let pourcentage=(this.state.current)/(nbreecran);
+        return (
+            <ScrollView style={{  backgroundColor:  "white"}} keyboardShouldPersistTaps="handled">
+            <KeyboardAvoidingView enabled>
+            <View style={styles.row}>
+               <Text style={styles.textlabel1}>{Math.floor(pourcentage*100)} % </Text>
+               <ProgressBar progress={pourcentage} color={Colors.red800} />
+               <Text style={styles.textlabel}> </Text> 
+                       
+          
+               <View style={styles.container}>
+                <Text style={{ marginBottom: 25, fontSize: 18, fontWeight: "bold" }}>
+                {"الولاية"}
+                </Text>
+                <RNPicker
+                dataSource={this.state.dataSource}
+                dummyDataSource={this.state.dataSource}
+                defaultValue={false}
+                pickerTitle={"الولايات"}
+                showSearchBar={true}
+                disablePicker={false}
+                changeAnimation={"none"}
+                searchBarPlaceHolder={"بحث....."}
+                showPickerTitle={true}
+                searchBarContainerStyle={this.props.searchBarContainerStyle}
+                pickerStyle={styles.pickerStyle}
+                itemSeparatorStyle={styles.itemSeparatorStyle}
+                pickerItemTextStyle={styles.listTextViewStyle}
+                selectedLabel={this.state.selectedTextville}
+                placeHolderLabel={this.state.placeHolderText}
+                selectLabelTextStyle={styles.selectLabelTextStyle}
+                placeHolderTextStyle={styles.placeHolderTextStyle}
+                dropDownImageStyle={styles.dropDownImageStyle}
+                //dropDownImage={require("./res/ic_drop_down.png")}
+                selectedValue={(index, item) => this._selectedValue(""+index, item)}
+                />
+            </View>
+                 
+                <Text style={styles.textlabel}> </Text> 
+                <Text style={styles.textlabel1}>  العنوان :</Text> 
+                <Textarea  placeholder="العنوان"
+                    style={styles.textInput}
+                    value={this.state.adresse} onChangeText={ (text) => this.setState({ adresse: text }) } />
+                <Text style={styles.textlabel}> </Text> 
                      <RadioForm
                         formHorizontal={false}
                         animation={true}
@@ -832,15 +1065,11 @@ var radio_props = [
                                 ))
                         }  
                         </RadioForm>
-                
-                
-          
-
+   
+        
            
-                    </View>
-                   
-      
-                  <Text style={styles.textlabel}>  </Text> 
+                </View>
+                <Text style={styles.textlabel}>  </Text> 
                      <View style={styles.innerContainer}> 
                         {this.state.current!= 0 ? 
                     <TouchableOpacity  style={styles.addButtonprev}  onPress={() => this._onPrev(1)}>
@@ -848,7 +1077,7 @@ var radio_props = [
                         </TouchableOpacity>: null}
 
                         {!this.state.isLast ? 
-                        <TouchableOpacity  style={(this.state.tel==""||this.state.telfamille==""||this.state.statusetatcivil=="-1")?styles.addButtonnextDisable:styles.addButtonnext}  disabled={(this.state.tel==""||this.state.telfamille==""||this.state.statusetatcivil=="-1") ? true : false}  onPress={() => this._addpatient()}>
+                        <TouchableOpacity  style={(this.state.statusetatcivil=="-1")?styles.addButtonnextDisable:styles.addButtonnext}  disabled={(this.state.statusetatcivil=="-1") ? true : false}  onPress={() => this._onNext(1)}>
                         <Text style={styles.addButtonText}> الموالي </Text> 
                         </TouchableOpacity>    
 
@@ -859,12 +1088,12 @@ var radio_props = [
    
                   </View>
                   </KeyboardAvoidingView>
-                  </ScrollView > 
- 
-        
+            </ScrollView > 
         );
     }
-    else if (this.state.current === 2) {
+
+
+    else if (this.state.current === 3) {
         let pourcentage=(this.state.current)/(nbreecran);
         return (
             <ScrollView style={{  backgroundColor:  "white"}} keyboardShouldPersistTaps="handled">
@@ -935,7 +1164,7 @@ var radio_props = [
             </ScrollView > 
         );
     }
-    else if (this.state.current === 3) {
+    else if (this.state.current === 4) {
         let pourcentage=(this.state.current)/(nbreecran);
         return (
             <ScrollView style={{  backgroundColor:  "white"}} keyboardShouldPersistTaps="handled">
@@ -987,7 +1216,7 @@ var radio_props = [
             </ScrollView > 
         );
     }
-    else if (this.state.current === 4) {
+    else if (this.state.current === 5) {
         let pourcentage=(this.state.current)/(nbreecran);
         return (
             <ScrollView style={{  backgroundColor:  "white"}} keyboardShouldPersistTaps="handled">
@@ -1040,7 +1269,7 @@ var radio_props = [
         );
     }
     
-    else if (this.state.current === 5) {
+    else if (this.state.current === 6) {
         let pourcentage=(this.state.current)/(nbreecran);
         return (
             <ScrollView style={{  backgroundColor:  "white"}} keyboardShouldPersistTaps="handled">
@@ -1106,7 +1335,7 @@ var radio_props = [
         );
     }
 
-    else if (this.state.current === 6) {
+    else if (this.state.current === 7) {
         let pourcentage=(this.state.current)/(nbreecran);
         return (
             <ScrollView style={{  backgroundColor:  "white"}} keyboardShouldPersistTaps="handled">
@@ -1204,7 +1433,7 @@ var radio_props = [
         );
     }
  
-    else if (this.state.current === 7) {
+    else if (this.state.current === 8) {
         let pourcentage=(this.state.current)/(nbreecran);
         return (
             <ScrollView style={{  backgroundColor:  "white"}} keyboardShouldPersistTaps="handled">
@@ -1256,7 +1485,7 @@ var radio_props = [
             </ScrollView > 
         );
     }
-    else if (this.state.current === 8) {
+    else if (this.state.current === 9) {
         let pourcentage=(this.state.current)/(nbreecran);
         return (
             <ScrollView style={{  backgroundColor:  "white"}} keyboardShouldPersistTaps="handled">
@@ -1310,7 +1539,7 @@ var radio_props = [
     }
 
 
-    else if (this.state.current === 9) {
+    else if (this.state.current === 10) {
         let pourcentage=(this.state.current)/(nbreecran);
         return (
             <ScrollView style={{  backgroundColor:  "white"}} keyboardShouldPersistTaps="handled">
@@ -1364,7 +1593,7 @@ var radio_props = [
     }
 
 
-    else if (this.state.current === 10) {
+    else if (this.state.current === 11) {
         let pourcentage=(this.state.current)/(nbreecran);
         return (
             <ScrollView style={{  backgroundColor:  "white"}} keyboardShouldPersistTaps="handled">
@@ -1423,7 +1652,7 @@ var radio_props = [
         );
     }
 
-    else if (this.state.current === 11) {
+    else if (this.state.current === 12) {
         let pourcentage=(this.state.current)/(nbreecran);
         return (
             <ScrollView style={{  backgroundColor:  "white"}} keyboardShouldPersistTaps="handled">
@@ -1477,7 +1706,7 @@ var radio_props = [
         );
     }
 
-    else if (this.state.current === 12) {
+    else if (this.state.current === 13) {
         let pourcentage=(this.state.current)/(nbreecran);
         return (
             <ScrollView style={{  backgroundColor:  "white"}} keyboardShouldPersistTaps="handled">
@@ -1530,7 +1759,7 @@ var radio_props = [
         );
     }
 
-    else if (this.state.current === 13) {
+    else if (this.state.current === 14) {
         let pourcentage=(this.state.current)/(nbreecran);
         return (
             <ScrollView style={{  backgroundColor:  "white"}} keyboardShouldPersistTaps="handled">
@@ -1598,7 +1827,7 @@ var radio_props = [
     }
 
 
-    else if (this.state.current === 14) {
+    else if (this.state.current === 15) {
         let pourcentage=(this.state.current)/(nbreecran);
         return (
             <ScrollView style={{  backgroundColor:  "white"}} keyboardShouldPersistTaps="handled">
@@ -1664,7 +1893,7 @@ var radio_props = [
     }
 
 
-    else if (this.state.current === 15) {
+    else if (this.state.current === 16) {
         let pourcentage=(this.state.current)/(nbreecran);
         return (
             <ScrollView style={{  backgroundColor:  "white"}} keyboardShouldPersistTaps="handled">
@@ -1714,7 +1943,7 @@ var radio_props = [
         );
     }
 
-    else if (this.state.current === 16) {
+    else if (this.state.current === 17) {
         let pourcentage=(this.state.current)/(nbreecran);
         return (
             <ScrollView style={{  backgroundColor:  "white"}} keyboardShouldPersistTaps="handled">
@@ -1764,7 +1993,7 @@ var radio_props = [
         );
     }
 
-    else if (this.state.current === 17) {
+    else if (this.state.current === 18) {
         let pourcentage=(this.state.current)/(nbreecran);
         return (
             <ScrollView style={{  backgroundColor:  "white"}} keyboardShouldPersistTaps="handled">
@@ -1814,7 +2043,7 @@ var radio_props = [
         );
     }
 
-    else if (this.state.current === 18) {
+    else if (this.state.current === 19) {
         let pourcentage=(this.state.current)/(nbreecran);
         return (
             <ScrollView style={{  backgroundColor:  "white"}} keyboardShouldPersistTaps="handled">
@@ -1876,7 +2105,7 @@ var radio_props = [
         );
     }
    
-    else if (this.state.current === 19) {
+    else if (this.state.current === 20) {
         let pourcentage=(this.state.current)/(nbreecran);
         return (
             <ScrollView style={{  backgroundColor:  "white"}} keyboardShouldPersistTaps="handled">
@@ -1928,7 +2157,7 @@ var radio_props = [
     }
 
 
-    else if (this.state.current === 20) {
+    else if (this.state.current === 21) {
         let pourcentage=(this.state.current)/(nbreecran);
         return (
             <ScrollView style={{  backgroundColor:  "white"}} keyboardShouldPersistTaps="handled">
@@ -1991,7 +2220,7 @@ var radio_props = [
 
 
     
-    else if (this.state.current === 21) {
+    else if (this.state.current === 22) {
         let pourcentage=(this.state.current)/(nbreecran);
         return (
             <ScrollView style={{  backgroundColor:  "white"}} keyboardShouldPersistTaps="handled">
@@ -2069,7 +2298,7 @@ var radio_props = [
     }
   
   
-    else if (this.state.current === 22) {
+    else if (this.state.current === 23) {
         let pourcentage=(this.state.current)/(nbreecran);
         return (
             <ScrollView style={{  backgroundColor:  "white"}} keyboardShouldPersistTaps="handled">
@@ -2120,7 +2349,7 @@ var radio_props = [
         );
     }
 
-    else if (this.state.current === 23) {
+    else if (this.state.current === 24) {
         let pourcentage=(this.state.current)/(nbreecran);
         return (
             <ScrollView style={{  backgroundColor:  "white"}} keyboardShouldPersistTaps="handled">
@@ -2184,7 +2413,7 @@ var radio_props = [
 
 
 
-    else if (this.state.current === 24) {
+    else if (this.state.current === 25) {
         let pourcentage=(this.state.current)/(nbreecran);
         return (
             <ScrollView style={{  backgroundColor:  "white"}} keyboardShouldPersistTaps="handled">
@@ -2252,7 +2481,7 @@ var radio_props = [
         );
     }
 
-    else if (this.state.current === 25) {
+    else if (this.state.current === 26) {
         let pourcentage=(this.state.current)/(nbreecran);
         return (
             <ScrollView style={{  backgroundColor:  "white"}} keyboardShouldPersistTaps="handled">
@@ -2332,7 +2561,7 @@ var radio_props = [
     }
 
 
-    else if (this.state.current === 26) {
+    else if (this.state.current === 27) {
         let pourcentage=(this.state.current)/(nbreecran);
         return (
             <ScrollView style={{  backgroundColor:  "white"}} keyboardShouldPersistTaps="handled">
@@ -2401,7 +2630,7 @@ var radio_props = [
 
   
 
-    else if (this.state.current === 27) {
+    else if (this.state.current === 28) {
         let pourcentage=(this.state.current)/(nbreecran);
         return (
             <ScrollView style={{  backgroundColor:  "white"}} keyboardShouldPersistTaps="handled">
@@ -2451,7 +2680,7 @@ var radio_props = [
         );
     }
 
-    else if (this.state.current === 28) {
+    else if (this.state.current === 29) {
         let pourcentage=(this.state.current)/(nbreecran);
         return (
             <ScrollView style={{  backgroundColor:  "white"}} keyboardShouldPersistTaps="handled">
@@ -2503,7 +2732,7 @@ var radio_props = [
     }
 
     
-    else if (this.state.current === 29) {
+    else if (this.state.current === 30) {
         let pourcentage=(this.state.current)/(nbreecran);
         return (
             <ScrollView style={{  backgroundColor:  "white"}} keyboardShouldPersistTaps="handled">
@@ -2553,7 +2782,7 @@ var radio_props = [
     }
 
 
-    else if (this.state.current === 30) {
+    else if (this.state.current === 31) {
         let pourcentage=(this.state.current)/(nbreecran);
         return (
             <ScrollView style={{  backgroundColor:  "white"}} keyboardShouldPersistTaps="handled">
@@ -2603,7 +2832,7 @@ var radio_props = [
     }
     
 
-    else if (this.state.current === 31) {
+    else if (this.state.current === 32) {
         let pourcentage=(this.state.current)/(nbreecran);
         return (
             <ScrollView style={{  backgroundColor:  "white"}} keyboardShouldPersistTaps="handled">
@@ -2662,7 +2891,7 @@ var radio_props = [
         );
     }
 
-    else if (this.state.current === 32) {
+    else if (this.state.current === 33) {
         let pourcentage=(this.state.current)/(nbreecran);
         return (
             <ScrollView style={{  backgroundColor:  "white"}} keyboardShouldPersistTaps="handled">
@@ -2716,7 +2945,7 @@ var radio_props = [
         );
     }
 
-    else if (this.state.current === 33) {
+    else if (this.state.current === 34) {
         let pourcentage=(this.state.current)/(nbreecran);
         return (
             <ScrollView style={{  backgroundColor:  "white"}} keyboardShouldPersistTaps="handled">
@@ -2889,7 +3118,84 @@ const styles = StyleSheet.create({
          flexDirection: "row",  
          justifyContent: "space-between",  
          alignItems: "center"  
-      }
+      }, container: {
+    flex: 1,
+    alignItems: "center",
+    justifyContent: "center"
+  },
+  itemSeparatorStyle:{
+    height: 1,
+    width: "90%",
+    alignSelf: "center",
+    backgroundColor: "#D3D3D3"
+  },
+  searchBarContainerStyle: {
+    marginBottom: 10,
+    flexDirection: "row",
+    height: 40,
+    shadowOpacity: 1.0,
+    shadowRadius: 5,
+    shadowOffset: {
+      width: 1,
+      height: 1
+    },
+    backgroundColor: "rgba(255,255,255,1)",
+    shadowColor: "#d3d3d3",
+    borderRadius: 10,
+    elevation: 3,
+    marginLeft: 10,
+    marginRight: 10
+  },
+
+  selectLabelTextStyle: {
+    color: "#000",
+    textAlign: "right",
+    width: "99%",
+    padding: 10,
+    flexDirection: "row",
+    fontSize: 18, fontWeight: "bold"
+  },
+  placeHolderTextStyle: {
+    color: "#D3D3D3",
+    padding: 10,
+    textAlign: "right",
+    width: "99%",
+    flexDirection: "row",
+    fontSize: 18, fontWeight: "bold"
+  },
+  dropDownImageStyle: {
+    marginLeft: 10,
+    width: 10,
+    height: 10,
+    alignSelf: "center"
+  },
+  listTextViewStyle: {
+    color: "#000",
+    marginVertical: 10,
+    flex: 0.9,
+    marginLeft: 20,
+    marginHorizontal: 10,
+    textAlign: "right",
+    fontSize: 18, fontWeight: "bold"
+  },
+  pickerStyle: {
+    marginLeft: 18,
+    elevation:3,
+    paddingRight: 25, 
+    marginRight: 10,
+    marginBottom: 2,
+    shadowOpacity: 1.0,
+    shadowOffset: {
+      width: 1,
+      height: 1
+    },
+    borderWidth:1,
+    shadowRadius: 10,
+    backgroundColor: "rgba(255,255,255,1)",
+    shadowColor: "#d3d3d3",
+    borderRadius: 5,
+    flexDirection: "row"
+  }
 });
 function mapDispatchToProps(dispatch) {
     return bindActionCreators({

@@ -37,7 +37,7 @@ firstname={item.firstname}
 lastname={item.lastname}
  age={item.age}
  phone={item.phone}
- list={item}
+ patient={item}
  navigation={ this.props.navigation}
 />
 
@@ -92,7 +92,7 @@ _onRefresh()
   
 }
 componentDidMount() {
-  console.log(this.props.patientslist[0].firstname);
+
 }
 
 _Editpatient= () => {
@@ -100,7 +100,7 @@ _Editpatient= () => {
 }
 
 render() {
-  if (! this.props.patientslist) {
+  if (! this.props.patientslist.patientslist) {
     return (
       <ActivityIndicator style={styles.container} animating={true} />
     );
@@ -110,8 +110,8 @@ render() {
     return (
       <View>
     <FlatList
-  data={this.props.patientslist}
-  keyExtractor={(item) => item.id}
+  data={this.props.patientslist.patientslist}
+  keyExtractor={(item) => ""+item.id}
   renderItem={( item ) => this._renderItem(item)}/>
 
  
