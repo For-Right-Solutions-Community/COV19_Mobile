@@ -7,7 +7,7 @@
     "description": "Application pour s'enquérir de votre santé",    
 	"icon": "./assets/logo.png",
 	"splash": {
-      "image": "./assets/logo.png",
+      "image": "./assets/splash.png",
       "backgroundColor": "#ffffff",
       "resizeMode": "contain"
 	},

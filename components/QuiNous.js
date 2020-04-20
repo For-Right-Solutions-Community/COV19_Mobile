@@ -1,5 +1,5 @@
 import React, { Component } from "react";
-import {ScrollView,StyleSheet} from 'react-native';
+import {ScrollView,StyleSheet,View} from 'react-native';
 import {Text} from 'native-base';
 
 export default class QuiNous extends Component {
@@ -7,7 +7,7 @@ export default class QuiNous extends Component {
         return (
     
             <ScrollView style={{  backgroundColor:  "white"}} keyboardShouldPersistTaps="handled">
-      
+            <View style={{ marginTop: 30}}>
     <Text style={styles.textlabel1}>
 هذه التطبيقة تم إنشاؤها من قبل مجموعة من الأطباء و المهندسين(ات) التونسيين(ات) في إطار دعم الجهود الوطنية لمقاومة فيروس كورونا.
 و تهدف إلى تخفيف العبء المسجل على خطوط 190 التابعة للإنعاش الطبي الاستعجالي و تحديد الحالات المصابة الأكثر خطورة و التي هي بحاجة ماسة لتدخل طبي عاجل و تنسيق ذلك إضافة إلى إرشاد المريض(ة) إلى أنجع الحلول من اجل متابعة حالته(ا) المرضية في حالة وجود أعراض غير خطيرة ..
@@ -19,6 +19,7 @@ export default class QuiNous extends Component {
 هذه المعطيات الشخصية محمية برمجيا و بموجب السر المهني للاطباء و العاملين في المجال الصحي
 الجهة الوحيدة المخولة للتعامل مع هذه المعطيات هي وزارة الصحة و كليات الطب و الهياكل التابعة لها في اطار جهود مقاومة وباء كورونا و البحوث العلمية المزمع القيام بها في هذا الاطار 
 </Text> 
+</View >
              </ScrollView >
             );
     }

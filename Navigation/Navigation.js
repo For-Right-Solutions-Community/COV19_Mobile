@@ -29,7 +29,7 @@ const IndexFollowScreenStackNavigator = createStackNavigator({
       Partenaires: {
         screen: Partenaires,
         navigationOptions: {
-          title: '  المساهمون'
+          title: '  المساهمين في العمل'
         }
       },
     Listpatient: {

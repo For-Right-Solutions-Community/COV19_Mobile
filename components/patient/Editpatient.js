@@ -8,7 +8,8 @@ import { ProgressBar, Colors } from 'react-native-paper';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import { _createpatient,_createPatientSymtomeAntecedent} from '../../Store/actions';
-import {getInitialDataPatient} from './initObjectPatient'
+import {getInitialDataPatient} from './initObjectPatient';
+import SearchableDropdown from 'react-native-searchable-dropdown';
 import RNPicker from "rn-modal-picker";
 const llll=' من يقوم بتعمير هذه الاستمارة ؟'
 const br = `\n`;
@@ -38,137 +39,137 @@ var radio_props = [
     {label: '    نعم    ', value: 1 }
   ];
   const { State: TextInputState } = TextInput;
+  var items= [
+    {
+      id: 1,
+      name: "ولايةأريانة",
+      value:"ARIANA"
+    },
+    {
+      id: 2,
+      name: "ولاية باجة",
+      value:"BEJA"
+    },
+    {
+      id: 3,
+      name: "ولاية بن عروس",
+      value:"BENAROURS"
+    },
+    {
+      id: 4,
+      name: "ولاية بنزرت",
+      value:"BIZERTE"
+    },
+    {
+      id: 5,
+      name: "ولاية تطاوين",
+      value:"TATOUINE"
+    },
+    {
+      id: 6,
+      name: "ولاية توزر",
+      value:"TOUZUER"
+    },
+    {
+      id: 7,
+      name: "ولاية تونس",
+      value:"TUNIS"
+    },
+    {
+      id: 8,
+      name: "ولاية جندوبة",
+      value:"JANDOUBA"
+    },
+    {
+      id: 9,
+      name: "ولاية زغوان",
+      value:"ZAGHOUIN"
+    },
+    {
+      id: 10,
+      name: "ولاية سليانة",
+      value:"SILIANA"
+    },
+    {
+      id: 11,
+      name: "ولاية سوسة",
+      value:"SOUSSE"
+    },
+    {
+      id: 12,
+      name: "ولاية سيدي بوزيد",
+      value:"SIDIBOUZID"
+    },
+    {
+        id: 13,
+        name: "ولاية صفاقس",
+        value:"SFAX"
+      },
+      {
+        id: 14,
+        name: "ولاية قابس",
+        value:"GABES"
+
+      },
+      {
+        id: 15,
+        name: "ولاية قبلي",
+        value:"KBELLI"
+      },
+      {
+        id: 16,
+        name: "ولاية القصرين",
+        value:"GASSERINE"
+      },
+      {
+        id: 17,
+        name: "ولاية قفصة",
+        value:"GAFSA"
+      },
+      {
+        id: 18,
+        name: "ولاية القيروان",
+        value:"KAIROIN"
+      },
+      {
+        id: 19,
+        name: "ولاية الكاف",
+        value:"ELKEF"
+      },
+      {
+        id: 20,
+        name: "ولاية مدنين",
+        value:"MEDINE"
+      },
+      {
+        id: 21,
+        name: "ولاية المنستير",
+        value:"MONASTIR"
+      },
+      {
+        id: 22,
+        name: "ولاية منوبة",
+        value:"MANNOUBA"
+      },
+      {
+        id: 23,
+        name: "ولاية المهدية",
+        value:"MAHDIA"
+      },
+      {
+        id: 24,
+        name: "ولاية نابل",
+        value:"NABEUL"
+      }
+  ];
 var patient;
  class Editpatient extends Component {
     constructor(props) {
         super(props);
         patient=getInitialDataPatient();
         this.state = ({
-            dataSource: [
-                {
-                  id: 1,
-                  name: "نعم أريانة",
-                  value:"ARIANA"
-                },
-                {
-                  id: 2,
-                  name: "ولاية باجة",
-                  value:"BEJA"
-                },
-                {
-                  id: 3,
-                  name: "ولاية بن عروس",
-                  value:"BENAROURS"
-                },
-                {
-                  id: 4,
-                  name: "ولاية بنزرت",
-                  value:"BIZERTE"
-                },
-                {
-                  id: 5,
-                  name: "ولاية تطاوين",
-                  value:"TATOUINE"
-                },
-                {
-                  id: 6,
-                  name: "ولاية توزر",
-                  value:"TOUZUER"
-                },
-                {
-                  id: 7,
-                  name: "ولاية تونس",
-                  value:"TUNIS"
-                },
-                {
-                  id: 8,
-                  name: "ولاية جندوبة",
-                  value:"JANDOUBA"
-                },
-                {
-                  id: 9,
-                  name: "ولاية زغوان",
-                  value:"ZAGHOUIN"
-                },
-                {
-                  id: 10,
-                  name: "ولاية سليانة",
-                  value:"SILIANA"
-                },
-                {
-                  id: 11,
-                  name: "ولاية سوسة",
-                  value:"SOUSSE"
-                },
-                {
-                  id: 12,
-                  name: "ولاية سيدي بوزيد",
-                  value:"SIDIBOUZID"
-                },
-                {
-                    id: 13,
-                    name: "ولاية صفاقس",
-                    value:"SFAX"
-                  },
-                  {
-                    id: 14,
-                    name: "ولاية قابس",
-                    value:"GABES"
-        
-                  },
-                  {
-                    id: 15,
-                    name: "ولاية قبلي",
-                    value:"KBELLI"
-                  },
-                  {
-                    id: 16,
-                    name: "ولاية القصرين",
-                    value:"GASSERINE"
-                  },
-                  {
-                    id: 17,
-                    name: "ولاية قفصة",
-                    value:"GAFSA"
-                  },
-                  {
-                    id: 18,
-                    name: "ولاية القيروان",
-                    value:"KAIROIN"
-                  },
-                  {
-                    id: 19,
-                    name: "ولاية الكاف",
-                    value:"ELKEF"
-                  },
-                  {
-                    id: 20,
-                    name: "ولاية مدنين",
-                    value:"MEDINE"
-                  },
-                  {
-                    id: 21,
-                    name: "ولاية المنستير",
-                    value:"MONASTIR"
-                  },
-                  {
-                    id: 22,
-                    name: "ولاية منوبة",
-                    value:"MANNOUBA"
-                  },
-                  {
-                    id: 23,
-                    name: "ولاية المهدية",
-                    value:"MAHDIA"
-                  },
-                  {
-                    id: 24,
-                    name: "ولاية نابل",
-                    value:"NABEUL"
-                  }
-              ],
-              placeHolderText: "قم بإختيارالولاية",
-              selectedTextville:"",
+
+              selectedindex:0,
               selectedValueville:"",
               adresse:"",
               longitude: 'unknown',
@@ -704,7 +705,7 @@ var patient;
     }
     _fillexposure()
     {
-        exposure={
+        let exposure={
          //exposure
              traveler:this.state.statusvoyage=="yes"?true:false,
              contactWithTraveler:this.state.statuscontact=="yes"?true:false,
@@ -815,11 +816,9 @@ var patient;
         });
       }
 
-      _selectedValue(index, item) {
+      _selectedValue(item) {
 
-          console.log(this.state.dataSource[index].name);
-          console.log("item.name   "+item.value);
-        this.setState({ selectedTextville: item.name ,selectedValueville:item.value});
+        this.setState({ selectedValueville: item.value,selectedindex :item.id-1});
       }
   render() {
     if(this.state.statususerfillform==="no")
@@ -909,7 +908,7 @@ var patient;
     
                         {!this.state.isLast ? 
                         <TouchableOpacity  style={(this.state.firstname == ''|| this.state.lastname == ''|| this.state.age == ''|| this.state.statusgender==-1)?styles.addButtonnextDisable:styles.addButtonnext}  disabled={(this.state.firstname == ''|| this.state.lastname == ''|| this.state.age == ''|| this.state.statusgender==-1) ? true : false}  onPress={() => this._onNext(1)}>
-                        <Text style={styles.addButtonText}> تسجيل </Text> 
+                        <Text style={styles.addButtonText}> الموالي </Text> 
                         </TouchableOpacity>
 
                         : <TouchableOpacity  style={styles.addButtonnext}  onPress={() => this._addpatient()}>
@@ -997,38 +996,63 @@ var patient;
                <Text style={styles.textlabel}> </Text> 
                        
           
-               <View style={styles.container}>
-                <Text style={{ marginBottom: 25, fontSize: 18, fontWeight: "bold" }}>
+               <View>
+                <Text style={styles.textlabel1}>
                 {"الولاية"}
                 </Text>
-                <RNPicker
-                dataSource={this.state.dataSource}
-                dummyDataSource={this.state.dataSource}
-                defaultValue={false}
-                pickerTitle={"الولايات"}
-                showSearchBar={true}
-                disablePicker={false}
-                changeAnimation={"none"}
-                searchBarPlaceHolder={"بحث....."}
-                showPickerTitle={true}
-                searchBarContainerStyle={this.props.searchBarContainerStyle}
-                pickerStyle={styles.pickerStyle}
-                itemSeparatorStyle={styles.itemSeparatorStyle}
-                pickerItemTextStyle={styles.listTextViewStyle}
-                selectedLabel={this.state.selectedTextville}
-                placeHolderLabel={this.state.placeHolderText}
-                selectLabelTextStyle={styles.selectLabelTextStyle}
-                placeHolderTextStyle={styles.placeHolderTextStyle}
-                dropDownImageStyle={styles.dropDownImageStyle}
-                //dropDownImage={require("./res/ic_drop_down.png")}
-                selectedValue={(index, item) => this._selectedValue(""+index, item)}
-                />
+                <SearchableDropdown
+            onItemSelect={(item,index) => {
+                this._selectedValue(item);
+              
+            }}
+            containerStyle={{ padding: 5 }}
+            /*
+            onRemoveItem={(item, index) => {
+              const items = this.state.selectedItems.filter((sitem) => sitem.id !== item.id);
+              this.setState({ selectedItems: items });
+            }}
+            */
+            itemStyle={{
+             
+              padding: 10,
+              marginTop: 2,
+              backgroundColor: '#ddd',
+              borderColor: '#bbb',
+              borderWidth: 1,
+              borderRadius: 5,
+            }}
+            itemTextStyle={{fontSize: 22, color: '#222' }}
+            itemsContainerStyle={{ maxHeight: 140 }}
+            items={items}
+            defaultIndex={this.state.selectedindex}
+            resetValue={false}
+            textInputProps={
+              {
+                placeholder: "الولاية",
+                underlineColorAndroid: "transparent",
+                style: {
+                    fontSize: 22,
+                    padding: 12,
+                    borderWidth: 1,
+                    borderColor: '#ccc',
+                    borderRadius: 5,
+                },
+                //onTextChange: text => alert(text)
+              }
+            }
+            listProps={
+              {
+                nestedScrollEnabled: true,
+              }
+            }
+        />
             </View>
                  
                 <Text style={styles.textlabel}> </Text> 
                 <Text style={styles.textlabel1}>  العنوان :</Text> 
-                <Textarea  placeholder="العنوان"
+                <Textarea 
                     style={styles.textInput}
+                    rowSpan={4}
                     value={this.state.adresse} onChangeText={ (text) => this.setState({ adresse: text }) } />
                 <Text style={styles.textlabel}> </Text> 
                      <RadioForm

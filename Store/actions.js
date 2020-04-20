@@ -1,4 +1,4 @@
-import { AsyncStorage,Alert } from "react-native"
+import { AsyncStorage,Alert,NetInfo } from "react-native"
 import axios from 'axios'; 
 export const GET_TOKEN = 'GET_TOKEN';
 export const DECONNECTION = 'DECONNECTION';
@@ -10,7 +10,7 @@ export const ADD_PATIENT = 'ADD_PATIENT';
 var  password = 'password';
 var STORAGE_KEY = 'id_token';
 var pathglobale="https://api.amu190.maodao.xyz";
-//var pathglobale="http://192.168.0.5:8080";
+//var pathglobale="http://192.168.0.3:8080";
 const SUBSCRIPE_URL =  "/m/account/subscribe";
 const VALIDATE_URL =  "/m/account/validate";
 const LOGIN_URL = "/v2/register";
@@ -87,8 +87,8 @@ export  function  _subscribeuser(login,password) {
       })
         .catch ( (error) =>  {
           Alert.alert(
-            'Problème !',
-            'Vérifier votre compte '+error,
+            '',
+            'يوجد حساب AMU بهذا البريد الإلكتروني !!',
             [
               {text: 'OK', onPress: () => console.log('OK Pressed')},
             ],
@@ -115,11 +115,17 @@ export  function  _createUser(login,password,validationcode) {
   axiosapi.post(VALIDATE_URL,account).then((responseData) => {
     dispatch(saveUserToken(login,password));
 })
-        .catch ( (error) =>  {
-            console.error(error.response);
-            console.error(error);
-            return null
-        })
+.catch ( (error) =>  {
+  Alert.alert(
+    '',
+    'تثبت من رقم الدخول الموجود في بريدك الإلكتروني !!',
+    [
+      {text: 'OK', onPress: () => console.log('OK Pressed')},
+    ],
+    { cancelable: false }
+  )
+
+})
 
 }
 
@@ -132,13 +138,10 @@ export async function  _fetchPatientx(token) {
  
   return new Promise(resolve => {
     AsyncStorage.getItem('user').then((data1) => {
-      console.log("data1   "+JSON.parse(data1).id);
       const iduser=JSON.parse(data1).id;
       axiosapi.get("/m/user/"+iduser+"/patients",
       {headers:{'Authorization': "Bearer "+token,"Content-Type":"application/json"}}).then((reponse) => {
         let patientslist  =  JSON.stringify(reponse.data);
-       //let patientslist  =  reponse.data;
-        console.log("yyyyyyyyyyyyyyyyyyy:         "+JSON.stringify(reponse.data));
         resolve(patientslist) ;
   
       })
@@ -148,6 +151,7 @@ export async function  _fetchPatientx(token) {
           console.error(error);
        */
           resolve(null) ;
+          /*
           Alert.alert(
             'Problème !',
             'Vérifier votre compte '+error,
@@ -156,6 +160,7 @@ export async function  _fetchPatientx(token) {
             ],
             { cancelable: false }
           )
+          */
       })
     }).catch((err) => {
       dispatch(loading(false));
@@ -175,7 +180,6 @@ export const getUserToken = () => dispatch =>
         .then((data) => {
             dispatch(loading(false));
             dispatch(getToken(data));
-            console.log(data)
             
             if(data!==null)
             {
@@ -222,11 +226,10 @@ fetch(pathglobale+LOGIN_URL, {
       {
           AsyncStorage.setItem('userToken', responseData.token)
           .then(() => {
-              console.log(responseData.token)
+
               dispatch(loading(false));
               dispatch(saveToken('token saved'));
               dispatch(getToken(responseData.token));
-              console.log("xxxxxxxxxxxxxxxxxxxxxxxx:         "+responseData.token);
               if(responseData.token!==null)
               {
                 _fetchPatientx(responseData.token).then((patientslist)=>
@@ -237,7 +240,7 @@ fetch(pathglobale+LOGIN_URL, {
               }
               else
               {
-                dispatch(userfetchPatient(null));
+                dispatch( (null));
               }
           })
           .catch((err) => {
@@ -249,7 +252,6 @@ fetch(pathglobale+LOGIN_URL, {
 
           AsyncStorage.setItem('user', JSON.stringify(responseData.details))
           .then(() => {
-            console.log("tttttttttttttttttttttttt:         ");
               dispatch(saveUser('user saved'));
               dispatch(getUser(JSON.stringify(responseData.details)));
           })
@@ -262,8 +264,8 @@ fetch(pathglobale+LOGIN_URL, {
 
 }).catch((err) => {
   Alert.alert(
-      'Problème !',
-      'Vérifier votre compte ',
+      ' ',
+      'لم يتم العثورعلى أي حساب تثبت من عنوان البريد الإلكتروني وكلمة االسر!! يمكنك إنشاء حساب جديد',
       [
         {text: 'OK', onPress: () => console.log('OK Pressed')},
       ],
@@ -406,7 +408,6 @@ export function _updatepatient(patient) {
         axiosapi.put(UPDATE_PATIEN_URL+patient.id,patient,
           {headers:{'Authorization': "Bearer "+resultat,'Content-Type': 'application/json'}}).then((reponse) => {
     
-            console.log("reponse    "+reponse);
           resolve(reponse);
     
       })
@@ -503,3 +504,7 @@ export const removeUserToken = () => dispatch =>
             dispatch(loading(false));
             dispatch(error(err.message || 'ERROR'));
         })
+
+export const checkConnectivity=()=>{
+NetInfo
+}

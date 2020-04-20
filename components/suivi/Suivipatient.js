@@ -515,23 +515,16 @@ export default class Suivipatient extends Component {
         console.log('end');
         let exposure=this._fillexposure();
         let patient=this.props.navigation.state.params.patient;
-        console.log("patient "+patient);
         patient.exposure=exposure;
         let symtome=this._fillSymtome();
-        console.log("symtome   "+JSON.stringify(symtome));
         _updatepatient(patient).then((resultat)=>{
            _createsymtome(symtome).then((resultat)=>{
-            console.log("fffffffffffff   "+resultat);
+
             this.props.navigation.navigate("IndexFollowScreen")
         });
 
         });
-        /*
-        _createsymtome(symtome).then((resultat)=>{
-            console.log("fffffffffffff   "+resultat);
-            this.props.navigation.navigate("IndexFollowScreen")
-        });
-        */
+
         this.props.navigation.goBack();
     }
     _onPrev(value)

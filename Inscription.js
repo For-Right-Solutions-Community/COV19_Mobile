@@ -1,5 +1,5 @@
 import React from "react";
-import { AsyncStorage,Animated, Dimensions, Keyboard,UIManager,StyleSheet,TouchableHighlight,TextInput,CheckBox,Alert} from "react-native";
+import { KeyboardAvoidingView,ProgressBarAndroid,AsyncStorage,Animated, Dimensions, Keyboard,UIManager,StyleSheet,TouchableHighlight,TextInput,CheckBox,Alert} from "react-native";
 import {Text,View,Input,Item,Icon,Textarea,DatePicker,Picker} from 'native-base';
 import { _Signup,_subscribeuser,_createUser} from './Store/actions';
 import { connect } from 'react-redux';
@@ -16,7 +16,8 @@ const { State: TextInputState } = TextInput;
         password:'',
         password1:'',
         hidepassword:false,
-        codevalidation:''
+        codevalidation:'',
+        indeterminate:false
         
     })
   }
@@ -67,85 +68,43 @@ const { State: TextInputState } = TextInput;
 
 _subscribeuser()
 {
-  this.props._subscribeuser(this.state.email,this.state.password);
+  if(this.state.password===this.state.password1)
+  {
+    this.setState({indeterminate: true});
+
+    this.props._subscribeuser(this.state.email,this.state.password).then(() => {
+      this.setState({indeterminate: false});
+    });
+  }
+  else{
+    Alert.alert(
+      '',
+      'كلمات المرور ليست هي نفسها',
+      [
+        {text: 'OK', onPress: () => console.log('OK Pressed')},
+      ],
+      { cancelable: false }
+    )
+  }
+
+
 
   
 }
 _createUser()
 {
-  this.props._createUser(this.state.email,this.state.password,this.state.codevalidation);
-  AsyncStorage.getItem('userToken')
-  .then((data) => {
-    this.props.navigation.navigate("IndexFollowScreen");
+  this.setState({indeterminate: true});
+  this.props._createUser(this.state.email,this.state.password,this.state.codevalidation).then(() => {
+    AsyncStorage.getItem('userToken')
+    .then((data) => {
+      this.props.navigation.navigate("IndexFollowScreen");
+      this.setState({indeterminate: false});
+    });
   });
-}
-_enregistrer() {
-
-  if(this.state.password===this.state.password1)
-  {
-    this.props._Signup(this.state.email,this.state.password);
-  }
-  else{
-    Alert.alert(
-      'Problème !',
-      'Les mots de passes ne sont pas identiques',
-      [
-        {text: 'OK', onPress: () => console.log('OK Pressed')},
-      ],
-      { cancelable: false }
-    )
-  }
-
-
-}
-/*
-_userSignup(responseData) {
-
-
-  fetch("http://192.168.0.5:8080/v2/register", {
-    method: "POST",
-    headers: {
-      'Content-Type': 'application/json'
-    },
-    body: JSON.stringify({
-      username: this.state.login,
-      password: this.state.password,
-    })
-  })
-  .then((response) => response.json())
-  .then((responseData) => {
-    this._onValueChange(STORAGE_KEY, responseData.token),
-   
-    Alert.alert(responseData.token===undefined?
-      'Problème !':"Signup Success!",
-      responseData.token===undefined?'compte n existe pas':'',
-      [
-        {text: 'OK', onPress: () => console.log('OK Pressed')},
-      ],
-      { cancelable: false }
-    )
-  })
-  .done();
 
 }
 
-async _onValueChange(item, selectedValue) {
-try {
-  await AsyncStorage.setItem(item, selectedValue);
-  if(selectedValue===undefined)
-  {
-    this.setState({correctcompte: false});
-  }
-  else{
-  this.setState({correctcompte: true});
-  }
 
- 
-} catch (error) {
-  console.log('AsyncStorage error: ' + error.message);
-}
-}
-*/
   render() {
     const { shift } = this.state;
     console.log(this.props.subscribe)
@@ -153,10 +112,8 @@ try {
    {
       return (
         <Animated.View style={[styles.container, { transform: [{translateY: shift}] }]}>
-         <View style={styles.row}>
-              <Text style={styles.title}>{this.props.navigation.state.params.title}</Text>
-            </View>
-          <View style={styles.row}>
+            <KeyboardAvoidingView enabled>
+         <View style={{ marginTop: 30}}>
           <Text style={styles.textlabel}> البريد الإلكتروني : </Text> 
                     
                     <TextInput
@@ -196,10 +153,21 @@ try {
           <TouchableHighlight style={styles.button} onPress={() => this._subscribeuser()} underlayColor='#99d9f4'>
               <Text style={styles.buttonText}>تسجيل </Text>
             </TouchableHighlight>
-     
+            {this.state.indeterminate ? (
+          <View style={styles.container}>
+          <ProgressBarAndroid
+            styleAttr="Horizontal"
+            indeterminate={this.state.indeterminate}
+            progress={0.0}
+          />
+          </View>
+              ) : (
+                  <View/>
+              )}
+
           </View>
   
-     
+          </KeyboardAvoidingView >
         </Animated.View>
       );
      
@@ -207,10 +175,10 @@ try {
     else
     {
       return (
-      <View style={styles.row}>
-      <Text style={styles.title}>تم إرسال رسالة على البريدك الالكتروني تحتوي على رقم الدخول</Text>
+        <View style={{ marginTop: 30}}>
+      <Text style={styles.title}>تم إرسال رسالة على بريدك الالكتروني تحتوي على رقم الدخول</Text>
       <Text style={styles.textlabel}> </Text> 
-                         <Text style={styles.textlabel}> رقم الدخول :  </Text> 
+                         <Text style={styles.textlabel}> رقم الدخول : {"\n"} </Text> 
                       <TextInput
                       placeholder="رقم الدخول"
                       style={styles.textInput}
@@ -218,9 +186,21 @@ try {
                     />
 
                              <View style={styles.row}>
+                             <Text style={styles.textlabel}>  </Text> 
           <TouchableHighlight style={styles.button} onPress={() => this._createUser()} underlayColor='#99d9f4'>
               <Text style={styles.buttonText}>دخول </Text>
             </TouchableHighlight>
+            {this.state.indeterminate ? (
+          <View style={styles.container}>
+          <ProgressBarAndroid
+            styleAttr="Horizontal"
+            indeterminate={this.state.indeterminate}
+            progress={0.0}
+          />
+          </View>
+              ) : (
+                  <View/>
+              )}
      
           </View>
       </View>

@@ -1,6 +1,6 @@
 import React, { Component} from 'react';
 
-import { AsyncStorage,StyleSheet,TouchableHighlight,TextInput,CheckBox,Image,Alert,ActivityIndicator} from "react-native";
+import { KeyboardAvoidingView,ProgressBarAndroid,StyleSheet,TouchableHighlight,TextInput,CheckBox,Image,Alert,ActivityIndicator,ScrollView} from "react-native";
 
 import { Container, Header,View, Tab, Tabs, TabHeading, Icon, Text,Button, Left, Body } from 'native-base';
 
@@ -9,11 +9,12 @@ import Editpatient from './patient/Editpatient';
 import Listpatient from './patient/Listpatient';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
-import { saveUserToken,removeUserToken} from '../Store/actions';
+import { saveUserToken,removeUserToken,_subscribeuser} from '../Store/actions';
 import Menu  from './Menu';
 import DrawerLayout from 'react-native-drawer-layout';
 import ActionBar from 'react-native-action-bar';
 import datapatient from './patient/Helpers'
+import Inscription from '../Inscription';
 const br = `\n`;
 var STORAGE_KEY = 'id_token'
 var valuetoken=""
@@ -29,8 +30,13 @@ var valuetoken=""
       correctcompte:false,
       login:'',
       password:'',
+      email:'',
+      passwordinscription:'',
+      passwordinscription1:'',
       hidepassword:false,
-      iscorrectcompte:false
+      hidepassword1:false,
+      iscorrectcompte:false,
+      indeterminate:false,
     }
     this.toggleDrawer = this.toggleDrawer.bind(this);
     this.setDrawerState = this.setDrawerState.bind(this);
@@ -53,6 +59,9 @@ toggleDrawer = () => {
 _affichePassWord(){
   this.setState({hidepassword: !this.state.hidepassword})
 }
+_affichePassWordinscription(){
+  this.setState({hidepassword1: !this.state.hidepassword1})
+}
 _Inscription(imode,ititle)
 {
 
@@ -60,26 +69,39 @@ _Inscription(imode,ititle)
 }
 
 _signOutAsync =  () => {
+  this.setState({indeterminate: false});
   this.props.removeUserToken()
       .then(() => {
-          this.props.navigation.navigate('Auth');
+         // this.props.navigation.navigate('Auth');
       })
       .catch(error => {
           this.setState({ error })
       })
 };
-_Connexion()
-{
 
-  this.setState({correctcompte: true})
 
-}
 
 _userSignup(login,password) {
-  this.props.saveUserToken(login,password);
+  this.setState({indeterminate: true})
+  this.props.saveUserToken(login,password).then(()=>{
+
+    if(this.props.token.token==null)
+      this.setState({indeterminate: false})
+
+  });
   
 }
+_subscribeuser()
+{
 
+  this.setState({indeterminate: true});
+
+  this.props._subscribeuser(this.state.email,this.state.password).then(() => {
+    this.setState({indeterminate: false});
+  });
+
+  
+}
 
 
 render() {
@@ -92,19 +114,27 @@ render() {
 
    else if (this.props.token.token==null ||this.props.token.token==undefined||this.props.patientslist.patientslist==null) {
     return (
-  
-      <View style={styles.container}>
-        <View style={styles.row}>
+    
+
+
+
+         <Tabs   tabBarPosition="top" tabBarUnderlineStyle={{ backgroundColor: '#f65857' }}  >
+            <Tab heading={ <TabHeading style={{backgroundColor: 'white'}}><Text style={styles.textlabeltab} >دخول</Text></TabHeading>}> 
+            <Grid>
+            <ScrollView style={{  backgroundColor:  "white"}} keyboardShouldPersistTaps="handled">
+            <KeyboardAvoidingView enabled>
+        <View style={styles.containercenter}>
         <Image  source={require('../assets/icon1.png')}/>
         </View>
         <View style={styles.row}>
+        <Text style={styles.textlabel}>  </Text> 
         <Text style={styles.textlabel}> البريد الإلكتروني :  </Text> 
                   
                   <TextInput
                     placeholder="البريد الإلكتروني"
                     style={styles.textInput}
                     autoCapitalize = 'none'
-                    value={this.state.login} onChangeText={ (text) => this.setState({ login: text }) }
+                    value={this.state.login} onChangeText={ (text) => this.setState({ login: text.trim() }) }
                   />
                     <Text style={styles.textlabel}> </Text> 
                     <Text style={styles.textlabel}> كلمة السر :  </Text> 
@@ -126,17 +156,49 @@ render() {
                     </View>
        <Text style={styles.textlabel}> </Text> 
         </View>
+        {this.state.indeterminate ? (
+
+          <ProgressBarAndroid
+            styleAttr="Horizontal"
+            indeterminate={this.state.indeterminate}
+            progress={0.0}
+          />
+   
+              ) : (
+                  <View/>
+              )}
         <View style={styles.row}>
         <TouchableHighlight  onPress={() => this._userSignup(this.state.login,this.state.password)} style={styles.button} underlayColor='#99d9f4'>
             <Text style={styles.buttonText}> دخول</Text>
           </TouchableHighlight>
-          <TouchableHighlight  onPress={() => this._Inscription("Inscription","إنشاء حساب")} style={styles.button}  underlayColor='#99d9f4'>
-            <Text style={styles.buttonText}>إنشاء حساب</Text>
-          </TouchableHighlight>
 
         </View>
+        </KeyboardAvoidingView>
 
-      </View>
+      </ScrollView >
+
+            </Grid>
+            </Tab>
+  
+
+           <Tab heading={ <TabHeading style={{backgroundColor: 'white'}}><Text style={styles.textlabeltab} >  إنشاء حساب </Text></TabHeading>}> 
+            <Grid>
+            <ScrollView >
+              <Inscription/>
+         
+          </ScrollView >
+              </Grid>
+              </Tab>
+
+
+
+          </Tabs>
+
+
+
+
+
+    
   
 );
   }
@@ -174,7 +236,7 @@ render() {
        
        /* This for set width drawer */
        
-       drawerWidth={120}
+       drawerWidth={180}
 
        /* end */
 
@@ -190,7 +252,7 @@ render() {
 
        onDrawerOpen={this.setDrawerState}
        onDrawerClose={this.setDrawerState}
-       renderNavigationView={() =>  <Menu navigation = {this.props.navigation}/>}
+       renderNavigationView={() =>  <Menu navigation = {this.props.navigation} _signOutAsync={this._signOutAsync.bind(this)}/>}
      >
      {
        /*
@@ -257,6 +319,12 @@ textlabel: {
   paddingRight:10,
   left:10
 },
+textlabeltab: {
+  fontSize: 22,
+  paddingRight:10,
+  left:10,
+  color: '#F0493E'
+},
 container: {
   justifyContent: 'center',
   marginTop: 50,
@@ -303,12 +371,18 @@ innerContainer:{
    flexDirection: "row",  
    justifyContent: "space-between",  
    alignItems: "center"  
+},
+containercenter: {
+  marginTop: 30,
+  justifyContent: 'center',
+  alignItems: 'center',
 }
 });
 function mapDispatchToProps(dispatch) {
   return bindActionCreators({
     saveUserToken: saveUserToken,
-    removeUserToken:removeUserToken
+    removeUserToken:removeUserToken,
+    _subscribeuser:_subscribeuser,
   }, dispatch);
 }
 function mapStateToProps(state) {

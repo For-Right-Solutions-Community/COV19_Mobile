@@ -5,12 +5,11 @@ import { bindActionCreators } from 'redux';
 import { removeUserToken} from '../Store/actions';
 
 const MENU_APP = [
-    { index: 1, name: '  من نحن ؟  ' },
-    { index: 2, name: '  المساهمون   ' },
+    { index: 1, name: '  من نحن   ' },
+    { index: 2, name: '  المساهمين في العمل   ' },
     { index: 3, name: '  خروج   ' }
   ]
  class Menu extends Component {
-
   ActionItem(item)
   {
     if(item.index==1)
@@ -18,20 +17,10 @@ const MENU_APP = [
     else if(item.index==2)
     this.props.navigation.navigate("Partenaires")
     else if(item.index==3)
-    this._signOutAsync();
+    this.props._signOutAsync();
 
 
   }
-
-  _signOutAsync =  () => {
-    this.props.removeUserToken()
-        .then(() => {
-            this.props.navigation.navigate('Auth');
-        })
-        .catch(error => {
-            this.setState({ error })
-        })
-  };
 
  
     render() {
@@ -57,14 +46,14 @@ const MENU_APP = [
     const styles = StyleSheet.create({
       wrapper: {
         //backgroundColor: '#c91f29',
-        backgroundColor: '#c91f29',
+        backgroundColor: 'white',
         marginTop: 50,
     
       },
     
       listMenu: {
-        color: 'white', 
-        fontSize: 22, 
+        color: '#c91f29', 
+        fontSize: 20, 
         paddingLeft: 20, 
         paddingTop: 12,
         paddingBottom: 12,
