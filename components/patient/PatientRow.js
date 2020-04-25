@@ -31,6 +31,7 @@ render() {
         
       </View>  
       <Text style={styles.secondaryText}>الهاتف :{this.props.phone}</Text>
+      <Text style={styles.messageText}> {this.props.message}</Text>
     </View>
       </View>  
   );  
@@ -66,7 +67,12 @@ const styles = StyleSheet.create({
   secondaryText: {
     color: "grey",
     fontSize: 20,
-  },  
+  }, 
+  messageText: {
+    color: "black",
+    fontSize: 18,
+    fontWeight: "bold"
+  }, 
   suivibutton: {
     backgroundColor: '#bdbdbd',
     fontSize: 22,

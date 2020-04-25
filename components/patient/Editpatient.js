@@ -1,16 +1,15 @@
 import React, { Component } from "react";
 
-import { KeyboardAvoidingView, Dimensions, Keyboard, StyleSheet, Button,TouchableWithoutFeedback, UIManager,TextInput ,TouchableOpacity,ScrollView,TouchableHighlight} from 'react-native';
+import { ProgressBarAndroid,KeyboardAvoidingView, Dimensions, Keyboard, StyleSheet, Button,TouchableWithoutFeedback, UIManager,TextInput ,TouchableOpacity,ScrollView,TouchableHighlight} from 'react-native';
 import {Text,View,Input,Item,Icon,Textarea,DatePicker,Picker} from 'native-base';
 import * as Animatable from 'react-native-animatable';
 import RadioForm, {RadioButton, RadioButtonInput, RadioButtonLabel} from 'react-native-simple-radio-button';
 import { ProgressBar, Colors } from 'react-native-paper';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
-import { _createpatient,_createPatientSymtomeAntecedent} from '../../Store/actions';
+import { _createpatient,_createPatientSymtomeAntecedent,getUserToken,_callcreatePatientSymtomeAntecedent} from '../../Store/actions';
 import {getInitialDataPatient} from './initObjectPatient';
 import SearchableDropdown from 'react-native-searchable-dropdown';
-import RNPicker from "rn-modal-picker";
 const llll=' من يقوم بتعمير هذه الاستمارة ؟'
 const br = `\n`;
 var malade="";
@@ -174,7 +173,7 @@ var patient;
               adresse:"",
               longitude: 'unknown',
               latitude: 'unknown',
-
+              indeterminate:false,
             validitynext:false,
             firstname:"",
             lastname:"",
@@ -246,21 +245,22 @@ var patient;
       
     }
     watchID = null;
-   componentDidMount = () => {
-      navigator.geolocation.watchPosition(
-         (position) => {
-            const initiallongitude = JSON.stringify(position.coords.longitude);
-            const initiallatitude = JSON.stringify(position.coords.latitude);
-            this.setState({ longitude:initiallongitude, latitude:initiallatitude});
-         },
-         (error) => alert(error.message),
-         { enableHighAccuracy: true, timeout: 20000, maximumAge: 1000 }
-      );
-    
-   }
-   componentWillUnmount = () => {
-      navigator.geolocation.clearWatch(this.watchID);
-   }
+    componentDidMount = () => {
+ 
+       navigator.geolocation.getCurrentPosition(
+          (position) => {
+             const initiallongitude = JSON.stringify(position.coords.longitude);
+             const initiallatitude = JSON.stringify(position.coords.latitude);
+             this.setState({ longitude:initiallongitude, latitude:initiallatitude});
+          },
+          (error) => alert(error.message),
+          { enableHighAccuracy: true, timeout: 20000, maximumAge: 1000 }
+       );
+     
+    }
+    componentWillUnmount = () => {
+       navigator.geolocation.clearWatch(this.watchID);
+    }
 
 
     _onPressuserfillform(statususerfillform){
@@ -626,15 +626,20 @@ var patient;
         }
     _addpatient()
     {
+        this.setState({indeterminate: true});
         console.log('end');
         let antecedent=this._fillAntecedent();
         let exposure=this._fillexposure()
         let patient=this._fillPatient(exposure,antecedent);
         let symtome=this._fillSymtome();
         
-        this.props._createPatientSymtomeAntecedent(patient,symtome,antecedent);
-  
-        this.props.navigation.goBack();
+        //this.props._createPatientSymtomeAntecedent(patient,symtome,antecedent);
+        _callcreatePatientSymtomeAntecedent(patient,symtome,antecedent).then(()=>{
+            this.props.getUserToken();
+            this.setState({indeterminate: false});
+            this.props.navigation.goBack();
+        });
+     
     }
     _onPrev(value)
     {
@@ -3012,7 +3017,17 @@ var patient;
                     <Text style={styles.addButtonText}> تسجيل </Text> 
                     </TouchableOpacity>
                     }
-   
+      {this.state.indeterminate ? (
+          <View style={styles.container}>
+          <ProgressBarAndroid
+            styleAttr="Horizontal"
+            indeterminate={this.state.indeterminate}
+            progress={0.0}
+          />
+          </View>
+              ) : (
+                  <View/>
+              )}
         
             </View>
             </KeyboardAvoidingView>
@@ -3225,6 +3240,7 @@ function mapDispatchToProps(dispatch) {
     return bindActionCreators({
         _createpatient: _createpatient,
         _createPatientSymtomeAntecedent:_createPatientSymtomeAntecedent,
+        getUserToken:getUserToken
     }, dispatch);
   }
   function mapStateToProps(state) {

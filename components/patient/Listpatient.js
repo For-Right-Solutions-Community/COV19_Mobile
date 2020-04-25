@@ -37,6 +37,7 @@ firstname={item.firstname}
 lastname={item.lastname}
  age={item.age}
  phone={item.phone}
+ message={item.message}
  patient={item}
  navigation={ this.props.navigation}
 />

@@ -10,7 +10,7 @@ export const ADD_PATIENT = 'ADD_PATIENT';
 var  password = 'password';
 var STORAGE_KEY = 'id_token';
 var pathglobale="https://api.amu190.maodao.xyz";
-//var pathglobale="http://192.168.0.3:8080";
+//var pathglobale="http://192.168.0.2:8080";
 const SUBSCRIPE_URL =  "/m/account/subscribe";
 const VALIDATE_URL =  "/m/account/validate";
 const LOGIN_URL = "/v2/register";
@@ -474,7 +474,7 @@ export  function _createPatientSymtomeAntecedent(ipatient,isymtome,iantecedent) 
 }
 
 
-async function _callcreatePatientSymtomeAntecedent(ipatient,isymtome,iantecedent) {
+export async function _callcreatePatientSymtomeAntecedent(ipatient,isymtome,iantecedent) {
 
   console.log("ipatient   "+JSON.stringify(ipatient));
     let patientadded = await _createpatient(ipatient);

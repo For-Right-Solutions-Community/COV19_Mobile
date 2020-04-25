@@ -1,11 +1,13 @@
 import React, { Component } from "react";
 
-import { KeyboardAvoidingView,Animated, Dimensions, Keyboard, StyleSheet, Button,TouchableWithoutFeedback, UIManager,TextInput ,TouchableOpacity,ScrollView,TouchableHighlight} from 'react-native';
+import { ProgressBarAndroid,KeyboardAvoidingView,Animated, Dimensions, Keyboard, StyleSheet, Button,TouchableWithoutFeedback, UIManager,TextInput ,TouchableOpacity,ScrollView,TouchableHighlight} from 'react-native';
 import {Text,View,Input,Item,Icon,Textarea,DatePicker,Picker} from 'native-base';
 import * as Animatable from 'react-native-animatable';
 import RadioForm, {RadioButton, RadioButtonInput, RadioButtonLabel} from 'react-native-simple-radio-button';
 import { ProgressBar, Colors } from 'react-native-paper';
-import { _createsymtome,_updatepatient } from "../../Store/actions";
+import { _createsymtome,_updatepatient,getUserToken } from "../../Store/actions";
+import { connect } from 'react-redux';
+import { bindActionCreators } from 'redux';
 const llll=' من يقوم بتعمير هذه الاستمارة ؟'
 const br = `\n`;
 var malade="";
@@ -34,12 +36,13 @@ var radio_props = [
   ];
   const { State: TextInputState } = TextInput;
 
-export default class Suivipatient extends Component {
+class Suivipatient extends Component {
     constructor(props) {
         super(props);
         this.state = ({
             shift: new Animated.Value(0),
             validitynext:false,
+            indeterminate:false,
             firstname:"",
             lastname:"",
             tel:"",
@@ -513,19 +516,21 @@ export default class Suivipatient extends Component {
     _addsymtome()
     {
         console.log('end');
+        this.setState({indeterminate: true});
         let exposure=this._fillexposure();
         let patient=this.props.navigation.state.params.patient;
         patient.exposure=exposure;
         let symtome=this._fillSymtome();
         _updatepatient(patient).then((resultat)=>{
            _createsymtome(symtome).then((resultat)=>{
-
+            this.props.getUserToken().then((resultat)=>{
+                this.setState({indeterminate: false});
             this.props.navigation.navigate("IndexFollowScreen")
         });
-
+        });
         });
 
-        this.props.navigation.goBack();
+       // this.props.navigation.goBack();
     }
     _onPrev(value)
     {
@@ -574,7 +579,7 @@ export default class Suivipatient extends Component {
 
    _fillexposure()
     {
-        exposure={
+        let exposure={
          //exposure
              traveler:this.state.statusvoyage=="yes"?true:false,
              contactWithTraveler:this.state.statuscontact=="yes"?true:false,
@@ -1611,7 +1616,17 @@ export default class Suivipatient extends Component {
                   </TouchableOpacity>
                 }
 
-   
+      {this.state.indeterminate ? (
+          <View style={styles.container}>
+          <ProgressBarAndroid
+            styleAttr="Horizontal"
+            indeterminate={this.state.indeterminate}
+            progress={0.0}
+          />
+          </View>
+              ) : (
+                  <View/>
+              )}
         
             </View>
             </KeyboardAvoidingView>
@@ -1744,3 +1759,14 @@ const styles = StyleSheet.create({
          alignItems: "center"  
       }
 });
+function mapDispatchToProps(dispatch) {
+    return bindActionCreators({
+        getUserToken:getUserToken
+    }, dispatch);
+  }
+  function mapStateToProps(state) {
+    return {
+      patient: state.patient
+    }
+  }
+  export default connect(mapStateToProps,mapDispatchToProps)(Suivipatient);
